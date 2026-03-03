@@ -1,17 +1,17 @@
 # ⚽ FutStats
 
-Dashboard web de estadísticas de fútbol construido con Vue 3 + TypeScript.
+A modern football statistics dashboard built with Vue 3 + TypeScript.
 
-## Stack tecnológico
+## Tech Stack
 - Vue 3 + TypeScript + Vite
 - Pinia · Vue Router 4
 - TailwindCSS · Chart.js · Leaflet
 
-## Requisitos
+## Requirements
 - Node.js >= 18
 - npm >= 9
 
-## Instalación y ejecución
+## Installation & Setup
 ```bash
 cd frontend
 npm install
@@ -19,17 +19,17 @@ cp .env.example .env
 npm run dev
 ```
 
-La aplicación estará disponible en: `http://localhost:5173`
+App will be available at: `http://localhost:5173`
 
-## Scripts disponibles
+## Available Scripts
 
-| Comando | Descripción |
+| Command | Description |
 |---|---|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción |
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
 | `npm run lint` | Lint + autofix |
-| `npm run format` | Formato con Prettier |
-| `npm run type-check` | Validación TypeScript |
+| `npm run format` | Format with Prettier |
+| `npm run type-check` | TypeScript validation |
 
-## Documentación
-Toda la documentación técnica del proyecto está en la [Wiki](../../wiki).
+## Documentation
+Full technical documentation is available in the [Wiki](../../wiki).
