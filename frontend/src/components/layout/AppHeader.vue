@@ -6,7 +6,6 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
 // TODO: US-09 — implement logout when AuthService is ready
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import AuthService from '@/services/AuthService'
 const route = useRoute()
 const authStore = useAuthStore()
 const authServiceModulePath = '@/services/AuthService'
