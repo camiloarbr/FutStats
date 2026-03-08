@@ -3,38 +3,14 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { AuthService } from '@/services/AuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
-// TODO: US-09 — implement logout when AuthService is ready
- 
+
 const route = useRoute()
 const authStore = useAuthStore()
-const authServiceModulePath = '@/services/AuthService'
 
 const pageTitle = computed(() => route.meta.title)
 const username = computed(() => authStore.currentUser?.username ?? 'Guest')
-
-type AuthServiceContract = {
-  logout: () => void | Promise<void>
-}
-
-type AuthServiceModule = {
-  default?: AuthServiceContract
-  AuthService?: AuthServiceContract
-}
-
-const handleLogout = async (): Promise<void> => {
-  // TODO: Replace dynamic import fallback once AuthService is fully implemented.
-  try {
-    const module = (await import(/* @vite-ignore */ authServiceModulePath)) as AuthServiceModule
-    const resolvedAuthService = module.default ?? module.AuthService
-
-    if (resolvedAuthService) {
-      await resolvedAuthService.logout()
-    }
-  } catch {
-    // AuthService is not available yet.
-  }
-}
 </script>
 
 <template>
@@ -58,12 +34,8 @@ const handleLogout = async (): Promise<void> => {
           <span class="text-sm font-medium">{{ username }}</span>
         </div>
 
-        <button
-          type="button"
-          class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-          @click="handleLogout"
-        >
-          Logout
+        <button @click="AuthService.logout()">
+          <i class="fas fa-sign-out-alt"></i>
         </button>
       </div>
     </div>
