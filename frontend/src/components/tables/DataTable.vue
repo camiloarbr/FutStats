@@ -39,7 +39,7 @@ const sortedRows = computed((): T[] => {
   return [...props.rows].sort((a, b) => {
     const aVal = (a as Record<string, unknown>)[sortKey.value]
     const bVal = (b as Record<string, unknown>)[sortKey.value]
-    if (aVal === undefined || bVal === undefined) return 0
+    if (aVal == null || bVal == null) return 0
     if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1
     if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1
     return 0
