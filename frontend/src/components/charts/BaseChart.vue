@@ -49,9 +49,25 @@ const props = defineProps<Props>()
     </h3>
 
     <!-- dynamic chart type -->
-    <Bar v-if="props.type === 'bar'" :data="props.data" :options="props.options" />
-    <Line v-else-if="props.type === 'line'" :data="props.data" :options="props.options" />
-    <Doughnut v-else-if="props.type === 'doughnut'" :data="props.data" :options="props.options" />
-    <Radar v-else-if="props.type === 'radar'" :data="props.data" :options="props.options" />
+    <Bar
+      v-if="props.type === 'bar'"
+      :data="(props.data as unknown as ChartData<'bar'>)"
+      :options="(props.options as unknown as ChartOptions<'bar'>)"
+    />
+    <Line
+      v-else-if="props.type === 'line'"
+      :data="(props.data as unknown as ChartData<'line'>)"
+      :options="(props.options as unknown as ChartOptions<'line'>)"
+    />
+    <Doughnut
+      v-else-if="props.type === 'doughnut'"
+      :data="(props.data as unknown as ChartData<'doughnut'>)"
+      :options="(props.options as unknown as ChartOptions<'doughnut'>)"
+    />
+    <Radar
+      v-else-if="props.type === 'radar'"
+      :data="(props.data as unknown as ChartData<'radar'>)"
+      :options="(props.options as unknown as ChartOptions<'radar'>)"
+    />
   </div>
 </template>
