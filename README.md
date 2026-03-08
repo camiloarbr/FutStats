@@ -1,35 +1,48 @@
-# ⚽ FutStats
+# .
 
-A modern football statistics dashboard built with Vue 3 + TypeScript.
+This template should help get you started developing with Vue 3 in Vite.
 
-## Tech Stack
-- Vue 3 + TypeScript + Vite
-- Pinia · Vue Router 4
-- TailwindCSS · Chart.js · Leaflet
+## Recommended IDE Setup
 
-## Requirements
-- Node.js >= 18
-- npm >= 9
+[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## Installation & Setup
-```bash
-cd frontend
+## Recommended Browser Setup
+
+- Chromium-based browsers (Chrome, Edge, Brave, etc.):
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
+- Firefox:
+  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
+  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vite.dev/config/).
+
+## Project Setup
+
+```sh
 npm install
-cp .env.example .env
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
 npm run dev
 ```
 
-App will be available at: `http://localhost:5173`
+### Type-Check, Compile and Minify for Production
 
-## Available Scripts
+```sh
+npm run build
+```
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm run lint` | Lint + autofix |
-| `npm run format` | Format with Prettier |
-| `npm run type-check` | TypeScript validation |
+### Lint with [ESLint](https://eslint.org/)
 
-## Documentation
-Full technical documentation is available in the [Wiki](../../wiki).
+```sh
+npm run lint
+```
