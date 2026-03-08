@@ -1,8 +1,6 @@
 // @author: [Name] | FutStats
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { useAuthStore } from '@/stores/useAuthStore'
-
 import HomeView from '@/views/HomeView.vue'
 
 declare module 'vue-router' {
@@ -107,23 +105,29 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, _from, next) => {
-  const authStore = useAuthStore()
-  const currentUser = authStore.currentUser
+router.beforeEach(async (to, _from, next) => {
+  try {
+    const { useAuthStore } = await import('@/stores/useAuthStore')
+    const authStore = useAuthStore()
+    const currentUser = authStore.currentUser
 
-  if (to.meta.requiresAuth && !currentUser) {
-    return next({ name: 'login' })
+    if (to.meta.requiresAuth && !currentUser) {
+      return next({ name: 'login' })
+    }
+
+    if (to.meta.adminOnly && currentUser?.role !== 'admin') {
+      return next({ name: 'home' })
+    }
+
+    if (currentUser && to.name === 'login') {
+      return next({ name: 'home' })
+    }
+
+    next()
+  } catch {
+    // Auth store doesn't exist yet, allow navigation
+    next()
   }
-
-  if (to.meta.adminOnly && currentUser?.role !== 'admin') {
-    return next({ name: 'home' })
-  }
-
-  if (currentUser && to.name === 'login') {
-    return next({ name: 'home' })
-  }
-
-  next()
 })
 
 export default router
