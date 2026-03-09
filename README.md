@@ -1,48 +1,119 @@
-# .
+# ⚽ FutStats
 
-This template should help get you started developing with Vue 3 in Vite.
+A comprehensive football statistics dashboard built with modern web technologies. FutStats provides real-time team, player, and match analytics with interactive visualizations and data management capabilities. Designed as a scalable SPA with a clear separation between frontend and backend layers.
 
-## Recommended IDE Setup
+## 🚀 Tech Stack
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Vue 3** — Progressive JavaScript framework
+- **TypeScript** — Type-safe JavaScript
+- **Vite** — Lightning-fast build tool
+- **Pinia** — State management with setup syntax
+- **Vue Router 4** — Client-side routing
+- **TailwindCSS** — Utility-first CSS framework
+- **Chart.js** — Powerful charting library
+- **Leaflet** — Interactive maps
+- **ESLint** — Code quality and consistency
+- **Prettier** — Code formatter
 
-## Recommended Browser Setup
+## 👥 Team
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+| Role | Name |
+|------|------|
+| Architect | Camilo |
+| Frontend Developer | Samuel |
+| Frontend Developer | Victor |
 
-## Type Support for `.vue` Imports in TS
+## 📋 Requirements
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Node.js >= 18
+- npm >= 9
 
-## Customize configuration
+## ⚙️ Installation & Setup
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Steps
 
-## Project Setup
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd FutStats
+   ```
 
-```sh
-npm install
+2. **Navigate to the frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+3. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+4. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+The application will be available at **http://localhost:5173**
+
+## 📜 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server with hot reload |
+| `npm run build` | Create optimized production build |
+| `npm run lint` | Run ESLint and apply automatic fixes |
+| `npm run format` | Format code with Prettier |
+| `npm run type-check` | Run TypeScript type validation |
+
+## 🏗️ Project Structure
+
+```
+frontend/src/
+├── components/          # Reusable Vue components
+│   ├── charts/         # Chart components (BaseChart)
+│   ├── filters/        # Filter components (SelectFilter)
+│   ├── layout/         # Layout components (Header, Sidebar, Footer)
+│   ├── tables/         # Table components (DataTable)
+│   └── ui/             # UI components (StatCard, LeafletMap)
+├── composables/         # Reusable Vue composition functions
+├── interfaces/          # TypeScript interfaces and types
+├── router/              # Vue Router configuration and navigation guards
+├── services/            # Business logic and data access layer
+├── stores/              # Pinia store definitions (state management)
+├── utils/               # Utility functions (formatters, localStorage)
+└── views/               # Page components (Views for each route)
+    ├── teams/          # Team-related views
+    ├── players/        # Player-related views
+    └── matches/        # Match-related views
 ```
 
-### Compile and Hot-Reload for Development
+**Key Responsibility:**
+- **Services** layer is the only place allowed to access localStorage or backend APIs
+- All data persists in localStorage with mock data during development
+- Architecture supports seamless migration to a backend when ready
 
-```sh
-npm run dev
-```
+## 🔐 Demo Credentials
 
-### Type-Check, Compile and Minify for Production
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@futstats.com | admin123 |
+| User | user@futstats.com | user123 |
 
-```sh
-npm run build
-```
+## 📚 Documentation
 
-### Lint with [ESLint](https://eslint.org/)
+Full technical documentation, architecture guidelines, and contribution standards are available in the [Wiki](../../wiki).
 
-```sh
-npm run lint
-```
+For detailed coding conventions and project rules, see [Copilot Instructions](.github/copilot-instructions.md).
+
+## 🚀 Deployment
+
+Production deployment to Google Cloud Platform coming soon.
+
+## 📄 License
+
+This project is licensed under the MIT License.
