@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { UserInterface } from '@/interfaces/UserInterface'

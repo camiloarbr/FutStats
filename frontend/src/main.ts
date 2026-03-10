@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 import './assets/css/input.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

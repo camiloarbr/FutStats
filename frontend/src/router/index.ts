@@ -1,4 +1,4 @@
-// @author: Samuel | FutStats
+// @author: Camilo | FutStats
 import { createRouter, createWebHistory } from 'vue-router'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 

@@ -1,5 +1,4 @@
 // @author: Samuel | FutStats
-// @author: Samuel | FutStats
 import { useMatchesStore } from '@/stores/useMatchesStore'
 import type { MatchInterface, CreateMatchDTO } from '@/interfaces/MatchInterface'
 

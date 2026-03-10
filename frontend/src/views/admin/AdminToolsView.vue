@@ -161,12 +161,14 @@ function mapMatchToDto(match: MatchInterface): CreateMatchDTO {
 }
 
 function mapPlayerToDto(player: PlayerInterface): CreatePlayerDTO {
-  const { id: _ignore, ...rest } = player
+  const { id, ...rest } = player
+  void id
   return { ...rest }
 }
 
 function mapTeamToDto(team: TeamInterface): CreateTeamDTO {
-  const { id: _ignore, ...rest } = team
+  const { id, ...rest } = team
+  void id
   return { ...rest }
 }
 
@@ -251,7 +253,8 @@ watch(
 
     const exists = nextMatches.some((match) => match.id.toString() === selectedMatchId.value)
     if (!exists) {
-      selectedMatchId.value = nextMatches[0].id.toString()
+      const firstMatch = nextMatches[0]
+      selectedMatchId.value = firstMatch ? firstMatch.id.toString() : ''
     }
   },
   { immediate: true },
@@ -267,7 +270,8 @@ watch(
 
     const exists = nextPlayers.some((player) => player.id.toString() === selectedPlayerId.value)
     if (!exists) {
-      selectedPlayerId.value = nextPlayers[0].id.toString()
+      const firstPlayer = nextPlayers[0]
+      selectedPlayerId.value = firstPlayer ? firstPlayer.id.toString() : ''
     }
   },
   { immediate: true },
@@ -283,7 +287,8 @@ watch(
 
     const exists = nextTeams.some((team) => team.id.toString() === selectedTeamId.value)
     if (!exists) {
-      selectedTeamId.value = nextTeams[0].id.toString()
+      const firstTeam = nextTeams[0]
+      selectedTeamId.value = firstTeam ? firstTeam.id.toString() : ''
     }
   },
   { immediate: true },
