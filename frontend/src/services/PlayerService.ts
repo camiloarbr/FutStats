@@ -10,8 +10,8 @@ export class PlayerService {
     return playersStore.players
   }
 
-  static getById(id: number): PlayerInterface | undefined {
-    return this.getAll().find((player: PlayerInterface) => player.id === id)
+  static getByTeam(teamId: number): PlayerInterface[] {
+    return this.getAll().filter((player: PlayerInterface) => player.teamId === teamId)
   }
 
   static getTopScorers(): TopScorerRow[] {

@@ -1,6 +1,8 @@
-// @author: Samuel | FutStats
+<!-- @author: Samuel | FutStats -->
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { ChartData, ChartOptions } from 'chart.js'
+import BaseChart from '@/components/charts/BaseChart.vue'
 import { TeamService } from '@/services/TeamService'
 import { PlayerService } from '@/services/PlayerService'
 import { MatchService } from '@/services/MatchService'
@@ -15,7 +17,73 @@ const totalPlayers = computed((): number => PlayerService.getAll().length)
 const totalMatches = computed((): number => MatchService.getAll().length)
 
 const topScorers = computed(() => PlayerService.getTopScorers())
-const teamPerformance = computed(() => TeamService.getTeamPerformance())
+
+const teamsByGoals = computed(() => {
+  return [...TeamService.getAll()]
+    .sort((firstTeam, secondTeam) => secondTeam.goalsFor - firstTeam.goalsFor)
+    .slice(0, 6)
+})
+
+const goalsChartData = computed((): ChartData<'bar'> => {
+  return {
+    labels: teamsByGoals.value.map((team) => team.name),
+    datasets: [
+      {
+        label: 'Goals',
+        data: teamsByGoals.value.map((team) => team.goalsFor),
+        backgroundColor: ['#1b69ff', '#3d82ff', '#5b96ff', '#7baeff', '#9ac4ff', '#bfdcff'],
+        borderRadius: 8,
+        borderSkipped: false,
+        barThickness: 22,
+      },
+    ],
+  }
+})
+
+const goalsChartOptions: ChartOptions<'bar'> = {
+  indexAxis: 'y',
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    tooltip: {
+      backgroundColor: '#0d1525',
+      titleColor: '#ffffff',
+      bodyColor: '#ffffff',
+      displayColors: false,
+    },
+  },
+  scales: {
+    x: {
+      beginAtZero: true,
+      grid: {
+        color: '#e5e7eb',
+      },
+      ticks: {
+        precision: 0,
+        color: '#64748b',
+        font: {
+          size: 12,
+          weight: 600,
+        },
+      },
+    },
+    y: {
+      grid: {
+        display: false,
+      },
+      ticks: {
+        color: '#64748b',
+        font: {
+          size: 12,
+          weight: 600,
+        },
+      },
+    },
+  },
+}
 </script>
 
 <template>
@@ -167,40 +235,12 @@ const teamPerformance = computed(() => TeamService.getTeamPerformance())
             <p class="text-sm text-slate-500">Total offensive contribution by squad</p>
           </div>
 
-          <div class="flex flex-1 flex-col justify-around gap-4">
-            <div
-              v-for="team in teamPerformance"
-              :key="team.name"
-              class="space-y-1.5"
-            >
-              <div
-                class="flex justify-between text-xs font-semibold uppercase tracking-wider text-slate-500"
-              >
-                <span>{{ team.name }}</span>
-                <span class="text-slate-900">{{ team.goals }} Goals</span>
-              </div>
-
-              <div class="h-3 w-full overflow-hidden rounded-full bg-slate-100">
-                <div
-                  class="h-full rounded-full transition-all duration-300"
-                  :class="team.barClass"
-                  :style="{ width: `${team.width}%` }"
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-            <div class="flex items-center gap-2">
-              <div class="h-3 w-3 rounded bg-[#1b69ff]"></div>
-              <span class="text-xs text-slate-500">Highest Performance</span>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <div class="h-3 w-3 rounded bg-[#bfdcff]"></div>
-              <span class="text-xs text-slate-500">Average Performance</span>
-            </div>
-          </div>
+          <BaseChart
+            type="bar"
+            :data="goalsChartData"
+            :options="goalsChartOptions"
+            heightClass="h-[420px]"
+          />
         </article>
       </section>
     </div>

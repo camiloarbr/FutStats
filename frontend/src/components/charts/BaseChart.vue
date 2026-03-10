@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+<!-- @author: Samuel | FutStats -->
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
@@ -37,51 +37,52 @@ interface Props {
   data: ChartData
   options?: ChartOptions
   title?: string
-  height?: number
+  heightClass?: string
+  showCard?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   height: 320,
 })
 
-const containerStyles = computed(() => ({
-  height: `${props.height}px`,
-}))
+const props = withDefaults(defineProps<Props>(), {
+  heightClass: 'h-[320px]',
+  showCard: false,
+})
 </script>
 
 <template>
   <div
-    class="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
-    :style="containerStyles"
+    :class="
+      props.showCard
+        ? 'rounded-xl border border-gray-100 bg-white p-6 shadow-sm'
+        : 'w-full'
+    "
   >
-    <!-- optional title -->
-    <h3 v-if="props.title" class="text-base font-semibold text-gray-700 mb-4">
+    <h3 v-if="props.title" class="mb-4 text-base font-semibold text-gray-700">
       {{ props.title }}
     </h3>
 
-    <!-- dynamic chart type -->
-    <Bar
-      v-if="props.type === 'bar'"
-      :data="(props.data as unknown as ChartData<'bar'>)"
-      :options="(props.options as unknown as ChartOptions<'bar'>)"
-      :height="props.height"
-    />
-    <Line
-      v-else-if="props.type === 'line'"
-      :data="(props.data as unknown as ChartData<'line'>)"
-      :options="(props.options as unknown as ChartOptions<'line'>)"
-      :height="props.height"
-    />
-    <Doughnut
-      v-else-if="props.type === 'doughnut'"
-      :data="(props.data as unknown as ChartData<'doughnut'>)"
-      :options="(props.options as unknown as ChartOptions<'doughnut'>)"
-      :height="props.height"
-    />
-    <Radar
-      v-else-if="props.type === 'radar'"
-      :data="(props.data as unknown as ChartData<'radar'>)"
-      :options="(props.options as unknown as ChartOptions<'radar'>)"
-      :height="props.height"
-    />
+    <div class="relative w-full" :class="props.heightClass">
+      <Bar
+        v-if="props.type === 'bar'"
+        :data="(props.data as unknown as ChartData<'bar'>)"
+        :options="(props.options as unknown as ChartOptions<'bar'>)"
+      />
+      <Line
+        v-else-if="props.type === 'line'"
+        :data="(props.data as unknown as ChartData<'line'>)"
+        :options="(props.options as unknown as ChartOptions<'line'>)"
+      />
+      <Doughnut
+        v-else-if="props.type === 'doughnut'"
+        :data="(props.data as unknown as ChartData<'doughnut'>)"
+        :options="(props.options as unknown as ChartOptions<'doughnut'>)"
+      />
+      <Radar
+        v-else-if="props.type === 'radar'"
+        :data="(props.data as unknown as ChartData<'radar'>)"
+        :options="(props.options as unknown as ChartOptions<'radar'>)"
+      />
+    </div>
   </div>
 </template>
