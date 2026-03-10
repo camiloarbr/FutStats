@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// @author: [Name] | FutStats
+// @author: Victor Chavez | FutStats
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 

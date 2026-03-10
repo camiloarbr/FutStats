@@ -61,12 +61,8 @@ watch(
   { deep: true },
 )
 
-const titleCopy = computed(() =>
-  props.mode === 'create' ? 'Registrar nuevo partido' : 'Editar partido',
-)
-const actionCopy = computed(() =>
-  props.mode === 'create' ? 'Guardar partido' : 'Actualizar partido',
-)
+const titleCopy = computed(() => (props.mode === 'create' ? 'Register new match' : 'Edit match'))
+const actionCopy = computed(() => (props.mode === 'create' ? 'Save match' : 'Update match'))
 
 function buildStateFromDto(dto: CreateMatchDTO): MatchFormState {
   return {
@@ -93,16 +89,16 @@ function clearErrors(): void {
 
 function validateField(key: keyof MatchFormState, value: unknown): void {
   if (typeof value === 'string') {
-    errors[key] = value.trim().length === 0 ? 'Campo obligatorio' : ''
+    errors[key] = value.trim().length === 0 ? 'Required field' : ''
     return
   }
 
   if (typeof value === 'number') {
-    errors[key] = Number.isNaN(value) ? 'Valor requerido' : ''
+    errors[key] = Number.isNaN(value) ? 'Value required' : ''
     return
   }
 
-  errors[key] = value === null || value === undefined ? 'Valor requerido' : ''
+  errors[key] = value === null || value === undefined ? 'Value required' : ''
 }
 
 function validateForm(): boolean {
@@ -113,13 +109,13 @@ function validateForm(): boolean {
   })
 
   if (formState.homeTeamId === formState.awayTeamId) {
-    errors.homeTeamId = 'Selecciona equipos distintos'
-    errors.awayTeamId = 'Selecciona equipos distintos'
+    errors.homeTeamId = 'Pick different teams'
+    errors.awayTeamId = 'Pick different teams'
   }
 
   if (formState.possessionHome + formState.possessionAway !== 100) {
-    errors.possessionHome = 'La suma debe ser 100%'
-    errors.possessionAway = 'La suma debe ser 100%'
+    errors.possessionHome = 'Totals must equal 100%'
+    errors.possessionAway = 'Totals must equal 100%'
   }
 
   const hasErrors = (Object.values(errors) as string[]).some((message) => message.length > 0)
@@ -145,7 +141,7 @@ function buildDtoFromState(): CreateMatchDTO {
 
 function handleSubmit(): void {
   if (!validateForm()) {
-    errors.general = 'Corrige los campos resaltados para continuar.'
+    errors.general = 'Resolve the highlighted fields before continuing.'
     return
   }
 
@@ -162,9 +158,9 @@ function handleDelete(): void {
   <div class="match-form">
     <div class="match-form__header">
       <div>
-        <p class="form-chip">Panel administrativo</p>
+        <p class="form-chip">Admin workflow</p>
         <h2>{{ titleCopy }}</h2>
-        <p>Gestiona resultados y estadísticas oficiales de la temporada.</p>
+        <p>Manage official results and match stats within a single streamlined flow.</p>
       </div>
       <button
         v-if="props.mode === 'edit'"
@@ -172,27 +168,27 @@ function handleDelete(): void {
         class="danger-chip"
         @click="handleDelete"
       >
-        Eliminar partido
+        Delete match
       </button>
     </div>
 
     <form class="match-form__grid" @submit.prevent="handleSubmit">
       <div class="field-group">
-        <label for="match-date">Fecha</label>
+        <label for="match-date">Date</label>
         <input id="match-date" v-model="formState.date" type="date" />
         <p v-if="errors.date" class="field-error">{{ errors.date }}</p>
       </div>
 
       <div class="field-group">
-        <label for="stadium">Estadio</label>
+        <label for="stadium">Stadium</label>
         <input id="stadium" v-model="formState.stadium" type="text" />
         <p v-if="errors.stadium" class="field-error">{{ errors.stadium }}</p>
       </div>
 
       <div class="field-group">
-        <label for="homeTeam">Equipo local</label>
+        <label for="homeTeam">Home team</label>
         <select id="homeTeam" v-model.number="formState.homeTeamId">
-          <option disabled value="0">Selecciona un equipo</option>
+          <option disabled value="0">Select a team</option>
           <option v-for="team in props.teams" :key="team.id" :value="team.id">
             {{ team.name }}
           </option>
@@ -201,9 +197,9 @@ function handleDelete(): void {
       </div>
 
       <div class="field-group">
-        <label for="awayTeam">Equipo visitante</label>
+        <label for="awayTeam">Away team</label>
         <select id="awayTeam" v-model.number="formState.awayTeamId">
-          <option disabled value="0">Selecciona un equipo</option>
+          <option disabled value="0">Select a team</option>
           <option v-for="team in props.teams" :key="team.id" :value="team.id">
             {{ team.name }}
           </option>
@@ -212,19 +208,19 @@ function handleDelete(): void {
       </div>
 
       <div class="field-group">
-        <label for="homeScore">Goles locales</label>
+        <label for="homeScore">Home goals</label>
         <input id="homeScore" v-model.number="formState.homeScore" type="number" min="0" />
         <p v-if="errors.homeScore" class="field-error">{{ errors.homeScore }}</p>
       </div>
 
       <div class="field-group">
-        <label for="awayScore">Goles visitantes</label>
+        <label for="awayScore">Away goals</label>
         <input id="awayScore" v-model.number="formState.awayScore" type="number" min="0" />
         <p v-if="errors.awayScore" class="field-error">{{ errors.awayScore }}</p>
       </div>
 
       <div class="field-group">
-        <label for="possessionHome">Posesión local (%)</label>
+        <label for="possessionHome">Home possession (%)</label>
         <input
           id="possessionHome"
           v-model.number="formState.possessionHome"
@@ -236,7 +232,7 @@ function handleDelete(): void {
       </div>
 
       <div class="field-group">
-        <label for="possessionAway">Posesión visitante (%)</label>
+        <label for="possessionAway">Away possession (%)</label>
         <input
           id="possessionAway"
           v-model.number="formState.possessionAway"
@@ -248,25 +244,25 @@ function handleDelete(): void {
       </div>
 
       <div class="field-group">
-        <label for="shotsHome">Disparos locales</label>
+        <label for="shotsHome">Home shots</label>
         <input id="shotsHome" v-model.number="formState.shotsHome" type="number" min="0" />
         <p v-if="errors.shotsHome" class="field-error">{{ errors.shotsHome }}</p>
       </div>
 
       <div class="field-group">
-        <label for="shotsAway">Disparos visitantes</label>
+        <label for="shotsAway">Away shots</label>
         <input id="shotsAway" v-model.number="formState.shotsAway" type="number" min="0" />
         <p v-if="errors.shotsAway" class="field-error">{{ errors.shotsAway }}</p>
       </div>
 
       <div class="field-group">
-        <label for="foulsHome">Faltas locales</label>
+        <label for="foulsHome">Home fouls</label>
         <input id="foulsHome" v-model.number="formState.foulsHome" type="number" min="0" />
         <p v-if="errors.foulsHome" class="field-error">{{ errors.foulsHome }}</p>
       </div>
 
       <div class="field-group">
-        <label for="foulsAway">Faltas visitantes</label>
+        <label for="foulsAway">Away fouls</label>
         <input id="foulsAway" v-model.number="formState.foulsAway" type="number" min="0" />
         <p v-if="errors.foulsAway" class="field-error">{{ errors.foulsAway }}</p>
       </div>

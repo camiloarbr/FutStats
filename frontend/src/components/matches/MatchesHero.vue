@@ -83,22 +83,21 @@ const props = defineProps<{
 
 @media (min-width: 1024px) {
   .matches-hero__content {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 2.5rem;
-    flex-wrap: wrap;
-  }
-
-  .matches-hero__intro,
-  .matches-hero__stats {
-    flex: 1 1 360px;
+    gap: 2rem;
   }
 }
 
 @media (min-width: 1280px) {
   .matches-hero__content {
-    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2.5rem;
+  }
+
+  .matches-hero__intro,
+  .matches-hero__stats {
+    flex: 1 1 360px;
   }
 }
 
