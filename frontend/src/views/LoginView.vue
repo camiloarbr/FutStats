@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
+
 import { AuthService } from '@/services/AuthService'
 
 const router = useRouter()
