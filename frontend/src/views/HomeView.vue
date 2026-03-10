@@ -94,15 +94,9 @@ const teamPerformance = computed(() => TeamService.getTeamPerformance())
         <article
           class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
         >
-          <div class="flex items-center justify-between border-b border-slate-100 p-6">
-            <div>
-              <h2 class="text-lg font-bold text-slate-900">Top 5 Scorers</h2>
-              <p class="text-sm text-slate-500">Current league leading performers</p>
-            </div>
-
-            <button type="button" class="text-sm font-semibold text-[#1b69ff] hover:underline">
-              View All
-            </button>
+          <div class="border-b border-slate-100 p-6">
+            <h2 class="text-lg font-bold text-slate-900">Top 5 Scorers</h2>
+            <p class="text-sm text-slate-500">Current league leading performers</p>
           </div>
 
           <div class="overflow-x-auto">
