@@ -1,5 +1,6 @@
 <!-- @author: Samuel | FutStats -->
 <script setup lang="ts">
+// @author: Samuel | FutStats
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { AuthService } from '@/services/AuthService'
