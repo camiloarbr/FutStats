@@ -10,6 +10,10 @@ export class PlayerService {
     return playersStore.players
   }
 
+  static getByTeam(teamId: number): PlayerInterface[] {
+    return this.getAll().filter((player: PlayerInterface) => player.teamId === teamId)
+  }
+
   static getTopScorers(): TopScorerRow[] {
     const teams = TeamService.getAll()
 
