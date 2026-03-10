@@ -1,4 +1,4 @@
-<!-- @author: Samuel | FutStats -->
+// @author: Victor Chavez | FutStats
 <script setup lang="ts">
 import { computed, ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -159,136 +159,302 @@ function handleRowClick(row: TeamTableRow): void {
 </script>
 
 <template>
-  <section class="w-full bg-[#f4f7fa] px-6 py-8 md:px-10">
-    <div class="mx-auto w-full max-w-7xl">
-      <section class="mb-8">
-        <div class="flex flex-col gap-1">
-          <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Teams</h1>
-          <p class="text-slate-500">
-            Compare team performance across leagues and countries.
-          </p>
+  <section class="space-y-10">
+    <header class="teams-hero">
+      <div>
+        <p class="hero-chip">Teams Intelligence</p>
+        <h1>Teams Overview</h1>
+        <p>Compare clubs across leagues and countries with live filters and rich tables.</p>
+      </div>
+      <div class="hero-metrics">
+        <div>
+          <span>Teams</span>
+          <strong>{{ totalTeams }}</strong>
         </div>
-      </section>
+        <div>
+          <span>Leagues</span>
+          <strong>{{ totalLeagues }}</strong>
+        </div>
+        <div>
+          <span>Countries</span>
+          <strong>{{ totalCountries }}</strong>
+        </div>
+      </div>
+    </header>
 
-      <section class="mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-        <article
-          class="flex flex-col justify-between rounded-xl bg-[#1b69ff] p-6 text-white shadow-lg shadow-blue-500/30 transition-transform duration-300 hover:scale-[1.02]"
-        >
-          <div class="flex items-start justify-between">
-            <div class="rounded-lg bg-white/20 p-2">
-              <span class="text-lg">👥</span>
-            </div>
-            <span class="rounded bg-white/20 px-2 py-1 text-xs font-bold uppercase tracking-wider">
-              Active
-            </span>
+    <section class="insights-grid">
+      <article class="insight-card insight-card--primary">
+        <div class="insight-card__icon">👥</div>
+        <div>
+          <p>Total Teams</p>
+          <h3>{{ totalTeams }}</h3>
+        </div>
+        <span>Active clubs</span>
+      </article>
+      <article class="insight-card insight-card--neutral">
+        <div class="insight-card__icon">🏆</div>
+        <div>
+          <p>Leagues filtered</p>
+          <h3>{{ totalLeagues }}</h3>
+        </div>
+        <span>Realtime scope</span>
+      </article>
+      <article class="insight-card insight-card--dark">
+        <div class="insight-card__icon">📍</div>
+        <div>
+          <p>Countries represented</p>
+          <h3>{{ totalCountries }}</h3>
+        </div>
+        <span>Global spread</span>
+      </article>
+    </section>
+
+    <section class="filters-panel">
+      <div>
+        <p class="panel-label">Filters</p>
+        <h2>Refine by league and country</h2>
+        <p>Selections update every table and visualization instantly.</p>
+      </div>
+      <div class="filters-grid">
+        <SelectFilter
+          v-model="selectedLeague"
+          label="League"
+          placeholder="All leagues"
+          :options="leagueOptions"
+        />
+        <SelectFilter
+          v-model="selectedCountry"
+          label="Country"
+          placeholder="All countries"
+          :options="countryOptions"
+        />
+      </div>
+    </section>
+
+    <section class="layout-grid">
+      <article class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <p class="panel-label">Roster grid</p>
+            <h2>Teams Table</h2>
           </div>
-
-          <div class="mt-4">
-            <p class="text-sm font-medium text-white/80">Total Teams</p>
-            <h3 class="mt-1 text-4xl font-black">{{ totalTeams }}</h3>
-          </div>
-        </article>
-
-        <article
-          class="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-transform duration-300 hover:scale-[1.02]"
-        >
-          <div class="flex items-start justify-between">
-            <div class="rounded-lg bg-[#1b69ff]/10 p-2 text-[#1b69ff]">
-              <span class="text-lg">🏆</span>
-            </div>
-            <span
-              class="rounded bg-emerald-50 px-2 py-1 text-xs font-bold uppercase tracking-wider text-emerald-500"
-            >
-              Filtered
-            </span>
-          </div>
-
-          <div class="mt-4 text-slate-900">
-            <p class="text-sm font-medium text-slate-500">Leagues</p>
-            <h3 class="mt-1 text-4xl font-black">{{ totalLeagues }}</h3>
-          </div>
-        </article>
-
-        <article
-          class="flex flex-col justify-between rounded-xl bg-[#0d1525] p-6 text-white shadow-sm transition-transform duration-300 hover:scale-[1.02]"
-        >
-          <div class="flex items-start justify-between">
-            <div class="rounded-lg bg-white/10 p-2 text-white">
-              <span class="text-lg">📍</span>
-            </div>
-            <span
-              class="rounded bg-[#1b69ff]/10 px-2 py-1 text-xs font-bold uppercase tracking-wider text-[#1b69ff]"
-            >
-              Global
-            </span>
-          </div>
-
-          <div class="mt-4">
-            <p class="text-sm font-medium text-slate-400">Countries</p>
-            <h3 class="mt-1 text-4xl font-black">{{ totalCountries }}</h3>
-          </div>
-        </article>
-      </section>
-
-      <section class="mb-10 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div class="mb-4">
-          <h2 class="text-lg font-bold text-slate-900">Filters</h2>
-          <p class="text-sm text-slate-500">
-            Narrow down teams by league and country in real time.
-          </p>
+          <span>{{ totalTeams }} results</span>
         </div>
 
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <SelectFilter
-            v-model="selectedLeague"
-            label="League"
-            placeholder="All leagues"
-            :options="leagueOptions"
-          />
+        <DataTable :columns="columns" :rows="teamRows" @rowClick="handleRowClick" />
+      </article>
 
-          <SelectFilter
-            v-model="selectedCountry"
-            label="Country"
-            placeholder="All countries"
-            :options="countryOptions"
-          />
+      <article class="panel-card">
+        <div class="panel-card__header">
+          <div>
+            <p class="panel-label">Points heat</p>
+            <h2>Points per Team</h2>
+          </div>
+          <span>Auto refreshed</span>
         </div>
-      </section>
 
-      <section class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <article
-          class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
-        >
-          <div class="border-b border-slate-100 p-6">
-            <h2 class="text-lg font-bold text-slate-900">Teams Table</h2>
-            <p class="text-sm text-slate-500">
-              Filterable list of all teams with league and country comparison.
-            </p>
-          </div>
-
-          <DataTable
-            :columns="columns"
-            :rows="teamRows"
-            @rowClick="handleRowClick"
-          />
-        </article>
-
-        <article class="flex flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div class="mb-6">
-            <h2 class="text-lg font-bold text-slate-900">Points per Team</h2>
-            <p class="text-sm text-slate-500">
-              Current points comparison across filtered teams.
-            </p>
-          </div>
-
-          <BaseChart
-            type="bar"
-            :data="chartData"
-            :options="chartOptions"
-            heightClass="h-[420px]"
-          />
-        </article>
-      </section>
-    </div>
+        <BaseChart
+          type="bar"
+          :data="chartData"
+          :options="chartOptions"
+          :height="420"
+          :show-card="false"
+        />
+      </article>
+    </section>
   </section>
 </template>
+
+<style scoped>
+.teams-hero {
+  border-radius: 2rem;
+  background: linear-gradient(130deg, #0f172a, #1d4ed8, #22d3ee);
+  color: #fff;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.35);
+}
+
+@media (min-width: 768px) {
+  .teams-hero {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.teams-hero h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  margin: 0.3rem 0;
+}
+
+.teams-hero p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-chip {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.hero-metrics span {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.hero-metrics strong {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.insight-card {
+  border-radius: 1.5rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: #fff;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2);
+}
+
+.insight-card__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+}
+
+.insight-card p {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.insight-card h3 {
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+
+.insight-card span {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.insight-card--primary {
+  background: linear-gradient(130deg, #2563eb, #38bdf8);
+}
+
+.insight-card--neutral {
+  background: linear-gradient(130deg, #ecfeff, #e0f2fe);
+  color: #0f172a;
+  box-shadow: 0 20px 50px rgba(14, 165, 233, 0.2);
+}
+
+.insight-card--neutral .insight-card__icon {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.insight-card--neutral span {
+  color: #334155;
+}
+
+.insight-card--dark {
+  background: linear-gradient(130deg, #0f172a, #1e293b);
+}
+
+.filters-panel {
+  border-radius: 1.75rem;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  background: #fff;
+  padding: 1.75rem;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.panel-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  color: #3b82f6;
+  margin-bottom: 0.4rem;
+}
+
+.filters-panel h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.filters-panel p {
+  color: #64748b;
+  max-width: 36rem;
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.panel-card {
+  border-radius: 1.75rem;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  padding: 1.5rem;
+  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-card__header h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.panel-card__header span {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #94a3b8;
+}
+</style>

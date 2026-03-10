@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 
 import MatchFormCard from '@/components/matches/MatchFormCard.vue'
 import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
+import TeamFormCard from '@/components/teams/TeamFormCard.vue'
 
 import { MatchService } from '@/services/MatchService'
 import { PlayerService } from '@/services/PlayerService'
@@ -12,7 +13,7 @@ import { TeamService } from '@/services/TeamService'
 
 import type { CreateMatchDTO, MatchInterface } from '@/interfaces/MatchInterface'
 import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
-import type { TeamInterface } from '@/interfaces/TeamInterface'
+import type { CreateTeamDTO, TeamInterface } from '@/interfaces/TeamInterface'
 
 type AccordionSection =
   | 'matchesCreate'
@@ -41,12 +42,16 @@ const matchCreateFeedback = ref<'idle' | 'success' | 'error'>('idle')
 const matchEditFeedback = ref<'idle' | 'success' | 'error'>('idle')
 const playerCreateFeedback = ref<'idle' | 'success' | 'error'>('idle')
 const playerEditFeedback = ref<'idle' | 'success' | 'error'>('idle')
+const teamCreateFeedback = ref<'idle' | 'success' | 'error'>('idle')
+const teamEditFeedback = ref<'idle' | 'success' | 'error'>('idle')
 
 const matchFormSeed = ref(0)
 const playerFormSeed = ref(0)
+const teamFormSeed = ref(0)
 
 const selectedMatchId = ref<string>('')
 const selectedPlayerId = ref<string>('')
+const selectedTeamId = ref<string>('')
 
 const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -106,6 +111,23 @@ function buildDefaultPlayer(): CreatePlayerDTO {
   }
 }
 
+function buildDefaultTeam(): CreateTeamDTO {
+  return {
+    imageUrl: '',
+    name: '',
+    country: '',
+    league: '',
+    foundedYear: new Date().getFullYear(),
+    matchesPlayed: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    points: 0,
+  }
+}
+
 const matchInitialValues = computed<CreateMatchDTO>(() => {
   void matchFormSeed.value
   return buildDefaultMatch()
@@ -114,6 +136,11 @@ const matchInitialValues = computed<CreateMatchDTO>(() => {
 const playerInitialValues = computed<CreatePlayerDTO>(() => {
   void playerFormSeed.value
   return buildDefaultPlayer()
+})
+
+const teamInitialValues = computed<CreateTeamDTO>(() => {
+  void teamFormSeed.value
+  return buildDefaultTeam()
 })
 
 function mapMatchToDto(match: MatchInterface): CreateMatchDTO {
@@ -135,6 +162,11 @@ function mapMatchToDto(match: MatchInterface): CreateMatchDTO {
 
 function mapPlayerToDto(player: PlayerInterface): CreatePlayerDTO {
   const { id: _ignore, ...rest } = player
+  return { ...rest }
+}
+
+function mapTeamToDto(team: TeamInterface): CreateTeamDTO {
+  const { id: _ignore, ...rest } = team
   return { ...rest }
 }
 
@@ -168,6 +200,21 @@ const editablePlayerValues = computed<CreatePlayerDTO | null>(() => {
   return mapPlayerToDto(editablePlayer.value)
 })
 
+const editableTeam = computed<TeamInterface | undefined>(() => {
+  const id = Number(selectedTeamId.value)
+  if (!Number.isFinite(id)) {
+    return undefined
+  }
+  return teams.value.find((team) => team.id === id)
+})
+
+const editableTeamValues = computed<CreateTeamDTO | null>(() => {
+  if (!editableTeam.value) {
+    return null
+  }
+  return mapTeamToDto(editableTeam.value)
+})
+
 const matchOptions = computed(() =>
   matches.value.map((match) => ({
     value: match.id.toString(),
@@ -179,6 +226,13 @@ const playerOptions = computed(() =>
   players.value.map((player) => ({
     value: player.id.toString(),
     label: player.fullName,
+  })),
+)
+
+const teamOptions = computed(() =>
+  teams.value.map((team) => ({
+    value: team.id.toString(),
+    label: team.name,
   })),
 )
 
@@ -214,6 +268,22 @@ watch(
     const exists = nextPlayers.some((player) => player.id.toString() === selectedPlayerId.value)
     if (!exists) {
       selectedPlayerId.value = nextPlayers[0].id.toString()
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  teams,
+  (nextTeams) => {
+    if (nextTeams.length === 0) {
+      selectedTeamId.value = ''
+      return
+    }
+
+    const exists = nextTeams.some((team) => team.id.toString() === selectedTeamId.value)
+    if (!exists) {
+      selectedTeamId.value = nextTeams[0].id.toString()
     }
   },
   { immediate: true },
@@ -301,6 +371,47 @@ function handlePlayerDelete(): void {
   }
 }
 
+function handleTeamCreate(payload: CreateTeamDTO): void {
+  try {
+    TeamService.create(payload)
+    teamCreateFeedback.value = 'success'
+    teamFormSeed.value += 1
+  } catch (error) {
+    console.error(error)
+    teamCreateFeedback.value = 'error'
+  }
+}
+
+function handleTeamUpdate(payload: CreateTeamDTO): void {
+  if (!editableTeam.value) {
+    teamEditFeedback.value = 'error'
+    return
+  }
+
+  try {
+    const updated = TeamService.update(editableTeam.value.id, payload)
+    teamEditFeedback.value = updated ? 'success' : 'error'
+  } catch (error) {
+    console.error(error)
+    teamEditFeedback.value = 'error'
+  }
+}
+
+function handleTeamDelete(): void {
+  if (!editableTeam.value) {
+    teamEditFeedback.value = 'error'
+    return
+  }
+
+  const deleted = TeamService.delete(editableTeam.value.id)
+  teamEditFeedback.value = deleted ? 'success' : 'error'
+
+  if (deleted) {
+    const nextId = teams.value[0]?.id
+    selectedTeamId.value = nextId ? nextId.toString() : ''
+  }
+}
+
 function goToMatches(): void {
   router.push({ name: 'matches.index' })
 }
@@ -314,7 +425,7 @@ function goToMatches(): void {
         <h1>Control Panel</h1>
         <p>
           Keep creation and maintenance flows organized inside collapsible sections. Register, edit,
-          or delete matches and players without leaving this screen.
+          or delete matches, players, and teams without leaving this screen.
         </p>
       </div>
       <button type="button" class="hero-action" @click="goToMatches">View matches</button>
@@ -516,11 +627,17 @@ function goToMatches(): void {
             <i class="fa-solid fa-chevron-down"></i>
           </span>
         </button>
-        <div v-show="isSectionOpen('teamsCreate')" class="accordion__panel placeholder">
-          <h4>Coming soon</h4>
-          <p>
-            This space will host the team creation form so you can sync rosters ahead of the next
-            season.
+        <div v-show="isSectionOpen('teamsCreate')" class="accordion__panel">
+          <TeamFormCard
+            mode="create"
+            :initial-values="teamInitialValues"
+            @submit="handleTeamCreate"
+          />
+          <p v-if="teamCreateFeedback === 'success'" class="success-banner">
+            Team registered successfully.
+          </p>
+          <p v-else-if="teamCreateFeedback === 'error'" class="error-banner">
+            Unable to store the new team. Please try again.
           </p>
         </div>
       </article>
@@ -541,11 +658,31 @@ function goToMatches(): void {
             <i class="fa-solid fa-chevron-down"></i>
           </span>
         </button>
-        <div v-show="isSectionOpen('teamsEdit')" class="accordion__panel placeholder">
-          <h4>Design in progress</h4>
-          <p>
-            Soon you will be able to refresh badges, leagues, and metrics for every club right from
-            here.
+        <div v-show="isSectionOpen('teamsEdit')" class="accordion__panel">
+          <div v-if="teams.length === 0" class="warning">
+            No teams exist yet. Create one first to unlock editing.
+          </div>
+          <div v-else class="selector">
+            <label for="team-select">Select a team</label>
+            <select id="team-select" v-model="selectedTeamId">
+              <option v-for="option in teamOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+          <TeamFormCard
+            v-if="editableTeamValues"
+            key="team-edit"
+            mode="edit"
+            :initial-values="editableTeamValues"
+            @submit="handleTeamUpdate"
+            @delete="handleTeamDelete"
+          />
+          <p v-if="teamEditFeedback === 'success'" class="success-banner">
+            Team updated successfully.
+          </p>
+          <p v-else-if="teamEditFeedback === 'error'" class="error-banner">
+            Could not update or delete the selected team.
           </p>
         </div>
       </article>

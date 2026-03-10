@@ -1,6 +1,5 @@
 // @author: [Name] | FutStats
 import { useAuthStore } from '@/stores/useAuthStore'
-import { useRouter } from 'vue-router'
 import type { UserInterface } from '@/interfaces/UserInterface'
 
 export class AuthService {
@@ -20,10 +19,7 @@ export class AuthService {
 
   static logout(): void {
     const authStore = useAuthStore()
-    const router = useRouter()
-
     authStore.setCurrentUser(null)
-    router.push({ name: 'login' })
   }
 
   static getCurrentUser(): UserInterface | null {

@@ -7,6 +7,7 @@ import type { UserInterface } from '@/interfaces/UserInterface'
 export class LocalStorageUtils {
   private static readonly KEY = import.meta.env.VITE_STORAGE_KEY as string
   private static readonly SEEDED_FLAG = `${LocalStorageUtils.KEY}_seeded`
+  private static readonly CURRENT_USER_KEY = `${LocalStorageUtils.KEY}_currentUserId`
 
   static isSeeded(): boolean {
     return localStorage.getItem(LocalStorageUtils.SEEDED_FLAG) === 'true'
@@ -100,6 +101,26 @@ export class LocalStorageUtils {
       ...user,
       createdAt: new Date(user.createdAt),
     }))
+  }
+
+  static saveCurrentUserId(userId: number | null): void {
+    if (userId === null) {
+      localStorage.removeItem(LocalStorageUtils.CURRENT_USER_KEY)
+      return
+    }
+
+    localStorage.setItem(LocalStorageUtils.CURRENT_USER_KEY, userId.toString())
+  }
+
+  static loadCurrentUserId(): number | null {
+    const stored = localStorage.getItem(LocalStorageUtils.CURRENT_USER_KEY)
+
+    if (stored === null) {
+      return null
+    }
+
+    const parsed = Number(stored)
+    return Number.isNaN(parsed) ? null : parsed
   }
 
   static seed(): void {

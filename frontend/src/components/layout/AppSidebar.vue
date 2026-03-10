@@ -43,7 +43,6 @@ const displayEmail = computed(() => currentUser.value?.email ?? 'guest@futstats.
       </RouterLink>
 
       <RouterLink
-        v-if="isAdmin"
         :to="{ name: 'teams.index' }"
         active-class="bg-gray-700"
         class="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition hover:bg-gray-700"
@@ -53,7 +52,6 @@ const displayEmail = computed(() => currentUser.value?.email ?? 'guest@futstats.
       </RouterLink>
 
       <RouterLink
-        v-if="isAdmin"
         :to="{ name: 'matches.index' }"
         active-class="bg-gray-700"
         class="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition hover:bg-gray-700"

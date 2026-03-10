@@ -1,16 +1,22 @@
 <script setup lang="ts">
 // @author: [Name] | FutStats
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { AuthService } from '@/services/AuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 
 const pageTitle = computed(() => route.meta.title)
 const username = computed(() => authStore.currentUser?.username ?? 'Guest')
+
+function handleLogout(): void {
+  AuthService.logout()
+  void router.push({ name: 'login' })
+}
 </script>
 
 <template>
@@ -34,7 +40,7 @@ const username = computed(() => authStore.currentUser?.username ?? 'Guest')
           <span class="text-sm font-medium">{{ username }}</span>
         </div>
 
-        <button @click="AuthService.logout()">
+        <button @click="handleLogout">
           <i class="fas fa-sign-out-alt"></i>
         </button>
       </div>

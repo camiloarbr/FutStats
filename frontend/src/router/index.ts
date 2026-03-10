@@ -32,7 +32,7 @@ const router = createRouter({
       path: '/teams',
       name: 'teams.index',
       component: () => import('@/views/teams/TeamsView.vue'),
-      meta: { title: 'Teams', requiresAuth: true, adminOnly: true },
+      meta: { title: 'Teams', requiresAuth: true, adminOnly: false },
     },
     {
       path: '/teams/create',
@@ -80,7 +80,7 @@ const router = createRouter({
       path: '/matches',
       name: 'matches.index',
       component: () => import('@/views/matches/MatchesView.vue'),
-      meta: { title: 'Matches', requiresAuth: true, adminOnly: true },
+      meta: { title: 'Matches', requiresAuth: true, adminOnly: false },
     },
     {
       path: '/matches/create',

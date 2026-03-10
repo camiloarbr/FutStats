@@ -1,4 +1,4 @@
-// @author: Samuel | FutStats
+// @author: Victor Chavez | FutStats
 import { usePlayersStore } from '@/stores/usePlayersStore'
 import { TeamService } from '@/services/TeamService'
 import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
@@ -8,6 +8,10 @@ export class PlayerService {
   static getAll(): PlayerInterface[] {
     const playersStore = usePlayersStore()
     return playersStore.players
+  }
+
+  static getById(id: number): PlayerInterface | undefined {
+    return this.getAll().find((player: PlayerInterface) => player.id === id)
   }
 
   static getByTeam(teamId: number): PlayerInterface[] {
