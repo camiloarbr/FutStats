@@ -161,12 +161,14 @@ function mapMatchToDto(match: MatchInterface): CreateMatchDTO {
 }
 
 function mapPlayerToDto(player: PlayerInterface): CreatePlayerDTO {
-  const { id: _ignore, ...rest } = player
+  const { id, ...rest } = player
+  void id
   return { ...rest }
 }
 
 function mapTeamToDto(team: TeamInterface): CreateTeamDTO {
-  const { id: _ignore, ...rest } = team
+  const { id, ...rest } = team
+  void id
   return { ...rest }
 }
 

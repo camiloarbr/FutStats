@@ -31,7 +31,8 @@ const player = computed<PlayerInterface | undefined>(() => {
 
 function buildFormValues(source?: PlayerInterface): CreatePlayerDTO {
   if (source) {
-    const { id: _ignore, ...rest } = source
+    const { id, ...rest } = source
+    void id
     return { ...rest }
   }
 

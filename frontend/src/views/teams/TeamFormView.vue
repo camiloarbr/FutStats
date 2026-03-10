@@ -29,7 +29,8 @@ const formValues = computed<CreateTeamDTO>(() => buildFormValues(team.value))
 
 function buildFormValues(source?: TeamInterface): CreateTeamDTO {
   if (source) {
-    const { id: _ignored, ...rest } = source
+    const { id, ...rest } = source
+    void id
     return { ...rest }
   }
 
