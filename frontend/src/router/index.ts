@@ -101,6 +101,12 @@ const router = createRouter({
       meta: { title: 'Edit Match', requiresAuth: true, adminOnly: true },
     },
     {
+      path: '/admin/tools',
+      name: 'admin.tools',
+      component: () => import('@/views/admin/AdminToolsView.vue'),
+      meta: { title: 'Admin Tools', requiresAuth: true, adminOnly: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

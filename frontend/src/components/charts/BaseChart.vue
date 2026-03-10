@@ -1,5 +1,6 @@
 <!-- @author: Samuel | FutStats -->
 <script setup lang="ts">
+import { computed } from 'vue'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,6 +40,9 @@ interface Props {
   heightClass?: string
   showCard?: boolean
 }
+const props = withDefaults(defineProps<Props>(), {
+  height: 320,
+})
 
 const props = withDefaults(defineProps<Props>(), {
   heightClass: 'h-[320px]',

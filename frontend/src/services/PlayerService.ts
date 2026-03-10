@@ -1,7 +1,7 @@
 // @author: Samuel | FutStats
 import { usePlayersStore } from '@/stores/usePlayersStore'
 import { TeamService } from '@/services/TeamService'
-import type { PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TopScorerRow } from '@/interfaces/DashboardInterface'
 
 export class PlayerService {
@@ -32,6 +32,60 @@ export class PlayerService {
           assists: player.assists,
         }
       })
+  }
+
+  static create(dto: CreatePlayerDTO): PlayerInterface {
+    const playersStore = usePlayersStore()
+    const currentPlayers = playersStore.players
+
+    const nextId =
+      currentPlayers.length > 0
+        ? Math.max(...currentPlayers.map((player: PlayerInterface) => player.id)) + 1
+        : 1
+
+    const newPlayer: PlayerInterface = {
+      id: nextId,
+      ...dto,
+    }
+
+    playersStore.setPlayers([...currentPlayers, newPlayer])
+    return newPlayer
+  }
+
+  static update(id: number, dto: CreatePlayerDTO): PlayerInterface | undefined {
+    const playersStore = usePlayersStore()
+    const currentPlayers = playersStore.players
+    const existingPlayer = currentPlayers.find((player: PlayerInterface) => player.id === id)
+
+    if (!existingPlayer) {
+      return undefined
+    }
+
+    const updatedPlayer: PlayerInterface = {
+      ...dto,
+      id,
+    }
+
+    const nextPlayers = currentPlayers.map((player: PlayerInterface) =>
+      player.id === id ? updatedPlayer : player,
+    )
+
+    playersStore.setPlayers(nextPlayers)
+    return updatedPlayer
+  }
+
+  static delete(id: number): boolean {
+    const playersStore = usePlayersStore()
+    const currentPlayers = playersStore.players
+    const exists = currentPlayers.some((player: PlayerInterface) => player.id === id)
+
+    if (!exists) {
+      return false
+    }
+
+    const nextPlayers = currentPlayers.filter((player: PlayerInterface) => player.id !== id)
+    playersStore.setPlayers(nextPlayers)
+    return true
   }
 
   private static buildInitials(fullName: string): string {
