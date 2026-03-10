@@ -1,7 +1,9 @@
-// @author: [Name] | FutStats
+// @author: Samuel | FutStats
 import { createRouter, createWebHistory } from 'vue-router'
+import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
 import HomeView from '@/views/HomeView.vue'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -18,7 +20,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: { title: 'Home', requiresAuth: false, adminOnly: false },
+      meta: { title: 'Home', requiresAuth: true, adminOnly: false },
     },
     {
       path: '/login',
@@ -99,35 +101,44 @@ const router = createRouter({
       meta: { title: 'Edit Match', requiresAuth: true, adminOnly: true },
     },
     {
-      path: '/:pathMatch(.*)',
+      path: '/:pathMatch(.*)*',
       redirect: '/',
     },
   ],
 })
 
-router.beforeEach(async (to, _from, next) => {
-  try {
-    const { useAuthStore } = await import('@/stores/useAuthStore')
+router.beforeEach(
+  (
+    to: RouteLocationNormalized,
+    _from: RouteLocationNormalized,
+    next: NavigationGuardNext,
+  ): void => {
     const authStore = useAuthStore()
     const currentUser = authStore.currentUser
+    const isAuthenticated = currentUser !== null
+    const isAdmin = currentUser?.role === 'admin'
 
-    if (to.meta.requiresAuth && !currentUser) {
-      return next({ name: 'login' })
+    if (to.meta.requiresAuth && !isAuthenticated) {
+      next({ name: 'login' })
+      return
     }
 
-    if (to.meta.adminOnly && currentUser?.role !== 'admin') {
-      return next({ name: 'home' })
+    if (to.name === 'login' && isAuthenticated) {
+      next({ name: 'home' })
+      return
     }
 
-    if (currentUser && to.name === 'login') {
-      return next({ name: 'home' })
+    if (to.meta.adminOnly && !isAdmin) {
+      next({ name: 'home' })
+      return
     }
 
     next()
-  } catch {
-    // Auth store doesn't exist yet, allow navigation
-    next()
-  }
+  },
+)
+
+router.afterEach((to: RouteLocationNormalized) => {
+  document.title = `FutStats | ${to.meta.title}`
 })
 
 export default router
