@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 </script>
 
 <template>

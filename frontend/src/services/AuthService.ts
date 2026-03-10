@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 import { useAuthStore } from '@/stores/useAuthStore'
 import type { UserInterface } from '@/interfaces/UserInterface'
 
