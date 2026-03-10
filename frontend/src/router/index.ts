@@ -1,9 +1,14 @@
 // @author: Camilo | FutStats
+// Vue Router core
 import { createRouter, createWebHistory } from 'vue-router'
+// Vue Router typings
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
-import HomeView from '@/views/HomeView.vue'
+// Stores
 import { useAuthStore } from '@/stores/useAuthStore'
+
+// Views
+import HomeView from '@/views/HomeView.vue'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -13,6 +18,7 @@ declare module 'vue-router' {
   }
 }
 
+// Router instance with FutStats routes
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -113,6 +119,7 @@ const router = createRouter({
   ],
 })
 
+// Authentication + authorization guard
 router.beforeEach(
   (
     to: RouteLocationNormalized,
@@ -143,6 +150,7 @@ router.beforeEach(
   },
 )
 
+// Keep document title in sync with route metadata
 router.afterEach((to: RouteLocationNormalized) => {
   document.title = `FutStats | ${to.meta.title}`
 })

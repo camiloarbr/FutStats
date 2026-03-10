@@ -1,13 +1,18 @@
-<script setup lang="ts">
 // @author: Camilo | FutStats
+<script setup lang="ts">
+// Vue reactivity utilities
 import { computed } from 'vue'
+// Router view rendering
 import { RouterView } from 'vue-router'
 
-import { useAuthStore } from '@/stores/useAuthStore'
+// Layout components
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
+// Auth store accessor
+import { useAuthStore } from '@/stores/useAuthStore'
 
+// Authentication state helpers
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => Boolean(authStore.isAuthenticated))
 </script>

@@ -1,21 +1,26 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// Filter control component
 import SelectFilter from '@/components/filters/SelectFilter.vue'
 
+// Available filter options
 interface OptionItem {
   value: string
   label: string
 }
 
+// Component props
 const props = defineProps<{
   modelValue: string
   options: OptionItem[]
 }>()
 
+// Emit hook for v-model sync
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
 
+// Bubble selection changes to parent
 function handleUpdate(value: string): void {
   emit('update:modelValue', value)
 }

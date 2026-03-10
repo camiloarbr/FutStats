@@ -1,24 +1,32 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+// Chart.js typings
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
+// Vue reactivity utilities
+import { computed, ref } from 'vue'
+// Router utilities
+import { useRouter } from 'vue-router'
 
+// Reusable components
 import BaseChart from '@/components/charts/BaseChart.vue'
 import DataTable from '@/components/tables/DataTable.vue'
 import SelectFilter from '@/components/filters/SelectFilter.vue'
 
+// Domain services
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
+// Domain interfaces
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Select filter option structure
 interface SelectOption {
   value: string
   label: string
 }
 
+// Table row backing model
 interface PlayerTableRow {
   id: number
   name: string
@@ -31,20 +39,25 @@ interface PlayerTableRow {
 
 type PlayerColumnKey = Exclude<keyof PlayerTableRow, 'id'>
 
+// Data table column definition
 interface TableColumn {
   key: PlayerColumnKey
   label: string
   sortable?: boolean
 }
 
+// Router instance
 const router = useRouter()
 
+// Active filters
 const selectedTeamId = ref<string>('')
 const selectedPosition = ref<string>('')
 
+// Collections sourced from services
 const players = computed<PlayerInterface[]>(() => PlayerService.getAll())
 const teams = computed<TeamInterface[]>(() => TeamService.getAll())
 
+// Quick lookup for team names
 const teamNameMap = computed<Record<number, string>>(() =>
   teams.value.reduce((accumulator, team) => {
     accumulator[team.id] = team.name
@@ -52,12 +65,14 @@ const teamNameMap = computed<Record<number, string>>(() =>
   }, {} as Record<number, string>),
 )
 
+// Dropdown options for filters
 const teamOptions = computed<SelectOption[]>(() =>
   [...teams.value]
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((team) => ({ value: team.id.toString(), label: team.name })),
 )
 
+// Build select options for player positions
 const positionOptions = computed<SelectOption[]>(() => {
   const positions = new Set<string>()
   players.value.forEach((player) => {
@@ -72,10 +87,12 @@ const positionOptions = computed<SelectOption[]>(() => {
     .map((position) => ({ value: position, label: position }))
 })
 
+// Team fallback helper
 function resolveTeamName(teamId: number): string {
   return teamNameMap.value[teamId] ?? 'Unknown Team'
 }
 
+// Players filtered by active selections
 const filteredPlayers = computed<PlayerInterface[]>(() => {
   return players.value.filter((player) => {
     const matchesTeam = selectedTeamId.value
@@ -88,6 +105,7 @@ const filteredPlayers = computed<PlayerInterface[]>(() => {
   })
 })
 
+// Table column metadata
 const tableColumns: TableColumn[] = [
   { key: 'name', label: 'Name', sortable: true },
   { key: 'team', label: 'Team', sortable: true },
@@ -97,6 +115,7 @@ const tableColumns: TableColumn[] = [
   { key: 'matchesPlayed', label: 'Matches', sortable: true },
 ]
 
+// Table rows derived from filtered players
 const tableRows = computed<PlayerTableRow[]>(() =>
   filteredPlayers.value.map((player) => ({
     id: player.id,
@@ -109,10 +128,12 @@ const tableRows = computed<PlayerTableRow[]>(() =>
   })),
 )
 
+// Top scorers slice for charts
 const chartPlayers = computed<PlayerInterface[]>(() =>
   [...filteredPlayers.value].sort((a, b) => b.goals - a.goals).slice(0, 10),
 )
 
+// Top scorers chart data
 const topScorersChartData = computed<ChartData<'bar'>>(() => ({
   labels: chartPlayers.value.map((player) => player.fullName),
   datasets: [
@@ -126,6 +147,7 @@ const topScorersChartData = computed<ChartData<'bar'>>(() => ({
   ],
 }))
 
+// Chart options with custom tooltip
 const topScorersChartOptions = computed<ChartOptions<'bar'>>(() => ({
   maintainAspectRatio: false,
   responsive: true,
@@ -156,10 +178,12 @@ const topScorersChartOptions = computed<ChartOptions<'bar'>>(() => ({
   },
 }))
 
+// Navigate to player detail route
 function handleRowClick(row: PlayerTableRow): void {
   router.push({ name: 'players.show', params: { id: row.id.toString() } })
 }
 
+// Copy used inside hero metrics
 const totalPlayersCopy = computed(() =>
   selectedTeamId.value || selectedPosition.value
     ? `${filteredPlayers.value.length} filtered`

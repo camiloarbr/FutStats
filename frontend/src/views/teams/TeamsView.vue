@@ -1,19 +1,30 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed, ref, type Ref } from 'vue'
-import { useRouter } from 'vue-router'
+// Chart.js typings
 import type { ChartData, ChartOptions } from 'chart.js'
-import SelectFilter from '@/components/filters/SelectFilter.vue'
-import DataTable from '@/components/tables/DataTable.vue'
+// Vue reactivity utilities
+import { computed, ref, type Ref } from 'vue'
+// Router utilities
+import { useRouter } from 'vue-router'
+
+// Reusable components
 import BaseChart from '@/components/charts/BaseChart.vue'
+import DataTable from '@/components/tables/DataTable.vue'
+import SelectFilter from '@/components/filters/SelectFilter.vue'
+
+// Domain services
 import { TeamService } from '@/services/TeamService'
+
+// Domain interfaces
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Filter dropdown option shape
 interface FilterOption {
   value: string
   label: string
 }
 
+// Data table row backing model
 interface TeamTableRow {
   id: number
   name: string
@@ -25,13 +36,17 @@ interface TeamTableRow {
   points: number
 }
 
+// Router instance
 const router = useRouter()
 
+// Active filters stored as refs for SelectFilter
 const selectedLeague: Ref<string> = ref('')
 const selectedCountry: Ref<string> = ref('')
 
+// Teams fetched from service
 const teams = computed((): TeamInterface[] => TeamService.getAll())
 
+// Apply league and country filters
 const filteredTeams = computed((): TeamInterface[] => {
   return teams.value.filter((team: TeamInterface) => {
     const matchesLeague = selectedLeague.value === '' || team.league === selectedLeague.value
@@ -41,6 +56,7 @@ const filteredTeams = computed((): TeamInterface[] => {
   })
 })
 
+// Aggregate counts feeding hero metrics
 const totalTeams = computed((): number => filteredTeams.value.length)
 
 const totalLeagues = computed((): number => {
@@ -51,6 +67,7 @@ const totalCountries = computed((): number => {
   return new Set(filteredTeams.value.map((team: TeamInterface) => team.country)).size
 })
 
+// Build select options for league filter
 const leagueOptions = computed((): FilterOption[] => {
   const uniqueLeagues = [...new Set(teams.value.map((team: TeamInterface) => team.league))].sort()
 
@@ -60,6 +77,7 @@ const leagueOptions = computed((): FilterOption[] => {
   }))
 })
 
+// Build select options for country filter
 const countryOptions = computed((): FilterOption[] => {
   const uniqueCountries = [...new Set(teams.value.map((team: TeamInterface) => team.country))].sort()
 
@@ -69,6 +87,7 @@ const countryOptions = computed((): FilterOption[] => {
   }))
 })
 
+// Convert team entities into table rows
 const teamRows = computed((): TeamTableRow[] => {
   return filteredTeams.value.map((team: TeamInterface) => ({
     id: team.id,
@@ -82,6 +101,7 @@ const teamRows = computed((): TeamTableRow[] => {
   }))
 })
 
+// Column definitions consumed by DataTable
 const columns = [
   { key: 'name', label: 'Name', sortable: true },
   { key: 'country', label: 'Country', sortable: true },
@@ -92,6 +112,7 @@ const columns = [
   { key: 'points', label: 'Points', sortable: true },
 ]
 
+// Chart dataset derived from filtered teams
 const chartData = computed((): ChartData<'bar'> => {
   return {
     labels: filteredTeams.value.map((team: TeamInterface) => team.name),
@@ -108,6 +129,7 @@ const chartData = computed((): ChartData<'bar'> => {
   }
 })
 
+// Static chart options for the leaderboard
 const chartOptions: ChartOptions<'bar'> = {
   indexAxis: 'y',
   responsive: true,
@@ -153,6 +175,7 @@ const chartOptions: ChartOptions<'bar'> = {
   },
 }
 
+// Route to detail view when table row clicked
 function handleRowClick(row: TeamTableRow): void {
   router.push({ name: 'teams.show', params: { id: row.id } })
 }

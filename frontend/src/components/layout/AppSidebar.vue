@@ -1,18 +1,22 @@
-<script setup lang="ts">
 // @author: [Name] | FutStats
+<script setup lang="ts">
+// Vue reactivity utilities
 import { computed } from 'vue'
+// Router navigation component
 import { RouterLink } from 'vue-router'
 
+// Auth store accessors
 import { useAuthStore } from '@/stores/useAuthStore'
 
+// Store instance for sidebar data
 const authStore = useAuthStore()
 
+// Session level state flags
 const currentUser = computed(() => authStore.currentUser ?? null)
-const isAuthenticated = computed(() => {
-  return Boolean(authStore.isAuthenticated ?? currentUser.value)
-})
+const isAuthenticated = computed(() => Boolean(authStore.isAuthenticated ?? currentUser.value))
 const isAdmin = computed(() => currentUser.value?.role === 'admin')
 
+// Display metadata for footer card
 const displayUsername = computed(() => currentUser.value?.username ?? 'Guest User')
 const displayEmail = computed(() => currentUser.value?.email ?? 'guest@futstats.app')
 </script>

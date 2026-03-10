@@ -1,23 +1,32 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+// Chart.js typings
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
+// Vue reactivity utilities
+import { computed, watch } from 'vue'
+// Router utilities
+import { useRoute, useRouter } from 'vue-router'
 
+// Reusable components
 import BaseChart from '@/components/charts/BaseChart.vue'
 
+// Domain services
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
+// Domain interfaces
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Route + router instances
 const route = useRoute()
 const router = useRouter()
 
+// Player selection and backing collection
 const playerId = computed<number>(() => Number(route.params.id))
 const playersCollection = computed<PlayerInterface[]>(() => PlayerService.getAll())
 
+// Player entity resolved from service
 const player = computed<PlayerInterface | undefined>(() => {
   if (!Number.isFinite(playerId.value)) {
     return undefined
@@ -25,8 +34,10 @@ const player = computed<PlayerInterface | undefined>(() => {
   return PlayerService.getById(playerId.value)
 })
 
+// Flag to guard navigation when data not ready
 const playersReady = computed<boolean>(() => playersCollection.value.length > 0)
 
+// Related team reference
 const team = computed<TeamInterface | undefined>(() => {
   if (!player.value) {
     return undefined
@@ -34,8 +45,10 @@ const team = computed<TeamInterface | undefined>(() => {
   return TeamService.getById(player.value.teamId)
 })
 
+// Display fallback when no player picture is available
 const playerImage = computed<string>(() => player.value?.imageUrl || 'https://placehold.co/320x320?text=Player')
 
+// Spotlight cards in hero section
 const spotlightStats = computed(() => {
   if (!player.value) {
     return []
@@ -66,6 +79,7 @@ const spotlightStats = computed(() => {
   ]
 })
 
+// Extended metrics block
 const extendedStats = computed(() => {
   if (!player.value) {
     return []
@@ -80,6 +94,7 @@ const extendedStats = computed(() => {
   ]
 })
 
+// Performance bar chart data
 const performanceChartData = computed<ChartData<'bar'>>(() => {
   if (!player.value) {
     return { labels: [], datasets: [] }
@@ -99,6 +114,7 @@ const performanceChartData = computed<ChartData<'bar'>>(() => {
   }
 })
 
+// Chart options with rich tooltip text
 const performanceChartOptions = computed<ChartOptions<'bar'>>(() => ({
   maintainAspectRatio: false,
   responsive: true,
@@ -121,6 +137,7 @@ const performanceChartOptions = computed<ChartOptions<'bar'>>(() => ({
   },
 }))
 
+// React to unavailable players and sync page title
 watch(
   () => ({ player: player.value, ready: playersReady.value }),
   ({ player: currentPlayer, ready }) => {

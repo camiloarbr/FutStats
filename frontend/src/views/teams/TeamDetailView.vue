@@ -1,24 +1,37 @@
-<!-- @author: Samuel | FutStats -->
+// @author: Samuel | FutStats
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+// Chart.js typings
 import type { ChartData, ChartOptions } from 'chart.js'
+// Vue reactivity utilities
+import { computed, watchEffect } from 'vue'
+// Router utilities
+import { useRoute, useRouter } from 'vue-router'
+
+// Reusable components
 import BaseChart from '@/components/charts/BaseChart.vue'
 import LeafletMap from '@/components/ui/LeafletMap.vue'
-import { TeamService } from '@/services/TeamService'
-import { PlayerService } from '@/services/PlayerService'
-import type { TeamInterface } from '@/interfaces/TeamInterface'
-import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 
+// Domain services
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
+
+// Domain interfaces
+import type { PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
+
+// Router + id extraction
 const route = useRoute()
 const router = useRouter()
 
+// Selected team id
 const teamId = computed((): number => Number(route.params.id))
 
+// Team entity resolved from service
 const team = computed((): TeamInterface | undefined => {
   return TeamService.getById(teamId.value)
 })
 
+// Squad listing for cards and tables
 const teamPlayers = computed((): PlayerInterface[] => {
   if (!team.value) {
     return []
@@ -27,6 +40,7 @@ const teamPlayers = computed((): PlayerInterface[] => {
   return PlayerService.getByTeam(team.value.id)
 })
 
+// Redirect when team missing and sync document title
 watchEffect((): void => {
   if (!team.value) {
     router.replace({ name: 'teams.index' })
@@ -36,6 +50,7 @@ watchEffect((): void => {
   document.title = `FutStats | ${team.value.name}`
 })
 
+// Doughnut chart dataset for season summary
 const seasonChartData = computed((): ChartData<'doughnut'> => {
   if (!team.value) {
     return {
@@ -62,6 +77,7 @@ const seasonChartData = computed((): ChartData<'doughnut'> => {
   }
 })
 
+// Static chart options shared between states
 const seasonChartOptions: ChartOptions<'doughnut'> = {
   responsive: true,
   maintainAspectRatio: false,

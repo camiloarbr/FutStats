@@ -1,20 +1,27 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+// Chart.js typings
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
+// Vue reactivity utilities
+import { computed, ref } from 'vue'
+// Router utilities
+import { useRouter } from 'vue-router'
 
+// Shared components
 import BaseChart from '@/components/charts/BaseChart.vue'
 import DataTable from '@/components/tables/DataTable.vue'
-import MatchesHero from '@/components/matches/MatchesHero.vue'
 import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
+import MatchesHero from '@/components/matches/MatchesHero.vue'
 
+// Domain services
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
 
+// Domain interfaces
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Table row view model
 interface MatchTableRow {
   id: number
   date: string
@@ -24,12 +31,14 @@ interface MatchTableRow {
   stadium: string
 }
 
+// Column metadata
 interface TableColumn {
   key: keyof MatchTableRow
   label: string
   sortable?: boolean
 }
 
+// Summary card details
 interface SummaryStat {
   id: string
   label: string
@@ -38,12 +47,15 @@ interface SummaryStat {
   accent: string
 }
 
+// Router instance and filter state
 const router = useRouter()
 const selectedTeamId = ref<string>('')
 
+// Collections sourced from services
 const matches = computed<MatchInterface[]>(() => MatchService.getAll())
 const teams = computed<TeamInterface[]>(() => TeamService.getAll())
 
+// Quick lookup for team names
 const teamNameMap = computed<Record<number, string>>(() => {
   return teams.value.reduce((accumulator, team) => {
     accumulator[team.id] = team.name
@@ -51,6 +63,7 @@ const teamNameMap = computed<Record<number, string>>(() => {
   }, {} as Record<number, string>)
 })
 
+// Filter dropdown options
 const teamOptions = computed(() =>
   teams.value.map((team) => ({
     value: team.id.toString(),
@@ -58,6 +71,7 @@ const teamOptions = computed(() =>
   })),
 )
 
+// Filter matches by selected club
 const filteredMatches = computed<MatchInterface[]>(() => {
   if (!selectedTeamId.value) {
     return matches.value
@@ -69,21 +83,25 @@ const filteredMatches = computed<MatchInterface[]>(() => {
   )
 })
 
+// Date formatter reused across grids
 const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
 })
 
+// Friendly date helper
 function formatMatchDate(dateValue: Date | string): string {
   const resolvedDate = dateValue instanceof Date ? dateValue : new Date(dateValue)
   return matchDateFormatter.format(resolvedDate)
 }
 
+// Team fallback helper
 function resolveTeamName(teamId: number): string {
   return teamNameMap.value[teamId] ?? 'Unknown Team'
 }
 
+// Hero summary stats
 const summaryStats = computed<SummaryStat[]>(() => {
   const scopedMatches = filteredMatches.value
 
@@ -197,6 +215,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
   ]
 })
 
+// Table column definition
 const tableColumns: TableColumn[] = [
   { key: 'date', label: 'Date', sortable: true },
   { key: 'homeTeam', label: 'Home Team', sortable: true },
@@ -205,6 +224,7 @@ const tableColumns: TableColumn[] = [
   { key: 'stadium', label: 'Stadium', sortable: true },
 ]
 
+// Data table rows derived from matches
 const tableRows = computed<MatchTableRow[]>(() =>
   [...filteredMatches.value]
     .sort((firstMatch, secondMatch) => {
@@ -223,6 +243,7 @@ const tableRows = computed<MatchTableRow[]>(() =>
     })),
 )
 
+// Goals per match line chart
 const goalsChartData = computed<ChartData<'line'>>(() => {
   const chronologicMatches = [...filteredMatches.value].sort((firstMatch, secondMatch) => {
     const firstDate = firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
@@ -252,6 +273,7 @@ const goalsChartData = computed<ChartData<'line'>>(() => {
   }
 })
 
+// Chart options for goals trend
 const goalsChartOptions = computed<ChartOptions<'line'>>(() => ({
   maintainAspectRatio: false,
   responsive: true,
@@ -288,6 +310,7 @@ const goalsChartOptions = computed<ChartOptions<'line'>>(() => ({
   },
 }))
 
+// Navigate to match detail when a row is clicked
 function handleRowClick(row: MatchTableRow): void {
   router.push({ name: 'matches.show', params: { id: row.id.toString() } })
 }

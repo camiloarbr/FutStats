@@ -1,5 +1,6 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// Highlight card contract
 interface SummaryStat {
   id: string
   label: string
@@ -8,6 +9,7 @@ interface SummaryStat {
   accent: string
 }
 
+// Hero props
 const props = defineProps<{
   summaryStats: SummaryStat[]
 }>()

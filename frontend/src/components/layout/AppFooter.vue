@@ -1,5 +1,6 @@
-<script setup lang="ts">
 // @author: [Name] | FutStats
+<script setup lang="ts">
+// Environment metadata for footer copy
 const appName = import.meta.env.VITE_APP_NAME as string
 const appVersion = import.meta.env.VITE_APP_VERSION as string
 </script>

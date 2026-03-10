@@ -1,19 +1,26 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+// Chart.js typings
 import type { ChartData, ChartOptions } from 'chart.js'
+// Vue reactivity utilities
+import { computed, watch } from 'vue'
+// Router utilities
+import { useRoute, useRouter } from 'vue-router'
 
+// Shared components
 import BaseChart from '@/components/charts/BaseChart.vue'
 import MatchScoreboardHero from '@/components/matches/MatchScoreboardHero.vue'
 import MatchStatsSummaryCard from '@/components/matches/MatchStatsSummaryCard.vue'
 
+// Domain services
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
 
+// Domain interfaces
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Comparison rows for summary card
 interface StatComparison {
   id: string
   label: string
@@ -22,11 +29,14 @@ interface StatComparison {
   unit?: string
 }
 
+// Router bindings
 const route = useRoute()
 const router = useRouter()
 
+// Match identifier derived from params
 const matchId = computed<number>(() => Number(route.params.id))
 
+// Match and team lookups
 const match = computed<MatchInterface | undefined>(() => {
   if (Number.isNaN(matchId.value)) {
     return undefined
@@ -42,8 +52,10 @@ const awayTeam = computed<TeamInterface | undefined>(() =>
   match.value ? TeamService.getById(match.value.awayTeamId) : undefined,
 )
 
+// Guard for template rendering
 const matchExists = computed<boolean>(() => Boolean(match.value && homeTeam.value && awayTeam.value))
 
+// Friendly date formatter
 const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
   weekday: 'long',
   day: '2-digit',
@@ -51,10 +63,12 @@ const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
   year: 'numeric',
 })
 
+// Formatted copy for scoreboard component
 const formattedDate = computed<string>(() =>
   match.value ? matchDateFormatter.format(match.value.date instanceof Date ? match.value.date : new Date(match.value.date)) : '',
 )
 
+// Scoreboard payload
 const scoreboard = computed(() => {
   if (!matchExists.value || match.value === undefined || homeTeam.value === undefined || awayTeam.value === undefined) {
     return null
@@ -75,6 +89,7 @@ const scoreboard = computed(() => {
   }
 })
 
+// Stat comparison rows for summary card
 const statComparisons = computed<StatComparison[]>(() => {
   if (!match.value) {
     return []
@@ -103,6 +118,7 @@ const statComparisons = computed<StatComparison[]>(() => {
   ]
 })
 
+// Dataset for chart module
 const statsChartData = computed<ChartData<'bar'>>(() => {
   if (!match.value || !homeTeam.value || !awayTeam.value) {
     return {
@@ -132,6 +148,7 @@ const statsChartData = computed<ChartData<'bar'>>(() => {
   }
 })
 
+// Chart options for styling
 const statsChartOptions = computed<ChartOptions<'bar'>>(() => ({
   responsive: true,
   maintainAspectRatio: false,
@@ -170,6 +187,7 @@ const statsChartOptions = computed<ChartOptions<'bar'>>(() => ({
   },
 }))
 
+// Highlight chips for hero component
 const heroHighlights = computed(() => {
   const possession = statComparisons.value.find((stat) => stat.id === 'possession')
   const shots = statComparisons.value.find((stat) => stat.id === 'shots')
@@ -186,6 +204,7 @@ const heroHighlights = computed(() => {
   ]
 })
 
+// Redirect when match is missing
 watch(
   match,
   (currentMatch) => {
@@ -196,6 +215,7 @@ watch(
   { immediate: true },
 )
 
+// Update page title when teams resolve
 watch(
   [homeTeam, awayTeam],
   ([home, away]) => {

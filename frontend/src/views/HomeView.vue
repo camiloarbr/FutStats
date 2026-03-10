@@ -1,29 +1,41 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed } from 'vue'
+// Chart.js typings
 import type { ChartData, ChartOptions } from 'chart.js'
+// Vue reactivity utilities
+import { computed } from 'vue'
+
+// Shared components
 import BaseChart from '@/components/charts/BaseChart.vue'
-import { TeamService } from '@/services/TeamService'
-import { PlayerService } from '@/services/PlayerService'
+// Domain services
 import { MatchService } from '@/services/MatchService'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
+// Auth store accessor
 import { useAuthStore } from '@/stores/useAuthStore'
 
+// Store reference
 const authStore = useAuthStore()
 
+// Dashboard hero copy
 const username = computed((): string => authStore.currentUser?.username ?? 'User')
 
+// Summary metrics
 const totalTeams = computed((): number => TeamService.getAll().length)
 const totalPlayers = computed((): number => PlayerService.getAll().length)
 const totalMatches = computed((): number => MatchService.getAll().length)
 
+// Leaderboard data
 const topScorers = computed(() => PlayerService.getTopScorers())
 
+// Chart collections
 const teamsByGoals = computed(() => {
   return [...TeamService.getAll()]
     .sort((firstTeam, secondTeam) => secondTeam.goalsFor - firstTeam.goalsFor)
     .slice(0, 6)
 })
 
+// Chart dataset for goals per team
 const goalsChartData = computed((): ChartData<'bar'> => {
   return {
     labels: teamsByGoals.value.map((team) => team.name),
@@ -40,6 +52,7 @@ const goalsChartData = computed((): ChartData<'bar'> => {
   }
 })
 
+// Chart options tuned for horizontal bar
 const goalsChartOptions: ChartOptions<'bar'> = {
   indexAxis: 'y',
   responsive: true,

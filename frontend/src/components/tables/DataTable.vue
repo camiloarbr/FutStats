@@ -1,20 +1,23 @@
 // @author: [Name] | FutStats
 <script setup lang="ts" generic="T">
+// Vue reactivity utilities
 import { computed, ref } from 'vue'
 
+// Column metadata contract
 interface Column {
   key: string
   label: string
   sortable?: boolean
 }
 
+// Component props
 interface Props<T> {
   columns: Column[]
   rows: T[]
 }
 
+// Props and emits
 const props = defineProps<Props<T>>()
-
 const emit = defineEmits<{
   (e: 'rowClick', row: T): void
 }>()

@@ -1,18 +1,25 @@
-<script setup lang="ts">
 // @author: [Name] | FutStats
+<script setup lang="ts">
+// Vue reactivity utilities
 import { computed } from 'vue'
+// Router navigation helpers
 import { useRoute, useRouter } from 'vue-router'
 
+// Auth domain services
 import { AuthService } from '@/services/AuthService'
+// Auth store accessors
 import { useAuthStore } from '@/stores/useAuthStore'
 
+// Routing instances and store reference
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
+// Header display copy
 const pageTitle = computed(() => route.meta.title)
 const username = computed(() => authStore.currentUser?.username ?? 'Guest')
 
+// Session termination handler
 function handleLogout(): void {
   AuthService.logout()
   void router.push({ name: 'login' })

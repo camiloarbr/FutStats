@@ -1,5 +1,6 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// Stat comparison payload
 interface StatComparison {
   id: string
   label: string
@@ -8,10 +9,12 @@ interface StatComparison {
   unit?: string
 }
 
+// Summary card props
 const props = defineProps<{
   statComparisons: StatComparison[]
 }>()
 
+// Balanced width helper for dual bars
 function calculateShare(primaryValue: number, secondaryValue: number): number {
   const total = primaryValue + secondaryValue
   if (total === 0) {

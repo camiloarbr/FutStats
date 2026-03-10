@@ -1,23 +1,28 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// Vue reactivity utilities
 import { computed, reactive, watch } from 'vue'
 
+// Team DTO contract
 import type { CreateTeamDTO } from '@/interfaces/TeamInterface'
 
+// Supported form modes
 type FormMode = 'create' | 'edit'
 
+// Component props
 interface Props {
   mode: FormMode
   initialValues: CreateTeamDTO
 }
 
+// Props and emits
 const props = defineProps<Props>()
-
 const emit = defineEmits<{
   (e: 'submit', payload: CreateTeamDTO): void
   (e: 'delete'): void
 }>()
 
+// Local form state and validation messages
 const formState = reactive<CreateTeamDTO>({ ...props.initialValues })
 const errors = reactive<Record<keyof CreateTeamDTO, string>>({
   imageUrl: '',
@@ -34,6 +39,7 @@ const errors = reactive<Record<keyof CreateTeamDTO, string>>({
   points: '',
 })
 
+// Keep local state up to date
 watch(
   () => props.initialValues,
   (nextValues) => {
@@ -43,17 +49,20 @@ watch(
   { deep: true },
 )
 
+// UI text helpers
 const titleCopy = computed(() =>
   props.mode === 'create' ? 'Register new team' : 'Edit team information',
 )
 const actionCopy = computed(() => (props.mode === 'create' ? 'Create Team' : 'Update Team'))
 
+// Reset error state
 function clearErrors(): void {
   ;(Object.keys(errors) as (keyof CreateTeamDTO)[]).forEach((key) => {
     errors[key] = ''
   })
 }
 
+// Field level validator
 function validateField(key: keyof CreateTeamDTO, value: unknown): void {
   if (typeof value === 'string') {
     errors[key] = value.trim().length === 0 ? 'Required field' : ''
@@ -68,6 +77,7 @@ function validateField(key: keyof CreateTeamDTO, value: unknown): void {
   errors[key] = value === null || value === undefined ? 'Value required' : ''
 }
 
+// Run validation across all fields
 function validateForm(): boolean {
   ;(Object.keys(formState) as (keyof CreateTeamDTO)[]).forEach((key) => {
     validateField(key, formState[key])
@@ -76,6 +86,7 @@ function validateForm(): boolean {
   return (Object.values(errors) as string[]).every((message) => message.length === 0)
 }
 
+// Emit submit action when form passes validation
 function handleSubmit(): void {
   if (!validateForm()) {
     return
@@ -84,6 +95,7 @@ function handleSubmit(): void {
   emit('submit', { ...formState })
 }
 
+// Emit delete action for parent to handle
 function handleDelete(): void {
   emit('delete')
 }

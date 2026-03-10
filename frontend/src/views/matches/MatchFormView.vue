@@ -1,5 +1,6 @@
-<script setup lang="ts">
 // @author: Camilo | FutStats
+<script setup lang="ts">
+// Placeholder script for future match form logic
 </script>
 
 <template>

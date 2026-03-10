@@ -1,27 +1,37 @@
 <script setup lang="ts">
 // @author: Victor Chavez | FutStats
+// Vue reactivity utilities
 import { computed, watch } from 'vue'
+// Router utilities
 import { useRoute, useRouter } from 'vue-router'
 
+// Feature components
 import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
 
+// Domain services
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
+// Domain interfaces
 import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Router helpers
 const route = useRoute()
 const router = useRouter()
 
+// Determines whether we are creating or editing
 const mode = computed<'create' | 'edit'>(() =>
   route.name === 'players.edit' ? 'edit' : 'create',
 )
 
+// Pull id from route params
 const playerId = computed<number>(() => Number(route.params.id))
 
+// Required team dataset
 const teams = computed<TeamInterface[]>(() => TeamService.getAll())
 
+// Player entity when editing
 const player = computed<PlayerInterface | undefined>(() => {
   if (mode.value === 'edit' && Number.isFinite(playerId.value)) {
     return PlayerService.getById(playerId.value)
@@ -29,6 +39,7 @@ const player = computed<PlayerInterface | undefined>(() => {
   return undefined
 })
 
+// Conform entity data into DTO shape
 function buildFormValues(source?: PlayerInterface): CreatePlayerDTO {
   if (source) {
     const { id, ...rest } = source
@@ -54,8 +65,10 @@ function buildFormValues(source?: PlayerInterface): CreatePlayerDTO {
   }
 }
 
+// Provide initial values for the form card
 const formValues = computed<CreatePlayerDTO>(() => buildFormValues(player.value))
 
+// Redirect away if editing non-existing entities
 watch(
   () => ({ isEdit: mode.value === 'edit', player: player.value }),
   ({ isEdit, player: currentPlayer }) => {
@@ -66,6 +79,7 @@ watch(
   { immediate: true },
 )
 
+// Persist player changes through the service
 function handleSubmit(payload: CreatePlayerDTO): void {
   if (mode.value === 'create') {
     PlayerService.create(payload)
@@ -76,6 +90,7 @@ function handleSubmit(payload: CreatePlayerDTO): void {
   router.push({ name: 'players.index' })
 }
 
+// Remove player via service
 function handleDelete(): void {
   if (mode.value === 'edit' && playerId.value && !Number.isNaN(playerId.value)) {
     PlayerService.delete(playerId.value)
@@ -84,6 +99,7 @@ function handleDelete(): void {
   router.push({ name: 'players.index' })
 }
 
+// UI warning when no teams exist
 const showTeamsWarning = computed(() => teams.value.length === 0)
 </script>
 

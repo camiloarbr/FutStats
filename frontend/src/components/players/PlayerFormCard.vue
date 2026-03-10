@@ -1,25 +1,30 @@
 // @author: [Name] | FutStats
 <script setup lang="ts">
-import { reactive, watch, computed } from 'vue'
+// Vue reactivity utilities
+import { computed, reactive, watch } from 'vue'
 
+// Player form DTOs
 import type { CreatePlayerDTO } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Supported form modes
 type FormMode = 'create' | 'edit'
 
+// Component props
 interface Props {
   mode: FormMode
   initialValues: CreatePlayerDTO
   teams: TeamInterface[]
 }
 
+// Props and emits
 const props = defineProps<Props>()
-
 const emit = defineEmits<{
   (e: 'submit', payload: CreatePlayerDTO): void
   (e: 'delete'): void
 }>()
 
+// Local form state and validation map
 const formState = reactive<CreatePlayerDTO>({ ...props.initialValues })
 const errors = reactive<Record<keyof CreatePlayerDTO, string>>({
   fullName: '',
@@ -38,6 +43,7 @@ const errors = reactive<Record<keyof CreatePlayerDTO, string>>({
   teamId: '',
 })
 
+// Keep local state aligned with incoming props
 watch(
   () => props.initialValues,
   (nextValues) => {
@@ -47,15 +53,18 @@ watch(
   { deep: true },
 )
 
+// UI copy helpers for header/button
 const titleCopy = computed(() => (props.mode === 'create' ? 'Create Player' : 'Edit Player'))
 const actionCopy = computed(() => (props.mode === 'create' ? 'Create Player' : 'Update Player'))
 
+// Reset validation errors
 function clearErrors(): void {
   (Object.keys(errors) as (keyof CreatePlayerDTO)[]).forEach((key) => {
     errors[key] = ''
   })
 }
 
+// Field-level validation helper
 function validateField(key: keyof CreatePlayerDTO, value: unknown): void {
   if (typeof value === 'number') {
     errors[key] = Number.isNaN(value) ? 'Value required' : ''
@@ -70,6 +79,7 @@ function validateField(key: keyof CreatePlayerDTO, value: unknown): void {
   errors[key] = value === null || value === undefined ? 'Value required' : ''
 }
 
+// Full-form validation orchestrator
 function validateForm(): boolean {
   clearErrors()
 
@@ -102,6 +112,7 @@ function validateForm(): boolean {
   return !hasErrors
 }
 
+// Submit handler that emits sanitized payload
 function handleSubmit(): void {
   if (!validateForm()) {
     return
@@ -110,6 +121,7 @@ function handleSubmit(): void {
   emit('submit', { ...formState })
 }
 
+// Delete handler to bubble action upwards
 function handleDelete(): void {
   emit('delete')
 }

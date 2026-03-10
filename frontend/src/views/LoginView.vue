@@ -1,18 +1,24 @@
-<script setup lang="ts">
 // @author: Samuel | FutStats
+<script setup lang="ts">
+// Vue reactivity utilities
 import { ref, type Ref } from 'vue'
+// Router utilities
 import { useRouter } from 'vue-router'
 
+// Auth domain service
 import { AuthService } from '@/services/AuthService'
 
+// Router instance
 const router = useRouter()
 
+// Form state
 const email: Ref<string> = ref('')
 const password: Ref<string> = ref('')
 const error: Ref<string | null> = ref(null)
 const isSubmitting: Ref<boolean> = ref(false)
 const showPassword: Ref<boolean> = ref(false)
 
+// Submit handler
 async function handleSubmit(): Promise<void> {
   error.value = null
   isSubmitting.value = true

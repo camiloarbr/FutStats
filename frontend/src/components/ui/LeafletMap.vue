@@ -1,11 +1,13 @@
 // @author: [Name] | FutStats
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch, ref } from 'vue'
+// Leaflet core and assets
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+// Vue lifecycle utilities
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
 
@@ -15,15 +17,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
+// Component props
 interface Props {
   lat: number
   lng: number
   stadiumName: string
 }
 
+// Props and internal refs
 const props = defineProps<Props>()
-
-// Map instance ref
 const mapInstance = ref<L.Map | null>(null)
 const markerId = `map-${Math.random().toString(36).slice(2, 9)}`
 
@@ -44,7 +46,7 @@ function initMap(): void {
   mapInstance.value = map
 }
 
-// Lifecycle
+// Lifecycle initialization
 onMounted((): void => {
   initMap()
 })
@@ -61,7 +63,7 @@ watch(
   () => [props.lat, props.lng],
   (): void => {
     initMap()
-  }
+  },
 )
 </script>
 

@@ -1,5 +1,6 @@
 // @author: [Name] | FutStats
 <script setup lang="ts">
+// Vue reactivity utilities
 import { computed } from 'vue'
 
 interface Props {
@@ -9,14 +10,17 @@ interface Props {
   placeholder?: string
 }
 
+// Select filter props
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'All',
 })
 
+// Update emitter for v-model
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
 
+// Computed proxy for v-model
 const selected = computed({
   get(): string {
     return props.modelValue

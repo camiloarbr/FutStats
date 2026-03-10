@@ -1,23 +1,27 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// Individual team representation
 interface TeamSide {
   name: string
   score: number
   badge: string
 }
 
+// Combined scoreboard payload
 interface ScoreboardData {
   home: TeamSide
   away: TeamSide
   stadium: string
 }
 
+// Highlight chips displayed under venue
 interface HighlightMetric {
   label: string
   value: string
   tone: 'emerald' | 'sky'
 }
 
+// Scoreboard hero props
 const props = defineProps<{
   scoreboard: ScoreboardData
   formattedDate: string

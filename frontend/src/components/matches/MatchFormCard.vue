@@ -1,12 +1,16 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { reactive, watch, computed } from 'vue'
+// Vue reactivity utilities
+import { computed, reactive, watch } from 'vue'
 
+// Match form DTO contracts
 import type { CreateMatchDTO } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+// Supported component modes
 type FormMode = 'create' | 'edit'
 
+// Internal reactive state
 interface MatchFormState {
   date: string
   stadium: string
@@ -22,19 +26,21 @@ interface MatchFormState {
   foulsAway: number
 }
 
+// Component props
 interface Props {
   mode: FormMode
   initialValues: CreateMatchDTO
   teams: TeamInterface[]
 }
 
+// Props and emitted events
 const props = defineProps<Props>()
-
 const emit = defineEmits<{
   (e: 'submit', payload: CreateMatchDTO): void
   (e: 'delete'): void
 }>()
 
+// Local state and validation errors
 const formState = reactive<MatchFormState>(buildStateFromDto(props.initialValues))
 const errors = reactive<Record<keyof MatchFormState | 'general', string>>({
   date: '',
@@ -52,6 +58,7 @@ const errors = reactive<Record<keyof MatchFormState | 'general', string>>({
   general: '',
 })
 
+// Keep local state synced with incoming props
 watch(
   () => props.initialValues,
   (nextValues) => {
@@ -61,9 +68,11 @@ watch(
   { deep: true },
 )
 
+// UI copy helpers
 const titleCopy = computed(() => (props.mode === 'create' ? 'Register new match' : 'Edit match'))
 const actionCopy = computed(() => (props.mode === 'create' ? 'Save match' : 'Update match'))
 
+// Build editable state from DTO
 function buildStateFromDto(dto: CreateMatchDTO): MatchFormState {
   return {
     date: dto.date instanceof Date ? dto.date.toISOString().slice(0, 10) : dto.date,
@@ -81,12 +90,14 @@ function buildStateFromDto(dto: CreateMatchDTO): MatchFormState {
   }
 }
 
+// Reset validation messages
 function clearErrors(): void {
   (Object.keys(errors) as (keyof typeof errors)[]).forEach((key) => {
     errors[key] = ''
   })
 }
 
+// Per-field validation helper
 function validateField(key: keyof MatchFormState, value: unknown): void {
   if (typeof value === 'string') {
     errors[key] = value.trim().length === 0 ? 'Required field' : ''
@@ -101,8 +112,9 @@ function validateField(key: keyof MatchFormState, value: unknown): void {
   errors[key] = value === null || value === undefined ? 'Value required' : ''
 }
 
+// Full-form validation pipeline
 function validateForm(): boolean {
-  clearErrors();
+  clearErrors()
 
   (Object.keys(formState) as (keyof MatchFormState)[]).forEach((key) => {
     validateField(key, formState[key])
@@ -122,6 +134,7 @@ function validateForm(): boolean {
   return !hasErrors
 }
 
+// Map internal state back to DTO
 function buildDtoFromState(): CreateMatchDTO {
   return {
     date: new Date(`${formState.date}T00:00:00`),
@@ -139,6 +152,7 @@ function buildDtoFromState(): CreateMatchDTO {
   }
 }
 
+// Submit handler for parent integration
 function handleSubmit(): void {
   if (!validateForm()) {
     errors.general = 'Resolve the highlighted fields before continuing.'
@@ -149,6 +163,7 @@ function handleSubmit(): void {
   emit('submit', buildDtoFromState())
 }
 
+// Delete handler only used in edit mode
 function handleDelete(): void {
   emit('delete')
 }

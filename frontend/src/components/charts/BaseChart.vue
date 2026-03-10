@@ -1,23 +1,27 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed } from 'vue'
+// Chart.js ecosystem imports
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
   ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
+  LineElement,
+  LinearScale,
+  PointElement,
   RadialLinearScale,
   Title,
   Tooltip,
-  Legend,
-  Filler,
 } from 'chart.js'
-import { Bar, Line, Doughnut, Radar } from 'vue-chartjs'
 import type { ChartData, ChartOptions } from 'chart.js'
+// Vue reactivity utilities
+import { computed } from 'vue'
+// Vue bindings for Chart.js components
+import { Bar, Doughnut, Line, Radar } from 'vue-chartjs'
 
+// Global Chart.js registration
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -32,6 +36,7 @@ ChartJS.register(
   Filler,
 )
 
+// Base chart prop contract
 interface Props {
   type: 'bar' | 'line' | 'doughnut' | 'radar'
   data: ChartData
@@ -42,18 +47,21 @@ interface Props {
   showCard?: boolean
 }
 
+// Default prop values
 const props = withDefaults(defineProps<Props>(), {
   height: 320,
   heightClass: '',
   showCard: true,
 })
 
+// Wrapper styling depending on card mode
 const wrapperClass = computed(() =>
   props.showCard
     ? 'rounded-xl border border-gray-100 bg-white p-6 shadow-sm'
     : 'w-full',
 )
 
+// Custom class and style helpers
 const chartContainerClass = computed(() => props.heightClass || '')
 
 const chartContainerStyle = computed(() =>

@@ -1,16 +1,21 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// Vue reactivity utilities
 import { computed, ref, watch } from 'vue'
+// Router utilities
 import { useRouter } from 'vue-router'
 
+// CRUD form components
 import MatchFormCard from '@/components/matches/MatchFormCard.vue'
 import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
 import TeamFormCard from '@/components/teams/TeamFormCard.vue'
 
+// Domain services
 import { MatchService } from '@/services/MatchService'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
+// Domain interfaces and DTOs
 import type { CreateMatchDTO, MatchInterface } from '@/interfaces/MatchInterface'
 import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { CreateTeamDTO, TeamInterface } from '@/interfaces/TeamInterface'
@@ -23,12 +28,15 @@ type AccordionSection =
   | 'teamsCreate'
   | 'teamsEdit'
 
+// Router instance
 const router = useRouter()
 
+// Data collections
 const teams = computed<TeamInterface[]>(() => TeamService.getAll())
 const matches = computed<MatchInterface[]>(() => MatchService.getAll())
 const players = computed<PlayerInterface[]>(() => PlayerService.getAll())
 
+// Accordion open state
 const accordionState = ref<Record<AccordionSection, boolean>>({
   matchesCreate: true,
   matchesEdit: false,
@@ -38,6 +46,7 @@ const accordionState = ref<Record<AccordionSection, boolean>>({
   teamsEdit: false,
 })
 
+// Feedback banners
 const matchCreateFeedback = ref<'idle' | 'success' | 'error'>('idle')
 const matchEditFeedback = ref<'idle' | 'success' | 'error'>('idle')
 const playerCreateFeedback = ref<'idle' | 'success' | 'error'>('idle')
@@ -45,20 +54,24 @@ const playerEditFeedback = ref<'idle' | 'success' | 'error'>('idle')
 const teamCreateFeedback = ref<'idle' | 'success' | 'error'>('idle')
 const teamEditFeedback = ref<'idle' | 'success' | 'error'>('idle')
 
+// Seeds to reset form defaults
 const matchFormSeed = ref(0)
 const playerFormSeed = ref(0)
 const teamFormSeed = ref(0)
 
+// Select controls state
 const selectedMatchId = ref<string>('')
 const selectedPlayerId = ref<string>('')
 const selectedTeamId = ref<string>('')
 
+// Shared date formatter
 const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
 })
 
+// Accordion toggles
 function toggleSection(section: AccordionSection): void {
   accordionState.value[section] = !accordionState.value[section]
 }
@@ -67,6 +80,7 @@ function isSectionOpen(section: AccordionSection): boolean {
   return accordionState.value[section]
 }
 
+// Default DTO builders
 function buildDefaultMatch(): CreateMatchDTO {
   const defaultTeamId = teams.value[0]?.id ?? 0
   const secondaryTeamId = teams.value[1]?.id ?? 0
@@ -172,6 +186,7 @@ function mapTeamToDto(team: TeamInterface): CreateTeamDTO {
   return { ...rest }
 }
 
+// Editable entities resolved from selections
 const editableMatch = computed<MatchInterface | undefined>(() => {
   const id = Number(selectedMatchId.value)
   if (!Number.isFinite(id)) {
@@ -217,6 +232,7 @@ const editableTeamValues = computed<CreateTeamDTO | null>(() => {
   return mapTeamToDto(editableTeam.value)
 })
 
+// Select options for forms
 const matchOptions = computed(() =>
   matches.value.map((match) => ({
     value: match.id.toString(),
@@ -243,6 +259,7 @@ function resolveTeamName(teamId: number): string {
   return name ?? 'Unknown team'
 }
 
+// Keep selected match valid when dataset changes
 watch(
   matches,
   (nextMatches) => {
@@ -260,6 +277,7 @@ watch(
   { immediate: true },
 )
 
+// Keep selected player valid when dataset changes
 watch(
   players,
   (nextPlayers) => {
@@ -277,6 +295,7 @@ watch(
   { immediate: true },
 )
 
+// Keep selected team valid when dataset changes
 watch(
   teams,
   (nextTeams) => {
@@ -294,6 +313,7 @@ watch(
   { immediate: true },
 )
 
+// Match CRUD handlers
 function handleMatchCreate(payload: CreateMatchDTO): void {
   try {
     MatchService.create(payload)
@@ -335,6 +355,7 @@ function handleMatchDelete(): void {
   }
 }
 
+// Player CRUD handlers
 function handlePlayerCreate(payload: CreatePlayerDTO): void {
   try {
     PlayerService.create(payload)
@@ -376,6 +397,7 @@ function handlePlayerDelete(): void {
   }
 }
 
+// Team CRUD handlers
 function handleTeamCreate(payload: CreateTeamDTO): void {
   try {
     TeamService.create(payload)
@@ -417,6 +439,7 @@ function handleTeamDelete(): void {
   }
 }
 
+// Quick navigation helper
 function goToMatches(): void {
   router.push({ name: 'matches.index' })
 }

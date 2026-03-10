@@ -1,7 +1,9 @@
 // @author: [Name] | FutStats
 <script setup lang="ts">
+// Vue reactivity utilities
 import { computed } from 'vue'
 
+// Component props
 interface Props {
   title: string
   value: string | number
@@ -9,16 +11,19 @@ interface Props {
   color?: 'primary' | 'accent' | 'secondary'
 }
 
+// Props with defaults
 const props = withDefaults(defineProps<Props>(), {
   color: 'primary',
 })
 
+// Static color references
 const colorMap = {
   primary: '#1a56db',
   accent: '#16bdca',
   secondary: '#1e2a3b',
 }
 
+// Color selection helper
 const resolvedColor = computed((): string => colorMap[props.color ?? 'primary'])
 </script>
 
