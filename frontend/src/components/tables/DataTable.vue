@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 <script setup lang="ts" generic="T">
 import { computed, ref } from 'vue'
 

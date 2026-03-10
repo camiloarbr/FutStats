@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 

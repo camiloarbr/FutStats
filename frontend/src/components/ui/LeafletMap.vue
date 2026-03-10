@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch, ref } from 'vue'
 import L from 'leaflet'
