@@ -19,5 +19,10 @@ export const useAuthStore = defineStore('auth', () => {
     LocalStorageUtils.saveCurrentUserId(user?.id ?? null)
   }
 
-  return { users, currentUser, isAuthenticated, setCurrentUser }
+  function setUsers(newUsers: UserInterface[]): void {
+    users.value = newUsers
+    LocalStorageUtils.saveUsers(newUsers)
+  }
+
+  return { users, currentUser, isAuthenticated, setCurrentUser, setUsers }
 })
