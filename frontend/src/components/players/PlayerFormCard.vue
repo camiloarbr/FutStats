@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { reactive, watch, computed } from 'vue'
 
-import type { CreatePlayerDTO } from '@/interfaces/PlayerInterface'
+import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 type FormMode = 'create' | 'edit'

@@ -1,6 +1,7 @@
 // @author: Samuel | FutStats
 import { useMatchesStore } from '@/stores/useMatchesStore'
-import type { MatchInterface, CreateMatchDTO } from '@/interfaces/MatchInterface'
+import type { MatchInterface } from '@/interfaces/MatchInterface'
+import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
 
 export class MatchService {
   static getAll(): MatchInterface[] {

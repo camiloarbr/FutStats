@@ -17,5 +17,3 @@ export interface PlayerInterface {
   minutesPlayed: number
   teamId: number
 }
-
-export type CreatePlayerDTO = Omit<PlayerInterface, 'id'>

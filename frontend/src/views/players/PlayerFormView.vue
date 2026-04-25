@@ -8,7 +8,8 @@ import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
-import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 const route = useRoute()

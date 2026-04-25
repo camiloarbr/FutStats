@@ -1,7 +1,8 @@
 // @author: Victor Chavez | FutStats
 import { usePlayersStore } from '@/stores/usePlayersStore'
 import { TeamService } from '@/services/TeamService'
-import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
 import type { TopScorerRow } from '@/interfaces/DashboardInterface'
 
 export class PlayerService {

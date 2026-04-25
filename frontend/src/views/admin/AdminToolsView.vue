@@ -11,9 +11,12 @@ import { MatchService } from '@/services/MatchService'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
-import type { CreateMatchDTO, MatchInterface } from '@/interfaces/MatchInterface'
-import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
-import type { CreateTeamDTO, TeamInterface } from '@/interfaces/TeamInterface'
+import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
+import type { MatchInterface } from '@/interfaces/MatchInterface'
+import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+import type { PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 type AccordionSection =
   | 'matchesCreate'

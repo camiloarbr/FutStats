@@ -15,5 +15,3 @@ export interface MatchInterface {
   homeTeamId: number
   awayTeamId: number
 }
-
-export type CreateMatchDTO = Omit<MatchInterface, 'id'>

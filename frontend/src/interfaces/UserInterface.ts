@@ -9,5 +9,3 @@ export interface UserInterface {
   createdAt: Date
   isActive: boolean
 }
-
-export type CreateUserDTO = Omit<UserInterface, 'id' | 'createdAt'>

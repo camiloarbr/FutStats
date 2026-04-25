@@ -7,7 +7,8 @@ import TeamFormCard from '@/components/teams/TeamFormCard.vue'
 
 import { TeamService } from '@/services/TeamService'
 
-import type { CreateTeamDTO, TeamInterface } from '@/interfaces/TeamInterface'
+import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 const route = useRoute()
 const router = useRouter()

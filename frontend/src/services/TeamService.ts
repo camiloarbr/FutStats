@@ -1,6 +1,7 @@
 // @author: Samuel | FutStats
 import { useTeamsStore } from '@/stores/useTeamsStore'
-import type { TeamInterface, CreateTeamDTO } from '@/interfaces/TeamInterface'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
+import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
 import type { TeamPerformanceRow } from '@/interfaces/DashboardInterface'
 
 export class TeamService {

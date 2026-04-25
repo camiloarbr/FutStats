@@ -15,5 +15,3 @@ export interface TeamInterface {
   goalsAgainst: number
   points: number
 }
-
-export type CreateTeamDTO = Omit<TeamInterface, 'id'>
