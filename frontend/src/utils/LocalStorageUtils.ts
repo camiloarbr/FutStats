@@ -73,96 +73,6 @@ export class LocalStorageUtils {
     })
   }
 
-  static saveTeams(teams: TeamInterface[]): void {
-    localStorage.setItem(`${LocalStorageUtils.KEY}_teams`, JSON.stringify(teams))
-  }
-
-  static loadTeams(): TeamInterface[] {
-    const rawTeams = localStorage.getItem(`${LocalStorageUtils.KEY}_teams`)
-
-    if (rawTeams === null) {
-      return []
-    }
-
-    const parsedTeams = JSON.parse(rawTeams) as unknown
-    return parsedTeams as TeamInterface[]
-  }
-
-  static savePlayers(players: PlayerInterface[]): void {
-    localStorage.setItem(`${LocalStorageUtils.KEY}_players`, JSON.stringify(players))
-  }
-
-  static loadPlayers(): PlayerInterface[] {
-    const rawPlayers = localStorage.getItem(`${LocalStorageUtils.KEY}_players`)
-
-    if (rawPlayers === null) {
-      return []
-    }
-
-    const parsedPlayers = JSON.parse(rawPlayers) as unknown
-    return parsedPlayers as PlayerInterface[]
-  }
-
-  static saveMatches(matches: MatchInterface[]): void {
-    localStorage.setItem(`${LocalStorageUtils.KEY}_matches`, JSON.stringify(matches))
-  }
-
-  static loadMatches(): MatchInterface[] {
-    const rawMatches = localStorage.getItem(`${LocalStorageUtils.KEY}_matches`)
-
-    if (rawMatches === null) {
-      return []
-    }
-
-    const parsedMatches = JSON.parse(rawMatches) as unknown
-    const matchesArray = parsedMatches as MatchInterface[]
-
-    return matchesArray.map((match: MatchInterface) => ({
-      ...match,
-      date: new Date(match.date),
-    }))
-  }
-
-  static saveUsers(users: UserInterface[]): void {
-    localStorage.setItem(`${LocalStorageUtils.KEY}_users`, JSON.stringify(users))
-  }
-
-  static loadUsers(): UserInterface[] {
-    const rawUsers = localStorage.getItem(`${LocalStorageUtils.KEY}_users`)
-
-    if (rawUsers === null) {
-      return []
-    }
-
-    const parsedUsers = JSON.parse(rawUsers) as unknown
-    const usersArray = parsedUsers as UserInterface[]
-
-    return usersArray.map((user: UserInterface) => ({
-      ...user,
-      createdAt: new Date(user.createdAt),
-    }))
-  }
-
-  static saveCurrentUserId(userId: number | null): void {
-    if (userId === null) {
-      localStorage.removeItem(LocalStorageUtils.CURRENT_USER_KEY)
-      return
-    }
-
-    localStorage.setItem(LocalStorageUtils.CURRENT_USER_KEY, userId.toString())
-  }
-
-  static loadCurrentUserId(): number | null {
-    const stored = localStorage.getItem(LocalStorageUtils.CURRENT_USER_KEY)
-
-    if (stored === null) {
-      return null
-    }
-
-    const parsed = Number(stored)
-    return Number.isNaN(parsed) ? null : parsed
-  }
-
   static savePiniaState(state: Record<string, StateTree>): void {
     localStorage.setItem(LocalStorageUtils.PINIA_STATE_KEY, JSON.stringify(state))
   }
@@ -178,6 +88,62 @@ export class LocalStorageUtils {
     return LocalStorageUtils.restoreDateFieldsFromPiniaState(
       parsedPiniaState as Record<string, StateTree>,
     )
+  }
+
+  static loadLegacyState(): Record<string, StateTree> | null {
+    const rawTeams = localStorage.getItem(`${LocalStorageUtils.KEY}_teams`)
+    const rawPlayers = localStorage.getItem(`${LocalStorageUtils.KEY}_players`)
+    const rawMatches = localStorage.getItem(`${LocalStorageUtils.KEY}_matches`)
+    const rawUsers = localStorage.getItem(`${LocalStorageUtils.KEY}_users`)
+    const rawCurrentUserId = localStorage.getItem(LocalStorageUtils.CURRENT_USER_KEY)
+
+    const legacyTeams = rawTeams === null ? [] : (JSON.parse(rawTeams) as TeamInterface[])
+    const legacyPlayers = rawPlayers === null ? [] : (JSON.parse(rawPlayers) as PlayerInterface[])
+    const legacyMatchesRaw = rawMatches === null ? [] : (JSON.parse(rawMatches) as MatchInterface[])
+    const legacyUsersRaw = rawUsers === null ? [] : (JSON.parse(rawUsers) as UserInterface[])
+
+    const legacyMatches = legacyMatchesRaw.map((match: MatchInterface) => ({
+      ...match,
+      date: new Date(match.date),
+    }))
+
+    const legacyUsers = legacyUsersRaw.map((user: UserInterface) => ({
+      ...user,
+      createdAt: new Date(user.createdAt),
+    }))
+
+    const legacyCurrentUserId =
+      rawCurrentUserId === null
+        ? null
+        : Number.isNaN(Number(rawCurrentUserId))
+          ? null
+          : Number(rawCurrentUserId)
+
+    const hasLegacyData =
+      legacyTeams.length > 0 ||
+      legacyPlayers.length > 0 ||
+      legacyMatches.length > 0 ||
+      legacyUsers.length > 0 ||
+      legacyCurrentUserId !== null
+
+    if (!hasLegacyData) {
+      return null
+    }
+
+    const legacyState: Record<string, StateTree> = {
+      teams: { teams: legacyTeams } as StateTree,
+      players: { players: legacyPlayers } as StateTree,
+      matches: { matches: legacyMatches } as StateTree,
+      auth: {
+        users: legacyUsers,
+        currentUser: legacyCurrentUserId
+          ? legacyUsers.find((u: UserInterface) => u.id === legacyCurrentUserId) ?? null
+          : null,
+        isAuthenticated: legacyCurrentUserId !== null,
+      } as StateTree,
+    }
+
+    return legacyState
   }
 
   static seed(): void {
