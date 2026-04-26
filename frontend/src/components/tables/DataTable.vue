@@ -11,6 +11,8 @@ interface Column {
 interface Props<T> {
   columns: Column[]
   rows: T[]
+  onEdit?: (row: T) => void
+  onDelete?: (row: T) => void
 }
 
 const props = defineProps<Props<T>>()
@@ -78,13 +80,19 @@ const sortedRows = computed((): T[] => {
               </span>
             </div>
           </th>
+          <th
+            v-if="props.onEdit || props.onDelete"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Actions
+          </th>
         </tr>
       </thead>
       <!-- body -->
       <tbody class="bg-white divide-y divide-gray-200">
         <tr
           v-for="(row, index) in sortedRows"
-          :key="index"
+          :key="(row as Record<string, string | number>)['id'] ?? index"
           class="hover:bg-gray-50 cursor-pointer transition-colors"
           @click="emit('rowClick', row)"
         >
@@ -94,6 +102,29 @@ const sortedRows = computed((): T[] => {
             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"
           >
             {{ (row as Record<string, unknown>)[column.key] }}
+          </td>
+          <td
+            v-if="props.onEdit || props.onDelete"
+            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"
+          >
+            <div class="flex items-center gap-3">
+              <button
+                v-if="props.onEdit"
+                type="button"
+                class="text-blue-600 hover:underline text-sm font-medium"
+                @click.stop="props.onEdit(row)"
+              >
+                Edit
+              </button>
+              <button
+                v-if="props.onDelete"
+                type="button"
+                class="text-red-500 hover:underline text-sm font-medium"
+                @click.stop="props.onDelete(row)"
+              >
+                Delete
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
