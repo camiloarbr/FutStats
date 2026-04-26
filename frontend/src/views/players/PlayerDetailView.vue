@@ -9,6 +9,8 @@ import BarChart from '@/components/charts/BarChart.vue'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
+import { Formatters } from '@/utils/Formatters'
+
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -108,7 +110,7 @@ const performanceChartOptions = computed<ChartOptions<'bar'>>(() => ({
       callbacks: {
         label(context: TooltipItem<'bar'>) {
           const value = context.parsed.y ?? 0
-          return `${value} ${context.label.toLowerCase()}`
+          return Formatters.formatChartTooltip(value, context.label.toLowerCase())
         },
       },
     },
@@ -133,7 +135,7 @@ watch(
       return
     }
 
-    document.title = `FutStats | ${currentPlayer.fullName}`
+    document.title = Formatters.formatPageTitle(currentPlayer.fullName)
   },
   { immediate: true },
 )

@@ -11,6 +11,8 @@ import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
+import { Formatters } from '@/utils/Formatters'
+
 type MatchesAccordionSection = 'matchesCreate' | 'matchesEdit'
 
 const teams = computed<TeamInterface[]>(() => TeamService.getAll())
@@ -26,12 +28,6 @@ const matchEditFeedback = ref<'idle' | 'success' | 'error'>('idle')
 
 const matchFormSeed = ref(0)
 const selectedMatchId = ref<string>('')
-
-const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-})
 
 function toggleSection(section: MatchesAccordionSection): void {
   accordionState.value[section] = !accordionState.value[section]
@@ -111,7 +107,11 @@ const editableMatchValues = computed<CreateMatchDTO | null>(() => {
 const matchOptions = computed(() =>
   matches.value.map((match) => ({
     value: match.id.toString(),
-    label: `${matchDateFormatter.format(match.date instanceof Date ? match.date : new Date(match.date))} · ${resolveTeamName(match.homeTeamId)} vs ${resolveTeamName(match.awayTeamId)}`,
+    label: Formatters.formatMatchLabel(
+      match.date,
+      resolveTeamName(match.homeTeamId),
+      resolveTeamName(match.awayTeamId),
+    ),
   })),
 )
 

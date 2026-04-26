@@ -11,6 +11,8 @@ import SelectFilter from '@/components/filters/SelectFilter.vue'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
+import { Formatters } from '@/utils/Formatters'
+
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -135,7 +137,7 @@ const topScorersChartOptions = computed<ChartOptions<'bar'>>(() => ({
       callbacks: {
         label(context: TooltipItem<'bar'>) {
           const goals = context.parsed.y ?? 0
-          return `${goals} goals`
+          return Formatters.formatChartTooltip(goals, 'goals')
         },
       },
     },
@@ -161,9 +163,10 @@ function handleRowClick(row: PlayerTableRow): void {
 }
 
 const totalPlayersCopy = computed(() =>
-  selectedTeamId.value || selectedPosition.value
-    ? `${filteredPlayers.value.length} filtered`
-    : `${players.value.length} total`,
+  Formatters.formatFilterStatus(
+    selectedTeamId.value || selectedPosition.value ? filteredPlayers.value.length : players.value.length,
+    Boolean(selectedTeamId.value || selectedPosition.value),
+  ),
 )
 </script>
 

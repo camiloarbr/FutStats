@@ -12,6 +12,8 @@ import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
 
+import { Formatters } from '@/utils/Formatters'
+
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -69,17 +71,6 @@ const filteredMatches = computed<MatchInterface[]>(() => {
   )
 })
 
-const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-})
-
-function formatMatchDate(dateValue: Date | string): string {
-  const resolvedDate = dateValue instanceof Date ? dateValue : new Date(dateValue)
-  return matchDateFormatter.format(resolvedDate)
-}
-
 function resolveTeamName(teamId: number): string {
   return teamNameMap.value[teamId] ?? 'Unknown Team'
 }
@@ -124,7 +115,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
     (accumulator, match) => accumulator + match.homeScore + match.awayScore,
     0,
   )
-  const avgGoals = (totalGoals / scopedMatches.length).toFixed(1)
+  const avgGoals = Formatters.formatDecimal(totalGoals / scopedMatches.length)
 
   const chronologic = [...scopedMatches].sort((firstMatch, secondMatch) => {
     const firstDate = firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
@@ -150,26 +141,32 @@ const summaryStats = computed<SummaryStat[]>(() => {
   )
 
   const latestSummary = latestMatch
-    ? `${resolveTeamName(latestMatch.homeTeamId)} ${latestMatch.homeScore}:${latestMatch.awayScore} ${resolveTeamName(latestMatch.awayTeamId)}`
+    ? Formatters.formatMatchResult(
+        resolveTeamName(latestMatch.homeTeamId),
+        latestMatch.homeScore,
+        latestMatch.awayScore,
+        resolveTeamName(latestMatch.awayTeamId),
+      )
     : 'Awaiting fixtures'
 
   const highestSummary =
     highestScoring.match !== null
-      ? `${resolveTeamName(highestScoring.match.homeTeamId)} vs ${resolveTeamName(
-          highestScoring.match.awayTeamId,
-        )}`
+      ? Formatters.formatMatchTitle(
+          resolveTeamName(highestScoring.match.homeTeamId),
+          resolveTeamName(highestScoring.match.awayTeamId),
+        )
       : 'Awaiting fixtures'
 
   const highestHelper =
     highestScoring.match !== null
-      ? `${highestScoring.totalGoals} total goals`
+      ? Formatters.formatChartTooltip(highestScoring.totalGoals, 'total goals')
       : 'Track upcoming games'
 
   return [
     {
       id: 'tracked',
       label: 'Tracked Matches',
-      value: scopedMatches.length.toString(),
+      value: Formatters.formatCount(scopedMatches.length),
       helper: 'Results within current filter',
       accent: 'from-blue-600 to-sky-500',
     },
@@ -184,7 +181,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
       id: 'latest',
       label: 'Latest Result',
       value: latestSummary,
-      helper: latestMatch ? formatMatchDate(latestMatch.date) : 'Awaiting fixtures',
+      helper: latestMatch ? Formatters.formatMatchDate(latestMatch.date) : 'Awaiting fixtures',
       accent: 'from-indigo-600 to-blue-500',
     },
     {
@@ -215,9 +212,9 @@ const tableRows = computed<MatchTableRow[]>(() =>
     })
     .map((match: MatchInterface) => ({
       id: match.id,
-      date: formatMatchDate(match.date),
+      date: Formatters.formatMatchDate(match.date),
       homeTeam: resolveTeamName(match.homeTeamId),
-      score: `${match.homeScore} - ${match.awayScore}`,
+      score: Formatters.formatScore(match.homeScore, match.awayScore),
       awayTeam: resolveTeamName(match.awayTeamId),
       stadium: match.stadium,
     })),
@@ -231,7 +228,7 @@ const goalsChartData = computed<ChartData<'line'>>(() => {
     return firstDate.getTime() - secondDate.getTime()
   })
 
-  const labels = chronologicMatches.map((match) => formatMatchDate(match.date))
+  const labels = chronologicMatches.map((match) => Formatters.formatMatchDate(match.date))
   const totals = chronologicMatches.map((match) => match.homeScore + match.awayScore)
 
   return {
@@ -263,7 +260,7 @@ const goalsChartOptions = computed<ChartOptions<'line'>>(() => ({
       callbacks: {
         label(context: TooltipItem<'line'>) {
           const goals = context.parsed.y ?? 0
-          return `${goals} goals`
+          return Formatters.formatChartTooltip(goals, 'goals')
         },
       },
     },
