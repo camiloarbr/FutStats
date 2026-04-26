@@ -107,6 +107,24 @@ const router = createRouter({
       meta: { title: 'Admin Tools', requiresAuth: true, adminOnly: true },
     },
     {
+      path: '/admin/teams',
+      name: 'admin.teams',
+      component: () => import('@/views/admin/TeamsAdminView.vue'),
+      meta: { title: 'Admin - Teams', requiresAuth: true, adminOnly: true },
+    },
+    {
+      path: '/admin/players',
+      name: 'admin.players',
+      component: () => import('@/views/admin/PlayersAdminView.vue'),
+      meta: { title: 'Admin - Players', requiresAuth: true, adminOnly: true },
+    },
+    {
+      path: '/admin/matches',
+      name: 'admin.matches',
+      component: () => import('@/views/admin/MatchesAdminView.vue'),
+      meta: { title: 'Admin - Matches', requiresAuth: true, adminOnly: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
