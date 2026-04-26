@@ -3,7 +3,7 @@
 import { computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ChartData, ChartOptions } from 'chart.js'
-import BaseChart from '@/components/charts/BaseChart.vue'
+import DoughnutChart from '@/components/charts/DoughnutChart.vue'
 import LeafletMap from '@/components/ui/LeafletMap.vue'
 import { TeamService } from '@/services/TeamService'
 import { PlayerService } from '@/services/PlayerService'
@@ -221,8 +221,7 @@ const seasonChartOptions: ChartOptions<'doughnut'> = {
             <p class="text-sm text-slate-500">Wins, draws, and losses breakdown.</p>
           </div>
 
-          <BaseChart
-            type="doughnut"
+          <DoughnutChart
             :data="seasonChartData"
             :options="seasonChartOptions"
             heightClass="h-[320px]"

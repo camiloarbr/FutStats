@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
 
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 import DataTable from '@/components/tables/DataTable.vue'
 import SelectFilter from '@/components/filters/SelectFilter.vue'
 
@@ -206,11 +206,10 @@ const totalPlayersCopy = computed(() =>
         />
       </div>
 
-      <BaseChart
+      <BarChart
         :data="topScorersChartData"
         :options="topScorersChartOptions"
         :height="280"
-        type="bar"
         title="Top Scorers (Goals)"
       />
 

@@ -4,7 +4,7 @@ import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
 
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
@@ -174,11 +174,10 @@ watch(
     </div>
 
     <div class="detail-grid">
-      <BaseChart
+      <BarChart
         :data="performanceChartData"
         :options="performanceChartOptions"
         :height="320"
-        type="bar"
         title="Attacking Output"
       />
 

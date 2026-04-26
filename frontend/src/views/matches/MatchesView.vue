@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
 
-import BaseChart from '@/components/charts/BaseChart.vue'
+import LineChart from '@/components/charts/LineChart.vue'
 import DataTable from '@/components/tables/DataTable.vue'
 import MatchesHero from '@/components/matches/MatchesHero.vue'
 import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
@@ -300,10 +300,9 @@ function handleRowClick(row: MatchTableRow): void {
     <div class="grid gap-6">
       <MatchesFilterPanel v-model="selectedTeamId" :options="teamOptions" />
 
-      <BaseChart
+      <LineChart
         class="rounded-2xl border border-blue-50 bg-white p-4 shadow-xl shadow-blue-500/10"
         :height="240"
-        type="line"
         :data="goalsChartData"
         :options="goalsChartOptions"
         title="Goals per Match"

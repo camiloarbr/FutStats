@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import type { ChartData, ChartOptions } from 'chart.js'
 import SelectFilter from '@/components/filters/SelectFilter.vue'
 import DataTable from '@/components/tables/DataTable.vue'
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 import { TeamService } from '@/services/TeamService'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -253,8 +253,7 @@ function handleRowClick(row: TeamTableRow): void {
           <span>Auto refreshed</span>
         </div>
 
-        <BaseChart
-          type="bar"
+        <BarChart
           :data="chartData"
           :options="chartOptions"
           :height="420"

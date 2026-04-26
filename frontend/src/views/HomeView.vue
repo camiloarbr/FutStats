@@ -3,7 +3,7 @@
 import { computed } from 'vue'
 import type { ChartData, ChartOptions } from 'chart.js'
 import type { TopScorerRow } from '@/interfaces/DashboardInterface'
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 import { TeamService } from '@/services/TeamService'
 import { PlayerService } from '@/services/PlayerService'
 import { MatchService } from '@/services/MatchService'
@@ -207,8 +207,7 @@ const goalsChartOptions: ChartOptions<'bar'> = {
           <span>Updated automatically</span>
         </div>
 
-        <BaseChart
-          type="bar"
+        <BarChart
           :data="goalsChartData"
           :options="goalsChartOptions"
           :height="420"

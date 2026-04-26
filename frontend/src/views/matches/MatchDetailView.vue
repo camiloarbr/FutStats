@@ -4,7 +4,7 @@ import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ChartData, ChartOptions } from 'chart.js'
 
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 import MatchScoreboardHero from '@/components/matches/MatchScoreboardHero.vue'
 import MatchStatsSummaryCard from '@/components/matches/MatchStatsSummaryCard.vue'
 
@@ -219,9 +219,8 @@ watch(
 
     <div class="grid gap-6 lg:grid-cols-3">
       <div class="lg:col-span-2">
-        <BaseChart
+        <BarChart
           :height="320"
-          type="bar"
           :data="statsChartData"
           :options="statsChartOptions"
           title="Home vs Away Metrics"

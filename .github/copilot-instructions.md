@@ -36,7 +36,7 @@ a future backend migration — the Services layer is the only layer allowed to t
 ```
 src/
 ├── components/
-│   ├── charts/       # BaseChart.vue
+│   ├── charts/       # Chart components
 │   ├── tables/       # DataTable.vue
 │   ├── filters/      # SelectFilter.vue
 │   ├── layout/       # AppHeader.vue, AppSidebar.vue, AppFooter.vue
