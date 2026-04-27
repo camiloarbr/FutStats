@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import type { ChartData, ChartOptions } from 'chart.js'
 import SelectFilter from '@/components/filters/SelectFilter.vue'
 import DataTable from '@/components/tables/DataTable.vue'
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 import { TeamService } from '@/services/TeamService'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -61,7 +61,9 @@ const leagueOptions = computed((): FilterOption[] => {
 })
 
 const countryOptions = computed((): FilterOption[] => {
-  const uniqueCountries = [...new Set(teams.value.map((team: TeamInterface) => team.country))].sort()
+  const uniqueCountries = [
+    ...new Set(teams.value.map((team: TeamInterface) => team.country)),
+  ].sort()
 
   return uniqueCountries.map((country: string) => ({
     value: country,
@@ -253,13 +255,7 @@ function handleRowClick(row: TeamTableRow): void {
           <span>Auto refreshed</span>
         </div>
 
-        <BaseChart
-          type="bar"
-          :data="chartData"
-          :options="chartOptions"
-          :height="420"
-          :show-card="false"
-        />
+        <BarChart :data="chartData" :options="chartOptions" :height="420" :show-card="false" />
       </article>
     </section>
   </section>

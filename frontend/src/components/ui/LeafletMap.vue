@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch, ref } from 'vue'
 import L from 'leaflet'
@@ -37,10 +37,7 @@ function initMap(): void {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
   }).addTo(map)
-  L.marker([props.lat, props.lng])
-    .addTo(map)
-    .bindPopup(props.stadiumName)
-    .openPopup()
+  L.marker([props.lat, props.lng]).addTo(map).bindPopup(props.stadiumName).openPopup()
   mapInstance.value = map
 }
 
@@ -74,7 +71,7 @@ watch(
     <div
       :id="markerId"
       class="w-full rounded-lg overflow-hidden"
-      style="height: 350px; z-index: 0;"
+      style="height: 350px; z-index: 0"
     ></div>
   </div>
 </template>

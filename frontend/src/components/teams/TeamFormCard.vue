@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue'
 
-import type { CreateTeamDTO } from '@/interfaces/TeamInterface'
+import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
 
 type FormMode = 'create' | 'edit'
 
@@ -40,11 +40,11 @@ watch(
     Object.assign(formState, nextValues)
     clearErrors()
   },
-  { deep: true },
+  { deep: true }
 )
 
 const titleCopy = computed(() =>
-  props.mode === 'create' ? 'Register new team' : 'Edit team information',
+  props.mode === 'create' ? 'Register new team' : 'Edit team information'
 )
 const actionCopy = computed(() => (props.mode === 'create' ? 'Create Team' : 'Update Team'))
 
@@ -95,7 +95,9 @@ function handleDelete(): void {
       <div>
         <p class="form-chip">Team management</p>
         <h2>{{ titleCopy }}</h2>
-        <p>Keep league data aligned by managing every attribute from a single validated workflow.</p>
+        <p>
+          Keep league data aligned by managing every attribute from a single validated workflow.
+        </p>
       </div>
       <button
         v-if="props.mode === 'edit'"

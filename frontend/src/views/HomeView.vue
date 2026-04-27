@@ -2,11 +2,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ChartData, ChartOptions } from 'chart.js'
-import BaseChart from '@/components/charts/BaseChart.vue'
+import type { TopScorerRow } from '@/interfaces/DashboardInterface'
+import BarChart from '@/components/charts/BarChart.vue'
 import { TeamService } from '@/services/TeamService'
 import { PlayerService } from '@/services/PlayerService'
 import { MatchService } from '@/services/MatchService'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { Formatters } from '@/utils/Formatters'
 
 const authStore = useAuthStore()
 
@@ -16,7 +18,22 @@ const totalTeams = computed((): number => TeamService.getAll().length)
 const totalPlayers = computed((): number => PlayerService.getAll().length)
 const totalMatches = computed((): number => MatchService.getAll().length)
 
-const topScorers = computed(() => PlayerService.getTopScorers())
+const topScorers = computed((): TopScorerRow[] => {
+  const teams = TeamService.getAll()
+
+  return PlayerService.getTopScorers().map((player, index) => {
+    const team = teams.find((currentTeam) => currentTeam.id === player.teamId)
+
+    return {
+      initials: Formatters.buildInitials(player.fullName),
+      initialsClass: Formatters.resolveInitialsClass(index),
+      name: player.fullName,
+      team: team?.name ?? 'Unknown Team',
+      goals: player.goals,
+      assists: player.assists,
+    }
+  })
+})
 
 const teamsByGoals = computed(() => {
   return [...TeamService.getAll()]
@@ -190,8 +207,7 @@ const goalsChartOptions: ChartOptions<'bar'> = {
           <span>Updated automatically</span>
         </div>
 
-        <BaseChart
-          type="bar"
+        <BarChart
           :data="goalsChartData"
           :options="goalsChartOptions"
           :height="420"

@@ -4,13 +4,15 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
 
-import BaseChart from '@/components/charts/BaseChart.vue'
+import LineChart from '@/components/charts/LineChart.vue'
 import DataTable from '@/components/tables/DataTable.vue'
 import MatchesHero from '@/components/matches/MatchesHero.vue'
 import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
 
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
+
+import { Formatters } from '@/utils/Formatters'
 
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
@@ -45,17 +47,20 @@ const matches = computed<MatchInterface[]>(() => MatchService.getAll())
 const teams = computed<TeamInterface[]>(() => TeamService.getAll())
 
 const teamNameMap = computed<Record<number, string>>(() => {
-  return teams.value.reduce((accumulator, team) => {
-    accumulator[team.id] = team.name
-    return accumulator
-  }, {} as Record<number, string>)
+  return teams.value.reduce(
+    (accumulator, team) => {
+      accumulator[team.id] = team.name
+      return accumulator
+    },
+    {} as Record<number, string>
+  )
 })
 
 const teamOptions = computed(() =>
   teams.value.map((team) => ({
     value: team.id.toString(),
     label: team.name,
-  })),
+  }))
 )
 
 const filteredMatches = computed<MatchInterface[]>(() => {
@@ -65,20 +70,9 @@ const filteredMatches = computed<MatchInterface[]>(() => {
 
   const teamId = Number(selectedTeamId.value)
   return matches.value.filter(
-    (match: MatchInterface) => match.homeTeamId === teamId || match.awayTeamId === teamId,
+    (match: MatchInterface) => match.homeTeamId === teamId || match.awayTeamId === teamId
   )
 })
-
-const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-})
-
-function formatMatchDate(dateValue: Date | string): string {
-  const resolvedDate = dateValue instanceof Date ? dateValue : new Date(dateValue)
-  return matchDateFormatter.format(resolvedDate)
-}
 
 function resolveTeamName(teamId: number): string {
   return teamNameMap.value[teamId] ?? 'Unknown Team'
@@ -122,9 +116,9 @@ const summaryStats = computed<SummaryStat[]>(() => {
 
   const totalGoals = scopedMatches.reduce(
     (accumulator, match) => accumulator + match.homeScore + match.awayScore,
-    0,
+    0
   )
-  const avgGoals = (totalGoals / scopedMatches.length).toFixed(1)
+  const avgGoals = Formatters.formatDecimal(totalGoals / scopedMatches.length)
 
   const chronologic = [...scopedMatches].sort((firstMatch, secondMatch) => {
     const firstDate = firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
@@ -146,30 +140,36 @@ const summaryStats = computed<SummaryStat[]>(() => {
       }
       return best
     },
-    { match: null, totalGoals: 0 },
+    { match: null, totalGoals: 0 }
   )
 
   const latestSummary = latestMatch
-    ? `${resolveTeamName(latestMatch.homeTeamId)} ${latestMatch.homeScore}:${latestMatch.awayScore} ${resolveTeamName(latestMatch.awayTeamId)}`
+    ? Formatters.formatMatchResult(
+        resolveTeamName(latestMatch.homeTeamId),
+        latestMatch.homeScore,
+        latestMatch.awayScore,
+        resolveTeamName(latestMatch.awayTeamId)
+      )
     : 'Awaiting fixtures'
 
   const highestSummary =
     highestScoring.match !== null
-      ? `${resolveTeamName(highestScoring.match.homeTeamId)} vs ${resolveTeamName(
-          highestScoring.match.awayTeamId,
-        )}`
+      ? Formatters.formatMatchTitle(
+          resolveTeamName(highestScoring.match.homeTeamId),
+          resolveTeamName(highestScoring.match.awayTeamId)
+        )
       : 'Awaiting fixtures'
 
   const highestHelper =
     highestScoring.match !== null
-      ? `${highestScoring.totalGoals} total goals`
+      ? Formatters.formatChartTooltip(highestScoring.totalGoals, 'total goals')
       : 'Track upcoming games'
 
   return [
     {
       id: 'tracked',
       label: 'Tracked Matches',
-      value: scopedMatches.length.toString(),
+      value: Formatters.formatCount(scopedMatches.length),
       helper: 'Results within current filter',
       accent: 'from-blue-600 to-sky-500',
     },
@@ -184,7 +184,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
       id: 'latest',
       label: 'Latest Result',
       value: latestSummary,
-      helper: latestMatch ? formatMatchDate(latestMatch.date) : 'Awaiting fixtures',
+      helper: latestMatch ? Formatters.formatMatchDate(latestMatch.date) : 'Awaiting fixtures',
       accent: 'from-indigo-600 to-blue-500',
     },
     {
@@ -208,19 +208,20 @@ const tableColumns: TableColumn[] = [
 const tableRows = computed<MatchTableRow[]>(() =>
   [...filteredMatches.value]
     .sort((firstMatch, secondMatch) => {
-      const firstDate = firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
+      const firstDate =
+        firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
       const secondDate =
         secondMatch.date instanceof Date ? secondMatch.date : new Date(secondMatch.date)
       return secondDate.getTime() - firstDate.getTime()
     })
     .map((match: MatchInterface) => ({
       id: match.id,
-      date: formatMatchDate(match.date),
+      date: Formatters.formatMatchDate(match.date),
       homeTeam: resolveTeamName(match.homeTeamId),
-      score: `${match.homeScore} - ${match.awayScore}`,
+      score: Formatters.formatScore(match.homeScore, match.awayScore),
       awayTeam: resolveTeamName(match.awayTeamId),
       stadium: match.stadium,
-    })),
+    }))
 )
 
 const goalsChartData = computed<ChartData<'line'>>(() => {
@@ -231,7 +232,7 @@ const goalsChartData = computed<ChartData<'line'>>(() => {
     return firstDate.getTime() - secondDate.getTime()
   })
 
-  const labels = chronologicMatches.map((match) => formatMatchDate(match.date))
+  const labels = chronologicMatches.map((match) => Formatters.formatMatchDate(match.date))
   const totals = chronologicMatches.map((match) => match.homeScore + match.awayScore)
 
   return {
@@ -263,7 +264,7 @@ const goalsChartOptions = computed<ChartOptions<'line'>>(() => ({
       callbacks: {
         label(context: TooltipItem<'line'>) {
           const goals = context.parsed.y ?? 0
-          return `${goals} goals`
+          return Formatters.formatChartTooltip(goals, 'goals')
         },
       },
     },
@@ -300,21 +301,16 @@ function handleRowClick(row: MatchTableRow): void {
     <div class="grid gap-6">
       <MatchesFilterPanel v-model="selectedTeamId" :options="teamOptions" />
 
-      <BaseChart
+      <LineChart
         class="rounded-2xl border border-blue-50 bg-white p-4 shadow-xl shadow-blue-500/10"
         :height="240"
-        type="line"
         :data="goalsChartData"
         :options="goalsChartOptions"
         title="Goals per Match"
       />
 
       <div class="rounded-3xl bg-white/95 p-1 shadow-[0_35px_80px_rgba(15,23,42,0.12)]">
-        <DataTable
-          :columns="tableColumns"
-          :rows="tableRows"
-          @rowClick="handleRowClick"
-        />
+        <DataTable :columns="tableColumns" :rows="tableRows" @rowClick="handleRowClick" />
       </div>
     </div>
   </section>

@@ -4,10 +4,12 @@ import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
 
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
+
+import { Formatters } from '@/utils/Formatters'
 
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
@@ -34,7 +36,9 @@ const team = computed<TeamInterface | undefined>(() => {
   return TeamService.getById(player.value.teamId)
 })
 
-const playerImage = computed<string>(() => player.value?.imageUrl || 'https://placehold.co/320x320?text=Player')
+const playerImage = computed<string>(
+  () => player.value?.imageUrl || 'https://placehold.co/320x320?text=Player'
+)
 
 const spotlightStats = computed(() => {
   if (!player.value) {
@@ -108,7 +112,7 @@ const performanceChartOptions = computed<ChartOptions<'bar'>>(() => ({
       callbacks: {
         label(context: TooltipItem<'bar'>) {
           const value = context.parsed.y ?? 0
-          return `${value} ${context.label.toLowerCase()}`
+          return Formatters.formatChartTooltip(value, context.label.toLowerCase())
         },
       },
     },
@@ -133,9 +137,9 @@ watch(
       return
     }
 
-    document.title = `FutStats | ${currentPlayer.fullName}`
+    document.title = Formatters.formatPageTitle(currentPlayer.fullName)
   },
-  { immediate: true },
+  { immediate: true }
 )
 </script>
 
@@ -145,9 +149,7 @@ watch(
       <div class="player-hero__content">
         <p class="hero-chip">Player Profile</p>
         <h1>{{ player.fullName }}</h1>
-        <p>
-          {{ player.position }} • {{ player.nationality }} • Shirt #{{ player.shirtNumber }}
-        </p>
+        <p>{{ player.position }} • {{ player.nationality }} • Shirt #{{ player.shirtNumber }}</p>
         <div class="player-meta">
           <span>Team</span>
           <strong>{{ team?.name ?? 'Free Agent' }}</strong>
@@ -159,11 +161,7 @@ watch(
     </article>
 
     <div class="stat-grid">
-      <div
-        v-for="stat in spotlightStats"
-        :key="stat.id"
-        class="stat-card"
-      >
+      <div v-for="stat in spotlightStats" :key="stat.id" class="stat-card">
         <div class="stat-card__bg" :class="[`bg-gradient-to-br`, stat.accent]"></div>
         <div class="stat-card__content">
           <p>{{ stat.label }}</p>
@@ -174,22 +172,17 @@ watch(
     </div>
 
     <div class="detail-grid">
-      <BaseChart
+      <BarChart
         :data="performanceChartData"
         :options="performanceChartOptions"
         :height="320"
-        type="bar"
         title="Attacking Output"
       />
 
       <div class="metrics-card">
         <h3>Match Impact</h3>
         <dl>
-          <div
-            v-for="metric in extendedStats"
-            :key="metric.id"
-            class="metric-row"
-          >
+          <div v-for="metric in extendedStats" :key="metric.id" class="metric-row">
             <dt>{{ metric.label }}</dt>
             <dd>{{ metric.value }}</dd>
           </div>

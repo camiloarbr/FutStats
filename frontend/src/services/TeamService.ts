@@ -1,6 +1,7 @@
 // @author: Samuel | FutStats
 import { useTeamsStore } from '@/stores/useTeamsStore'
-import type { TeamInterface, CreateTeamDTO } from '@/interfaces/TeamInterface'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
+import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
 import type { TeamPerformanceRow } from '@/interfaces/DashboardInterface'
 
 export class TeamService {
@@ -47,7 +48,7 @@ export class TeamService {
     }
 
     const updatedTeams: TeamInterface[] = teamsStore.teams.map((team: TeamInterface) =>
-      team.id === id ? updatedTeam : team,
+      team.id === id ? updatedTeam : team
     )
 
     teamsStore.setTeams(updatedTeams)
@@ -65,7 +66,7 @@ export class TeamService {
     }
 
     const filteredTeams: TeamInterface[] = teamsStore.teams.filter(
-      (team: TeamInterface) => team.id !== id,
+      (team: TeamInterface) => team.id !== id
     )
 
     teamsStore.setTeams(filteredTeams)

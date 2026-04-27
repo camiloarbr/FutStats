@@ -1,10 +1,10 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 <script setup lang="ts">
 import { computed } from 'vue'
 
 interface Props {
-  options: { value: string; label: string }[]
-  modelValue: string
+  options: { value: string | number; label: string }[]
+  modelValue: string | number
   label: string
   placeholder?: string
 }
@@ -14,14 +14,14 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void
+  (e: 'update:modelValue', value: string | number): void
 }>()
 
 const selected = computed({
-  get(): string {
+  get(): string | number {
     return props.modelValue
   },
-  set(value: string): void {
+  set(value: string | number): void {
     emit('update:modelValue', value)
   },
 })
@@ -44,11 +44,7 @@ const selected = computed({
         <!-- default option -->
         <option value="">{{ props.placeholder }}</option>
         <!-- dynamic options -->
-        <option
-          v-for="option in props.options"
-          :key="option.value"
-          :value="option.value"
-        >
+        <option v-for="option in props.options" :key="option.value" :value="option.value">
           {{ option.label }}
         </option>
       </select>

@@ -4,12 +4,14 @@ import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ChartData, ChartOptions } from 'chart.js'
 
-import BaseChart from '@/components/charts/BaseChart.vue'
+import BarChart from '@/components/charts/BarChart.vue'
 import MatchScoreboardHero from '@/components/matches/MatchScoreboardHero.vue'
 import MatchStatsSummaryCard from '@/components/matches/MatchStatsSummaryCard.vue'
 
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
+
+import { Formatters } from '@/utils/Formatters'
 
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
@@ -35,28 +37,28 @@ const match = computed<MatchInterface | undefined>(() => {
 })
 
 const homeTeam = computed<TeamInterface | undefined>(() =>
-  match.value ? TeamService.getById(match.value.homeTeamId) : undefined,
+  match.value ? TeamService.getById(match.value.homeTeamId) : undefined
 )
 
 const awayTeam = computed<TeamInterface | undefined>(() =>
-  match.value ? TeamService.getById(match.value.awayTeamId) : undefined,
+  match.value ? TeamService.getById(match.value.awayTeamId) : undefined
 )
 
-const matchExists = computed<boolean>(() => Boolean(match.value && homeTeam.value && awayTeam.value))
-
-const matchDateFormatter = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'long',
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-})
+const matchExists = computed<boolean>(() =>
+  Boolean(match.value && homeTeam.value && awayTeam.value)
+)
 
 const formattedDate = computed<string>(() =>
-  match.value ? matchDateFormatter.format(match.value.date instanceof Date ? match.value.date : new Date(match.value.date)) : '',
+  match.value ? Formatters.formatMatchDate(match.value.date) : ''
 )
 
 const scoreboard = computed(() => {
-  if (!matchExists.value || match.value === undefined || homeTeam.value === undefined || awayTeam.value === undefined) {
+  if (
+    !matchExists.value ||
+    match.value === undefined ||
+    homeTeam.value === undefined ||
+    awayTeam.value === undefined
+  ) {
     return null
   }
 
@@ -175,10 +177,13 @@ const heroHighlights = computed(() => {
   const shots = statComparisons.value.find((stat) => stat.id === 'shots')
   const fouls = statComparisons.value.find((stat) => stat.id === 'fouls')
 
-  const possessionCopy = `${possession?.homeValue ?? 0}% — ${possession?.awayValue ?? 0}%`
+  const possessionCopy = Formatters.formatPossession(
+    possession?.homeValue ?? 0,
+    possession?.awayValue ?? 0
+  )
   const intensityHome = (shots?.homeValue ?? 0) + (fouls?.homeValue ?? 0)
   const intensityAway = (shots?.awayValue ?? 0) + (fouls?.awayValue ?? 0)
-  const intensityCopy = `${intensityHome} : ${intensityAway}`
+  const intensityCopy = Formatters.formatIntensity(intensityHome, intensityAway)
 
   return [
     { label: 'Possession', value: possessionCopy, tone: 'emerald' as const },
@@ -193,19 +198,19 @@ watch(
       router.replace({ name: 'matches.index' })
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 watch(
   [homeTeam, awayTeam],
   ([home, away]) => {
     if (home && away) {
-      const resolvedTitle = `${home.name} vs ${away.name}`
+      const resolvedTitle = Formatters.formatMatchTitle(home.name, away.name)
       route.meta.title = resolvedTitle
-      document.title = `FutStats | ${resolvedTitle}`
+      document.title = Formatters.formatPageTitle(resolvedTitle)
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 </script>
 
@@ -219,9 +224,8 @@ watch(
 
     <div class="grid gap-6 lg:grid-cols-3">
       <div class="lg:col-span-2">
-        <BaseChart
+        <BarChart
           :height="320"
-          type="bar"
           :data="statsChartData"
           :options="statsChartOptions"
           title="Home vs Away Metrics"
@@ -231,8 +235,10 @@ watch(
     </div>
   </section>
 
-  <section v-else class="rounded-3xl border border-dashed border-slate-200 bg-slate-50 py-20 text-center text-slate-500">
+  <section
+    v-else
+    class="rounded-3xl border border-dashed border-slate-200 bg-slate-50 py-20 text-center text-slate-500"
+  >
     Loading match insights...
   </section>
 </template>
-

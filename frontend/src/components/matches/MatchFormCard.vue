@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { reactive, watch, computed } from 'vue'
 
-import type { CreateMatchDTO } from '@/interfaces/MatchInterface'
+import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 type FormMode = 'create' | 'edit'
@@ -58,7 +58,7 @@ watch(
     Object.assign(formState, buildStateFromDto(nextValues))
     clearErrors()
   },
-  { deep: true },
+  { deep: true }
 )
 
 const titleCopy = computed(() => (props.mode === 'create' ? 'Register new match' : 'Edit match'))
@@ -82,7 +82,7 @@ function buildStateFromDto(dto: CreateMatchDTO): MatchFormState {
 }
 
 function clearErrors(): void {
-  (Object.keys(errors) as (keyof typeof errors)[]).forEach((key) => {
+  ;(Object.keys(errors) as (keyof typeof errors)[]).forEach((key) => {
     errors[key] = ''
   })
 }
@@ -102,9 +102,9 @@ function validateField(key: keyof MatchFormState, value: unknown): void {
 }
 
 function validateForm(): boolean {
-  clearErrors();
+  clearErrors()
 
-  (Object.keys(formState) as (keyof MatchFormState)[]).forEach((key) => {
+  ;(Object.keys(formState) as (keyof MatchFormState)[]).forEach((key) => {
     validateField(key, formState[key])
   })
 
@@ -162,12 +162,7 @@ function handleDelete(): void {
         <h2>{{ titleCopy }}</h2>
         <p>Manage official results and match stats within a single streamlined flow.</p>
       </div>
-      <button
-        v-if="props.mode === 'edit'"
-        type="button"
-        class="danger-chip"
-        @click="handleDelete"
-      >
+      <button v-if="props.mode === 'edit'" type="button" class="danger-chip" @click="handleDelete">
         Delete match
       </button>
     </div>

@@ -1,5 +1,5 @@
+// @author: Camilo | FutStats
 <script setup lang="ts">
-// @author: [Name] | FutStats
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 

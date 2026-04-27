@@ -3,20 +3,20 @@
 import SelectFilter from '@/components/filters/SelectFilter.vue'
 
 interface OptionItem {
-  value: string
+  value: string | number
   label: string
 }
 
 const props = defineProps<{
-  modelValue: string
+  modelValue: string | number
   options: OptionItem[]
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void
+  (e: 'update:modelValue', value: string | number): void
 }>()
 
-function handleUpdate(value: string): void {
+function handleUpdate(value: string | number): void {
   emit('update:modelValue', value)
 }
 </script>

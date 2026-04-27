@@ -1,5 +1,5 @@
-<script setup lang="ts">
 // @author: Victor Chavez | FutStats
+<script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -8,15 +8,14 @@ import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
 
-import type { CreatePlayerDTO, PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 const route = useRoute()
 const router = useRouter()
 
-const mode = computed<'create' | 'edit'>(() =>
-  route.name === 'players.edit' ? 'edit' : 'create',
-)
+const mode = computed<'create' | 'edit'>(() => (route.name === 'players.edit' ? 'edit' : 'create'))
 
 const playerId = computed<number>(() => Number(route.params.id))
 
@@ -63,7 +62,7 @@ watch(
       router.replace({ name: 'players.index' })
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 function handleSubmit(payload: CreatePlayerDTO): void {
