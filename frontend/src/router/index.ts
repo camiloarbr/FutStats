@@ -135,7 +135,7 @@ router.beforeEach(
   (
     to: RouteLocationNormalized,
     _from: RouteLocationNormalized,
-    next: NavigationGuardNext,
+    next: NavigationGuardNext
   ): void => {
     const authStore = useAuthStore()
     const currentUser = authStore.currentUser
@@ -158,7 +158,7 @@ router.beforeEach(
     }
 
     next()
-  },
+  }
 )
 
 router.afterEach((to: RouteLocationNormalized) => {

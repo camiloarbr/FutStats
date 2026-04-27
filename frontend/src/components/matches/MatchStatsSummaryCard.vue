@@ -28,11 +28,7 @@ function calculateShare(primaryValue: number, secondaryValue: number): number {
     <p class="summary-chip">Summary</p>
     <h3>Head-to-head breakdown</h3>
     <div class="summary-list">
-      <div
-        v-for="comparison in props.statComparisons"
-        :key="comparison.id"
-        class="summary-item"
-      >
+      <div v-for="comparison in props.statComparisons" :key="comparison.id" class="summary-item">
         <div class="summary-item__label">
           <span>{{ comparison.label }}</span>
           <span>{{ comparison.unit ?? '' }}</span>

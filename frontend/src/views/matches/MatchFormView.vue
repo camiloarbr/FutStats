@@ -1,6 +1,5 @@
-<script setup lang="ts">
 // @author: Camilo | FutStats
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <section class="mt-4 mb-4">

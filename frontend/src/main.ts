@@ -1,8 +1,8 @@
 // @author: Camilo | FutStats
-import './assets/css/input.css'
+import '@/assets/css/input.css'
 import { createApp, watch } from 'vue'
 import { createPinia } from 'pinia'
-import App from './App.vue'
+import App from '@/App.vue'
 import router from '@/router'
 import { LocalStorageUtils } from '@/utils/LocalStorageUtils'
 
@@ -29,7 +29,7 @@ watch(
   (state) => {
     LocalStorageUtils.savePiniaState(state)
   },
-  { deep: true },
+  { deep: true }
 )
 
 app.use(router)

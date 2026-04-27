@@ -1,5 +1,5 @@
-<script setup lang="ts">
 // @author: Camilo | FutStats
+<script setup lang="ts">
 const appName = import.meta.env.VITE_APP_NAME as string
 const appVersion = import.meta.env.VITE_APP_VERSION as string
 </script>

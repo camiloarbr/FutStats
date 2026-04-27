@@ -16,7 +16,16 @@ import {
 import { Line } from 'vue-chartjs'
 import type { ChartData, ChartOptions } from 'chart.js'
 
-ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend, Filler)
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 interface Props {
   data: ChartData<'line'>
@@ -34,15 +43,13 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const wrapperClass = computed(() =>
-  props.showCard
-    ? 'rounded-xl border border-gray-100 bg-white p-6 shadow-sm'
-    : 'w-full',
+  props.showCard ? 'rounded-xl border border-gray-100 bg-white p-6 shadow-sm' : 'w-full'
 )
 
 const chartContainerClass = computed(() => props.heightClass || '')
 
 const chartContainerStyle = computed<CSSProperties | undefined>(() =>
-  props.heightClass ? undefined : { height: `${props.height}px` },
+  props.heightClass ? undefined : { height: `${props.height}px` }
 )
 </script>
 
@@ -53,11 +60,7 @@ const chartContainerStyle = computed<CSSProperties | undefined>(() =>
     </h3>
 
     <div class="relative w-full" :class="chartContainerClass" :style="chartContainerStyle">
-      <Line
-        :data="props.data"
-        :options="props.options"
-        :height="props.height"
-      />
+      <Line :data="props.data" :options="props.options" :height="props.height" />
     </div>
   </div>
 </template>

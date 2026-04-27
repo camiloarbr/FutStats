@@ -75,7 +75,7 @@ export class Formatters {
     homeTeam: string,
     homeScore: number,
     awayScore: number,
-    awayTeam: string,
+    awayTeam: string
   ): string {
     return `${homeTeam} ${homeScore}:${awayScore} ${awayTeam}`
   }

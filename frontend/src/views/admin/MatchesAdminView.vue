@@ -110,9 +110,9 @@ const matchOptions = computed(() =>
     label: Formatters.formatMatchLabel(
       match.date,
       resolveTeamName(match.homeTeamId),
-      resolveTeamName(match.awayTeamId),
+      resolveTeamName(match.awayTeamId)
     ),
-  })),
+  }))
 )
 
 watch(
@@ -129,7 +129,7 @@ watch(
       selectedMatchId.value = firstMatch ? firstMatch.id.toString() : ''
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 function handleMatchCreate(payload: CreateMatchDTO): void {

@@ -47,17 +47,20 @@ const matches = computed<MatchInterface[]>(() => MatchService.getAll())
 const teams = computed<TeamInterface[]>(() => TeamService.getAll())
 
 const teamNameMap = computed<Record<number, string>>(() => {
-  return teams.value.reduce((accumulator, team) => {
-    accumulator[team.id] = team.name
-    return accumulator
-  }, {} as Record<number, string>)
+  return teams.value.reduce(
+    (accumulator, team) => {
+      accumulator[team.id] = team.name
+      return accumulator
+    },
+    {} as Record<number, string>
+  )
 })
 
 const teamOptions = computed(() =>
   teams.value.map((team) => ({
     value: team.id.toString(),
     label: team.name,
-  })),
+  }))
 )
 
 const filteredMatches = computed<MatchInterface[]>(() => {
@@ -67,7 +70,7 @@ const filteredMatches = computed<MatchInterface[]>(() => {
 
   const teamId = Number(selectedTeamId.value)
   return matches.value.filter(
-    (match: MatchInterface) => match.homeTeamId === teamId || match.awayTeamId === teamId,
+    (match: MatchInterface) => match.homeTeamId === teamId || match.awayTeamId === teamId
   )
 })
 
@@ -113,7 +116,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
 
   const totalGoals = scopedMatches.reduce(
     (accumulator, match) => accumulator + match.homeScore + match.awayScore,
-    0,
+    0
   )
   const avgGoals = Formatters.formatDecimal(totalGoals / scopedMatches.length)
 
@@ -137,7 +140,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
       }
       return best
     },
-    { match: null, totalGoals: 0 },
+    { match: null, totalGoals: 0 }
   )
 
   const latestSummary = latestMatch
@@ -145,7 +148,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
         resolveTeamName(latestMatch.homeTeamId),
         latestMatch.homeScore,
         latestMatch.awayScore,
-        resolveTeamName(latestMatch.awayTeamId),
+        resolveTeamName(latestMatch.awayTeamId)
       )
     : 'Awaiting fixtures'
 
@@ -153,7 +156,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
     highestScoring.match !== null
       ? Formatters.formatMatchTitle(
           resolveTeamName(highestScoring.match.homeTeamId),
-          resolveTeamName(highestScoring.match.awayTeamId),
+          resolveTeamName(highestScoring.match.awayTeamId)
         )
       : 'Awaiting fixtures'
 
@@ -205,7 +208,8 @@ const tableColumns: TableColumn[] = [
 const tableRows = computed<MatchTableRow[]>(() =>
   [...filteredMatches.value]
     .sort((firstMatch, secondMatch) => {
-      const firstDate = firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
+      const firstDate =
+        firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
       const secondDate =
         secondMatch.date instanceof Date ? secondMatch.date : new Date(secondMatch.date)
       return secondDate.getTime() - firstDate.getTime()
@@ -217,7 +221,7 @@ const tableRows = computed<MatchTableRow[]>(() =>
       score: Formatters.formatScore(match.homeScore, match.awayScore),
       awayTeam: resolveTeamName(match.awayTeamId),
       stadium: match.stadium,
-    })),
+    }))
 )
 
 const goalsChartData = computed<ChartData<'line'>>(() => {
@@ -306,11 +310,7 @@ function handleRowClick(row: MatchTableRow): void {
       />
 
       <div class="rounded-3xl bg-white/95 p-1 shadow-[0_35px_80px_rgba(15,23,42,0.12)]">
-        <DataTable
-          :columns="tableColumns"
-          :rows="tableRows"
-          @rowClick="handleRowClick"
-        />
+        <DataTable :columns="tableColumns" :rows="tableRows" @rowClick="handleRowClick" />
       </div>
     </div>
   </section>

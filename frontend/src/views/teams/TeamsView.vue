@@ -61,7 +61,9 @@ const leagueOptions = computed((): FilterOption[] => {
 })
 
 const countryOptions = computed((): FilterOption[] => {
-  const uniqueCountries = [...new Set(teams.value.map((team: TeamInterface) => team.country))].sort()
+  const uniqueCountries = [
+    ...new Set(teams.value.map((team: TeamInterface) => team.country)),
+  ].sort()
 
   return uniqueCountries.map((country: string) => ({
     value: country,
@@ -253,12 +255,7 @@ function handleRowClick(row: TeamTableRow): void {
           <span>Auto refreshed</span>
         </div>
 
-        <BarChart
-          :data="chartData"
-          :options="chartOptions"
-          :height="420"
-          :show-card="false"
-        />
+        <BarChart :data="chartData" :options="chartOptions" :height="420" :show-card="false" />
       </article>
     </section>
   </section>

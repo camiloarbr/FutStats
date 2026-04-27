@@ -37,21 +37,28 @@ const match = computed<MatchInterface | undefined>(() => {
 })
 
 const homeTeam = computed<TeamInterface | undefined>(() =>
-  match.value ? TeamService.getById(match.value.homeTeamId) : undefined,
+  match.value ? TeamService.getById(match.value.homeTeamId) : undefined
 )
 
 const awayTeam = computed<TeamInterface | undefined>(() =>
-  match.value ? TeamService.getById(match.value.awayTeamId) : undefined,
+  match.value ? TeamService.getById(match.value.awayTeamId) : undefined
 )
 
-const matchExists = computed<boolean>(() => Boolean(match.value && homeTeam.value && awayTeam.value))
+const matchExists = computed<boolean>(() =>
+  Boolean(match.value && homeTeam.value && awayTeam.value)
+)
 
 const formattedDate = computed<string>(() =>
-  match.value ? Formatters.formatMatchDate(match.value.date) : '',
+  match.value ? Formatters.formatMatchDate(match.value.date) : ''
 )
 
 const scoreboard = computed(() => {
-  if (!matchExists.value || match.value === undefined || homeTeam.value === undefined || awayTeam.value === undefined) {
+  if (
+    !matchExists.value ||
+    match.value === undefined ||
+    homeTeam.value === undefined ||
+    awayTeam.value === undefined
+  ) {
     return null
   }
 
@@ -170,7 +177,10 @@ const heroHighlights = computed(() => {
   const shots = statComparisons.value.find((stat) => stat.id === 'shots')
   const fouls = statComparisons.value.find((stat) => stat.id === 'fouls')
 
-  const possessionCopy = Formatters.formatPossession(possession?.homeValue ?? 0, possession?.awayValue ?? 0)
+  const possessionCopy = Formatters.formatPossession(
+    possession?.homeValue ?? 0,
+    possession?.awayValue ?? 0
+  )
   const intensityHome = (shots?.homeValue ?? 0) + (fouls?.homeValue ?? 0)
   const intensityAway = (shots?.awayValue ?? 0) + (fouls?.awayValue ?? 0)
   const intensityCopy = Formatters.formatIntensity(intensityHome, intensityAway)
@@ -188,7 +198,7 @@ watch(
       router.replace({ name: 'matches.index' })
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 watch(
@@ -200,7 +210,7 @@ watch(
       document.title = Formatters.formatPageTitle(resolvedTitle)
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 </script>
 
@@ -225,8 +235,10 @@ watch(
     </div>
   </section>
 
-  <section v-else class="rounded-3xl border border-dashed border-slate-200 bg-slate-50 py-20 text-center text-slate-500">
+  <section
+    v-else
+    class="rounded-3xl border border-dashed border-slate-200 bg-slate-50 py-20 text-center text-slate-500"
+  >
     Loading match insights...
   </section>
 </template>
-

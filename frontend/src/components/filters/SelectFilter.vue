@@ -44,11 +44,7 @@ const selected = computed({
         <!-- default option -->
         <option value="">{{ props.placeholder }}</option>
         <!-- dynamic options -->
-        <option
-          v-for="option in props.options"
-          :key="option.value"
-          :value="option.value"
-        >
+        <option v-for="option in props.options" :key="option.value" :value="option.value">
           {{ option.label }}
         </option>
       </select>

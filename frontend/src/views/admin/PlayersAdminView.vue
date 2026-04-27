@@ -88,7 +88,7 @@ const playerOptions = computed(() =>
   players.value.map((player) => ({
     value: player.id.toString(),
     label: player.fullName,
-  })),
+  }))
 )
 
 watch(
@@ -105,7 +105,7 @@ watch(
       selectedPlayerId.value = firstPlayer ? firstPlayer.id.toString() : ''
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 function handlePlayerCreate(payload: CreatePlayerDTO): void {

@@ -57,7 +57,7 @@ export class PlayerService {
     }
 
     const nextPlayers = currentPlayers.map((player: PlayerInterface) =>
-      player.id === id ? updatedPlayer : player,
+      player.id === id ? updatedPlayer : player
     )
 
     playersStore.setPlayers(nextPlayers)

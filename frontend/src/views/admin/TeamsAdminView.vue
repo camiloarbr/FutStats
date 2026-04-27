@@ -81,7 +81,7 @@ const teamOptions = computed(() =>
   teams.value.map((team) => ({
     value: team.id.toString(),
     label: team.name,
-  })),
+  }))
 )
 
 watch(
@@ -98,7 +98,7 @@ watch(
       selectedTeamId.value = firstTeam ? firstTeam.id.toString() : ''
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 function handleTeamCreate(payload: CreateTeamDTO): void {
@@ -171,7 +171,11 @@ function handleTeamDelete(): void {
         </button>
 
         <div v-show="isSectionOpen('teamsCreate')" class="accordion__panel">
-          <TeamFormCard mode="create" :initial-values="teamInitialValues" @submit="handleTeamCreate" />
+          <TeamFormCard
+            mode="create"
+            :initial-values="teamInitialValues"
+            @submit="handleTeamCreate"
+          />
           <p v-if="teamCreateFeedback === 'success'" class="success-banner">
             Team registered successfully.
           </p>
@@ -217,7 +221,9 @@ function handleTeamDelete(): void {
             @submit="handleTeamUpdate"
             @delete="handleTeamDelete"
           />
-          <p v-if="teamEditFeedback === 'success'" class="success-banner">Team updated successfully.</p>
+          <p v-if="teamEditFeedback === 'success'" class="success-banner">
+            Team updated successfully.
+          </p>
           <p v-else-if="teamEditFeedback === 'error'" class="error-banner">
             Could not update or delete the selected team.
           </p>

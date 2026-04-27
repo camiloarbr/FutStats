@@ -44,14 +44,14 @@ watch(
     Object.assign(formState, nextValues)
     clearErrors()
   },
-  { deep: true },
+  { deep: true }
 )
 
 const titleCopy = computed(() => (props.mode === 'create' ? 'Create Player' : 'Edit Player'))
 const actionCopy = computed(() => (props.mode === 'create' ? 'Create Player' : 'Update Player'))
 
 function clearErrors(): void {
-  (Object.keys(errors) as (keyof CreatePlayerDTO)[]).forEach((key) => {
+  ;(Object.keys(errors) as (keyof CreatePlayerDTO)[]).forEach((key) => {
     errors[key] = ''
   })
 }
@@ -72,7 +72,6 @@ function validateField(key: keyof CreatePlayerDTO, value: unknown): void {
 
 function validateForm(): boolean {
   clearErrors()
-
   ;(
     [
       'fullName',
@@ -151,11 +150,7 @@ function handleDelete(): void {
         <label for="team">Team</label>
         <select id="team" v-model.number="formState.teamId">
           <option disabled value="">Select team</option>
-          <option
-            v-for="team in props.teams"
-            :key="team.id"
-            :value="team.id"
-          >
+          <option v-for="team in props.teams" :key="team.id" :value="team.id">
             {{ team.name }}
           </option>
         </select>
@@ -176,12 +171,7 @@ function handleDelete(): void {
 
       <div class="field-group">
         <label for="matchesPlayed">Matches Played</label>
-        <input
-          id="matchesPlayed"
-          v-model.number="formState.matchesPlayed"
-          type="number"
-          min="0"
-        />
+        <input id="matchesPlayed" v-model.number="formState.matchesPlayed" type="number" min="0" />
         <p v-if="errors.matchesPlayed" class="field-error">{{ errors.matchesPlayed }}</p>
       </div>
 

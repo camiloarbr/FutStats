@@ -1,5 +1,5 @@
-<script setup lang="ts">
 // @author: Samuel | FutStats
+<script setup lang="ts">
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -42,7 +42,11 @@ async function handleSubmit(): Promise<void> {
           <div
             class="h-full w-full"
             style="
-              background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.35) 1px, transparent 0);
+              background-image: radial-gradient(
+                circle at 2px 2px,
+                rgba(255, 255, 255, 0.35) 1px,
+                transparent 0
+              );
               background-size: 28px 28px;
             "
           ></div>
@@ -72,8 +76,8 @@ async function handleSubmit(): Promise<void> {
           </h1>
 
           <p class="mt-6 max-w-md text-lg leading-8 text-blue-100/95 xl:text-xl">
-            Access real-time football analytics, player heatmaps, and advanced team statistics
-            in one powerful dashboard.
+            Access real-time football analytics, player heatmaps, and advanced team statistics in
+            one powerful dashboard.
           </p>
         </div>
 

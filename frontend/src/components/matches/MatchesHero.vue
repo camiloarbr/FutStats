@@ -14,9 +14,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    class="matches-hero"
-  >
+  <div class="matches-hero">
     <div class="matches-hero__content">
       <div class="matches-hero__intro">
         <p class="intro-label">Season Intelligence</p>

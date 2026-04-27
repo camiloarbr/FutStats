@@ -1,4 +1,4 @@
-<!-- @author: Samuel | FutStats -->
+// @author: Samuel | FutStats
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -195,9 +195,7 @@ const seasonChartOptions: ChartOptions<'doughnut'> = {
             </div>
 
             <div class="rounded-lg bg-slate-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Goals For
-              </p>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Goals For</p>
               <p class="mt-2 text-2xl font-black text-slate-900">{{ team.goalsFor }}</p>
             </div>
 
@@ -277,11 +275,7 @@ const seasonChartOptions: ChartOptions<'doughnut'> = {
             <p class="text-sm text-slate-500">Explore the team stadium on the map.</p>
           </div>
 
-          <LeafletMap
-            :lat="6.2442"
-            :lng="-75.5812"
-            :stadium-name="`${team.name} Stadium`"
-          />
+          <LeafletMap :lat="6.2442" :lng="-75.5812" :stadium-name="`${team.name} Stadium`" />
         </article>
       </section>
     </div>

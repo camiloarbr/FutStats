@@ -13,7 +13,7 @@ export class LocalStorageUtils {
   private static readonly PINIA_STATE_KEY = `${LocalStorageUtils.KEY}_piniaState`
 
   private static restoreDateFieldsFromPiniaState(
-    state: Record<string, StateTree>,
+    state: Record<string, StateTree>
   ): Record<string, StateTree> {
     const restoredState = state as Record<string, StateTree> & {
       auth?: {
@@ -26,10 +26,12 @@ export class LocalStorageUtils {
     }
 
     if (restoredState.matches?.matches !== undefined) {
-      restoredState.matches.matches = restoredState.matches.matches.map((match: MatchInterface) => ({
-        ...match,
-        date: new Date(match.date),
-      }))
+      restoredState.matches.matches = restoredState.matches.matches.map(
+        (match: MatchInterface) => ({
+          ...match,
+          date: new Date(match.date),
+        })
+      )
     }
 
     if (restoredState.auth?.users !== undefined) {
@@ -86,7 +88,7 @@ export class LocalStorageUtils {
 
     const parsedPiniaState = JSON.parse(rawPiniaState) as unknown
     return LocalStorageUtils.restoreDateFieldsFromPiniaState(
-      parsedPiniaState as Record<string, StateTree>,
+      parsedPiniaState as Record<string, StateTree>
     )
   }
 
@@ -137,7 +139,7 @@ export class LocalStorageUtils {
       auth: {
         users: legacyUsers,
         currentUser: legacyCurrentUserId
-          ? legacyUsers.find((u: UserInterface) => u.id === legacyCurrentUserId) ?? null
+          ? (legacyUsers.find((u: UserInterface) => u.id === legacyCurrentUserId) ?? null)
           : null,
         isAuthenticated: legacyCurrentUserId !== null,
       } as StateTree,

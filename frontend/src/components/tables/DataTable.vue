@@ -47,15 +47,21 @@ const sortedRows = computed((): T[] => {
     return 0
   })
 })
+
+function resolveRowKey(row: T, index: number): string | number {
+  const rowRecord = row as Record<string, string | number | undefined>
+  return rowRecord.id ?? index
+}
+
+function getCellValue(row: T, key: string): unknown {
+  return (row as Record<string, unknown>)[key]
+}
 </script>
 
 <template>
   <div class="w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
     <!-- empty state -->
-    <div
-      v-if="props.rows.length === 0"
-      class="text-center py-12 text-gray-400 text-sm"
-    >
+    <div v-if="props.rows.length === 0" class="text-center py-12 text-gray-400 text-sm">
       <i class="fas fa-inbox text-3xl mb-3 block"></i>
       No data available
     </div>
@@ -92,7 +98,7 @@ const sortedRows = computed((): T[] => {
       <tbody class="bg-white divide-y divide-gray-200">
         <tr
           v-for="(row, index) in sortedRows"
-          :key="(row as Record<string, string | number>)['id'] ?? index"
+          :key="resolveRowKey(row, index)"
           class="hover:bg-gray-50 cursor-pointer transition-colors"
           @click="emit('rowClick', row)"
         >
@@ -101,7 +107,7 @@ const sortedRows = computed((): T[] => {
             :key="column.key"
             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"
           >
-            {{ (row as Record<string, unknown>)[column.key] }}
+            {{ getCellValue(row, column.key) }}
           </td>
           <td
             v-if="props.onEdit || props.onDelete"

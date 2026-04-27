@@ -48,7 +48,7 @@ export class TeamService {
     }
 
     const updatedTeams: TeamInterface[] = teamsStore.teams.map((team: TeamInterface) =>
-      team.id === id ? updatedTeam : team,
+      team.id === id ? updatedTeam : team
     )
 
     teamsStore.setTeams(updatedTeams)
@@ -66,7 +66,7 @@ export class TeamService {
     }
 
     const filteredTeams: TeamInterface[] = teamsStore.teams.filter(
-      (team: TeamInterface) => team.id !== id,
+      (team: TeamInterface) => team.id !== id
     )
 
     teamsStore.setTeams(filteredTeams)

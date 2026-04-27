@@ -14,7 +14,7 @@ const route = useRoute()
 const router = useRouter()
 
 const mode = computed<'create' | 'edit'>(() =>
-  route.name === 'teams.edit' || route.params.id ? 'edit' : 'create',
+  route.name === 'teams.edit' || route.params.id ? 'edit' : 'create'
 )
 
 const teamId = computed<number>(() => Number(route.params.id))
@@ -58,7 +58,7 @@ watch(
       router.replace({ name: 'teams.index' })
     }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 function handleSubmit(payload: CreateTeamDTO): void {

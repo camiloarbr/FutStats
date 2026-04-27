@@ -36,7 +36,9 @@ const team = computed<TeamInterface | undefined>(() => {
   return TeamService.getById(player.value.teamId)
 })
 
-const playerImage = computed<string>(() => player.value?.imageUrl || 'https://placehold.co/320x320?text=Player')
+const playerImage = computed<string>(
+  () => player.value?.imageUrl || 'https://placehold.co/320x320?text=Player'
+)
 
 const spotlightStats = computed(() => {
   if (!player.value) {
@@ -137,7 +139,7 @@ watch(
 
     document.title = Formatters.formatPageTitle(currentPlayer.fullName)
   },
-  { immediate: true },
+  { immediate: true }
 )
 </script>
 
@@ -147,9 +149,7 @@ watch(
       <div class="player-hero__content">
         <p class="hero-chip">Player Profile</p>
         <h1>{{ player.fullName }}</h1>
-        <p>
-          {{ player.position }} • {{ player.nationality }} • Shirt #{{ player.shirtNumber }}
-        </p>
+        <p>{{ player.position }} • {{ player.nationality }} • Shirt #{{ player.shirtNumber }}</p>
         <div class="player-meta">
           <span>Team</span>
           <strong>{{ team?.name ?? 'Free Agent' }}</strong>
@@ -161,11 +161,7 @@ watch(
     </article>
 
     <div class="stat-grid">
-      <div
-        v-for="stat in spotlightStats"
-        :key="stat.id"
-        class="stat-card"
-      >
+      <div v-for="stat in spotlightStats" :key="stat.id" class="stat-card">
         <div class="stat-card__bg" :class="[`bg-gradient-to-br`, stat.accent]"></div>
         <div class="stat-card__content">
           <p>{{ stat.label }}</p>
@@ -186,11 +182,7 @@ watch(
       <div class="metrics-card">
         <h3>Match Impact</h3>
         <dl>
-          <div
-            v-for="metric in extendedStats"
-            :key="metric.id"
-            class="metric-row"
-          >
+          <div v-for="metric in extendedStats" :key="metric.id" class="metric-row">
             <dt>{{ metric.label }}</dt>
             <dd>{{ metric.value }}</dd>
           </div>

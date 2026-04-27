@@ -15,7 +15,7 @@ export class MatchService {
 
   static getByTeam(teamId: number): MatchInterface[] {
     return this.getAll().filter(
-      (match: MatchInterface) => match.homeTeamId === teamId || match.awayTeamId === teamId,
+      (match: MatchInterface) => match.homeTeamId === teamId || match.awayTeamId === teamId
     )
   }
 
@@ -53,7 +53,7 @@ export class MatchService {
     }
 
     const updatedMatches: MatchInterface[] = matchesStore.matches.map((match: MatchInterface) =>
-      match.id === id ? updatedMatch : match,
+      match.id === id ? updatedMatch : match
     )
 
     matchesStore.setMatches(updatedMatches)
@@ -71,7 +71,7 @@ export class MatchService {
     }
 
     const filteredMatches: MatchInterface[] = matchesStore.matches.filter(
-      (match: MatchInterface) => match.id !== id,
+      (match: MatchInterface) => match.id !== id
     )
 
     matchesStore.setMatches(filteredMatches)
