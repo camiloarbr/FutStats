@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 // 2. Internal imports
 import { AuthModule } from './auth/auth.module';
-import { DatabaseModule } from './database/database.module';
 import { MatchEntity } from './matches/entities/match.entity';
 import { MatchesModule } from './matches/matches.module';
 import { PlayerEntity } from './players/entities/player.entity';
@@ -31,7 +30,6 @@ import { UsersModule } from './users/users.module';
       }),
     }),
     AuthModule,
-    DatabaseModule,
     MatchesModule,
     PlayersModule,
     TeamsModule,
