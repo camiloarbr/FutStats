@@ -21,10 +21,13 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="filters-panel">
-    <label class="filter-field">
-      <span>Team</span>
+  <div
+    class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5 rounded-[1.75rem] border border-blue-500/15 bg-white p-6 shadow-[0_25px_60px_rgba(15,23,42,0.08)]"
+  >
+    <label class="flex flex-col gap-2">
+      <span class="text-xs font-bold uppercase tracking-[0.3em] text-blue-600">Team</span>
       <select
+        class="rounded-2xl border border-blue-600/20 bg-white px-4 py-3 text-slate-900 outline-none"
         :value="props.selectedTeamId"
         @change="emit('update:selectedTeamId', ($event.target as HTMLSelectElement).value)"
       >
@@ -35,53 +38,22 @@ const emit = defineEmits<{
       </select>
     </label>
 
-    <label class="filter-field">
-      <span>Position</span>
+    <label class="flex flex-col gap-2">
+      <span class="text-xs font-bold uppercase tracking-[0.3em] text-blue-600">Position</span>
       <select
+        class="rounded-2xl border border-blue-600/20 bg-white px-4 py-3 text-slate-900 outline-none"
         :value="props.selectedPosition"
         @change="emit('update:selectedPosition', ($event.target as HTMLSelectElement).value)"
       >
         <option value="">All positions</option>
-        <option v-for="option in props.positionOptions" :key="option.value" :value="option.value">
+        <option
+          v-for="option in props.positionOptions"
+          :key="option.value"
+          :value="option.value"
+        >
           {{ option.label }}
         </option>
       </select>
     </label>
   </div>
 </template>
-
-<style scoped>
-.filters-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.25rem;
-  border-radius: 1.75rem;
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  background: #fff;
-  padding: 1.5rem;
-  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
-}
-
-.filter-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.filter-field span {
-  color: #2563eb;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-}
-
-.filter-field select {
-  border-radius: 1rem;
-  border: 1px solid rgba(37, 99, 235, 0.18);
-  background: #fff;
-  color: #0f172a;
-  padding: 0.75rem 1rem;
-  outline: none;
-}
-</style>

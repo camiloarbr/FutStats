@@ -1,10 +1,8 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-// 1. External imports
 import { computed, reactive, watch } from 'vue'
 
-// 2. Internal imports
-import type { CreateTeamDTO } from '@/dtos/TeamDTO'
+import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
 
 type FormMode = 'create' | 'edit'
 
@@ -92,207 +90,183 @@ function handleDelete(): void {
 </script>
 
 <template>
-  <div class="team-form">
-    <div class="team-form__header">
+  <div
+    class="rounded-[2rem] border border-slate-900/[0.07] bg-white p-8 shadow-[0_35px_80px_rgba(15,23,42,0.08)]"
+  >
+    <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
-        <p class="form-chip">Team management</p>
-        <h2>{{ titleCopy }}</h2>
-        <p>
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-500">
+          Team management
+        </p>
+        <h2 class="mt-[0.4rem] text-[2rem] font-extrabold text-slate-900">{{ titleCopy }}</h2>
+        <p class="text-slate-600">
           Keep league data aligned by managing every attribute from a single validated workflow.
         </p>
       </div>
       <button
         v-if="props.mode === 'edit'"
         type="button"
-        class="team-form__danger"
+        class="cursor-pointer rounded-full border border-red-500/35 bg-red-500/10 px-4 py-2 font-semibold text-red-700 transition-colors duration-200 hover:bg-red-500/20"
         @click="handleDelete"
       >
         Delete Team
       </button>
     </div>
 
-    <form class="team-form__grid" @submit.prevent="handleSubmit">
-      <div class="field-group field-group--full">
-        <label for="name">Team Name</label>
-        <input id="name" v-model="formState.name" type="text" />
-        <p v-if="errors.name" class="field-error">{{ errors.name }}</p>
+    <form
+      class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-x-4 gap-y-5"
+      @submit.prevent="handleSubmit"
+    >
+      <div class="col-span-full flex flex-col gap-[0.35rem]">
+        <label for="name" class="text-sm font-semibold text-slate-900">Team Name</label>
+        <input
+          id="name"
+          v-model="formState.name"
+          type="text"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.name" class="text-xs text-red-600">{{ errors.name }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="country">Country</label>
-        <input id="country" v-model="formState.country" type="text" />
-        <p v-if="errors.country" class="field-error">{{ errors.country }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="country" class="text-sm font-semibold text-slate-900">Country</label>
+        <input
+          id="country"
+          v-model="formState.country"
+          type="text"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.country" class="text-xs text-red-600">{{ errors.country }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="league">League</label>
-        <input id="league" v-model="formState.league" type="text" />
-        <p v-if="errors.league" class="field-error">{{ errors.league }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="league" class="text-sm font-semibold text-slate-900">League</label>
+        <input
+          id="league"
+          v-model="formState.league"
+          type="text"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.league" class="text-xs text-red-600">{{ errors.league }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="foundedYear">Founded Year</label>
-        <input id="foundedYear" v-model.number="formState.foundedYear" type="number" min="1800" />
-        <p v-if="errors.foundedYear" class="field-error">{{ errors.foundedYear }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="foundedYear" class="text-sm font-semibold text-slate-900">Founded Year</label>
+        <input
+          id="foundedYear"
+          v-model.number="formState.foundedYear"
+          type="number"
+          min="1800"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.foundedYear" class="text-xs text-red-600">{{ errors.foundedYear }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="imageUrl">Badge URL</label>
-        <input id="imageUrl" v-model="formState.imageUrl" type="url" />
-        <p v-if="errors.imageUrl" class="field-error">{{ errors.imageUrl }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="imageUrl" class="text-sm font-semibold text-slate-900">Badge URL</label>
+        <input
+          id="imageUrl"
+          v-model="formState.imageUrl"
+          type="url"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.imageUrl" class="text-xs text-red-600">{{ errors.imageUrl }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="matchesPlayed">Matches Played</label>
-        <input id="matchesPlayed" v-model.number="formState.matchesPlayed" type="number" min="0" />
-        <p v-if="errors.matchesPlayed" class="field-error">{{ errors.matchesPlayed }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="matchesPlayed" class="text-sm font-semibold text-slate-900">
+          Matches Played
+        </label>
+        <input
+          id="matchesPlayed"
+          v-model.number="formState.matchesPlayed"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.matchesPlayed" class="text-xs text-red-600">{{ errors.matchesPlayed }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="wins">Wins</label>
-        <input id="wins" v-model.number="formState.wins" type="number" min="0" />
-        <p v-if="errors.wins" class="field-error">{{ errors.wins }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="wins" class="text-sm font-semibold text-slate-900">Wins</label>
+        <input
+          id="wins"
+          v-model.number="formState.wins"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.wins" class="text-xs text-red-600">{{ errors.wins }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="draws">Draws</label>
-        <input id="draws" v-model.number="formState.draws" type="number" min="0" />
-        <p v-if="errors.draws" class="field-error">{{ errors.draws }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="draws" class="text-sm font-semibold text-slate-900">Draws</label>
+        <input
+          id="draws"
+          v-model.number="formState.draws"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.draws" class="text-xs text-red-600">{{ errors.draws }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="losses">Losses</label>
-        <input id="losses" v-model.number="formState.losses" type="number" min="0" />
-        <p v-if="errors.losses" class="field-error">{{ errors.losses }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="losses" class="text-sm font-semibold text-slate-900">Losses</label>
+        <input
+          id="losses"
+          v-model.number="formState.losses"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.losses" class="text-xs text-red-600">{{ errors.losses }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="goalsFor">Goals For</label>
-        <input id="goalsFor" v-model.number="formState.goalsFor" type="number" min="0" />
-        <p v-if="errors.goalsFor" class="field-error">{{ errors.goalsFor }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="goalsFor" class="text-sm font-semibold text-slate-900">Goals For</label>
+        <input
+          id="goalsFor"
+          v-model.number="formState.goalsFor"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.goalsFor" class="text-xs text-red-600">{{ errors.goalsFor }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="goalsAgainst">Goals Against</label>
-        <input id="goalsAgainst" v-model.number="formState.goalsAgainst" type="number" min="0" />
-        <p v-if="errors.goalsAgainst" class="field-error">{{ errors.goalsAgainst }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="goalsAgainst" class="text-sm font-semibold text-slate-900">Goals Against</label>
+        <input
+          id="goalsAgainst"
+          v-model.number="formState.goalsAgainst"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.goalsAgainst" class="text-xs text-red-600">{{ errors.goalsAgainst }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="points">Points</label>
-        <input id="points" v-model.number="formState.points" type="number" min="0" />
-        <p v-if="errors.points" class="field-error">{{ errors.points }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="points" class="text-sm font-semibold text-slate-900">Points</label>
+        <input
+          id="points"
+          v-model.number="formState.points"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.points" class="text-xs text-red-600">{{ errors.points }}</p>
       </div>
 
-      <div class="field-group field-group--full">
-        <button type="submit">{{ actionCopy }}</button>
+      <div class="col-span-full flex flex-col gap-[0.35rem]">
+        <button
+          type="submit"
+          class="cursor-pointer rounded-full border-0 bg-gradient-to-r from-[#1d4ed8] to-[#22d3ee] px-6 py-[0.85rem] font-bold text-white shadow-[0_25px_60px_rgba(37,99,235,0.25)] transition-transform duration-200 hover:-translate-y-0.5"
+        >
+          {{ actionCopy }}
+        </button>
       </div>
     </form>
   </div>
 </template>
-
-<style scoped>
-.team-form {
-  border-radius: 2rem;
-  border: 1px solid rgba(15, 23, 42, 0.07);
-  background: #fff;
-  padding: 2rem;
-  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.08);
-}
-
-.team-form__header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .team-form__header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.form-chip {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.35em;
-  font-weight: 600;
-  color: #3b82f6;
-}
-
-.team-form__header h2 {
-  margin-top: 0.4rem;
-  font-size: 2rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.team-form__header p {
-  color: #475569;
-}
-
-.team-form__danger {
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.1);
-  color: #b91c1c;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 0.5rem 1rem;
-}
-
-.team-form__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.25rem 1rem;
-}
-
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.field-group--full {
-  grid-column: 1 / -1;
-}
-
-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-input {
-  border-radius: 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  padding: 0.65rem 0.9rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #0f172a;
-  background: #fff;
-}
-
-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.field-error {
-  font-size: 0.75rem;
-  color: #dc2626;
-}
-
-button[type='submit'] {
-  border-radius: 999px;
-  background: linear-gradient(120deg, #1d4ed8, #22d3ee);
-  color: #fff;
-  font-weight: 700;
-  padding: 0.85rem 1.5rem;
-  border: none;
-  box-shadow: 0 25px 60px rgba(37, 99, 235, 0.25);
-}
-</style>

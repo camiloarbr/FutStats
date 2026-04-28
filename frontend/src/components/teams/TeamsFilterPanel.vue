@@ -21,16 +21,21 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="filters-panel">
+  <section
+    class="flex flex-col gap-6 rounded-[1.75rem] border border-blue-500/15 bg-white p-7 shadow-[0_30px_70px_rgba(15,23,42,0.08)]"
+  >
     <div>
-      <p class="panel-label">Filters</p>
-      <h2>Refine by league and country</h2>
-      <p>Selections update every table and visualization instantly.</p>
+      <p class="mb-0 text-xs font-bold uppercase tracking-[0.3em] text-blue-500">Filters</p>
+      <h2 class="text-[1.35rem] font-bold text-slate-900">Refine by league and country</h2>
+      <p class="max-w-[36rem] text-slate-500">
+        Selections update every table and visualization instantly.
+      </p>
     </div>
-    <div class="filters-grid">
-      <label class="filter-field">
-        <span>League</span>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
+      <label class="flex flex-col gap-2">
+        <span class="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">League</span>
         <select
+          class="rounded-2xl border border-blue-500/20 bg-white px-4 py-3 text-slate-900 outline-none"
           :value="props.selectedLeague"
           @change="emit('update:selectedLeague', ($event.target as HTMLSelectElement).value)"
         >
@@ -41,14 +46,19 @@ const emit = defineEmits<{
         </select>
       </label>
 
-      <label class="filter-field">
-        <span>Country</span>
+      <label class="flex flex-col gap-2">
+        <span class="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">Country</span>
         <select
+          class="rounded-2xl border border-blue-500/20 bg-white px-4 py-3 text-slate-900 outline-none"
           :value="props.selectedCountry"
           @change="emit('update:selectedCountry', ($event.target as HTMLSelectElement).value)"
         >
           <option value="">All countries</option>
-          <option v-for="option in props.countryOptions" :key="option.value" :value="option.value">
+          <option
+            v-for="option in props.countryOptions"
+            :key="option.value"
+            :value="option.value"
+          >
             {{ option.label }}
           </option>
         </select>
@@ -56,57 +66,3 @@ const emit = defineEmits<{
     </div>
   </section>
 </template>
-
-<style scoped>
-.filters-panel {
-  border-radius: 1.75rem;
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  background: #fff;
-  padding: 1.75rem;
-  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.filters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.filter-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.filter-field span,
-.panel-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: #3b82f6;
-  font-weight: 700;
-}
-
-.filter-field select {
-  border-radius: 1rem;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  background: #fff;
-  color: #0f172a;
-  padding: 0.75rem 1rem;
-  outline: none;
-}
-
-.filters-panel h2 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.filters-panel p {
-  color: #64748b;
-  max-width: 36rem;
-}
-</style>

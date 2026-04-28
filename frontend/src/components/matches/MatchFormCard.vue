@@ -1,10 +1,8 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-// 1. External imports
-import { computed, reactive, watch } from 'vue'
+import { reactive, watch, computed } from 'vue'
 
-// 2. Internal imports
-import type { CreateMatchDTO } from '@/dtos/MatchDTO'
+import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 type FormMode = 'create' | 'edit'
@@ -156,225 +154,200 @@ function handleDelete(): void {
 </script>
 
 <template>
-  <div class="match-form">
-    <div class="match-form__header">
+  <div
+    class="rounded-[2rem] border border-slate-900/[0.07] bg-white p-8 shadow-[0_40px_90px_rgba(15,23,42,0.08)]"
+  >
+    <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
-        <p class="form-chip">Admin workflow</p>
-        <h2>{{ titleCopy }}</h2>
-        <p>Manage official results and match stats within a single streamlined flow.</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-500">
+          Admin workflow
+        </p>
+        <h2 class="mt-[0.4rem] text-[2rem] font-extrabold text-slate-900">{{ titleCopy }}</h2>
+        <p class="text-slate-600">
+          Manage official results and match stats within a single streamlined flow.
+        </p>
       </div>
-      <button v-if="props.mode === 'edit'" type="button" class="danger-chip" @click="handleDelete">
+      <button
+        v-if="props.mode === 'edit'"
+        type="button"
+        class="cursor-pointer rounded-full border border-red-500/35 bg-red-500/10 px-4 py-2 font-semibold text-red-700 transition-colors duration-200 hover:bg-red-500/20"
+        @click="handleDelete"
+      >
         Delete match
       </button>
     </div>
 
-    <form class="match-form__grid" @submit.prevent="handleSubmit">
-      <div class="field-group">
-        <label for="match-date">Date</label>
-        <input id="match-date" v-model="formState.date" type="date" />
-        <p v-if="errors.date" class="field-error">{{ errors.date }}</p>
+    <form
+      class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-x-4 gap-y-5"
+      @submit.prevent="handleSubmit"
+    >
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="match-date" class="text-sm font-semibold text-slate-900">Date</label>
+        <input
+          id="match-date"
+          v-model="formState.date"
+          type="date"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.date" class="text-xs text-red-600">{{ errors.date }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="stadium">Stadium</label>
-        <input id="stadium" v-model="formState.stadium" type="text" />
-        <p v-if="errors.stadium" class="field-error">{{ errors.stadium }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="stadium" class="text-sm font-semibold text-slate-900">Stadium</label>
+        <input
+          id="stadium"
+          v-model="formState.stadium"
+          type="text"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.stadium" class="text-xs text-red-600">{{ errors.stadium }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="homeTeam">Home team</label>
-        <select id="homeTeam" v-model.number="formState.homeTeamId">
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="homeTeam" class="text-sm font-semibold text-slate-900">Home team</label>
+        <select
+          id="homeTeam"
+          v-model.number="formState.homeTeamId"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        >
           <option disabled value="0">Select a team</option>
           <option v-for="team in props.teams" :key="team.id" :value="team.id">
             {{ team.name }}
           </option>
         </select>
-        <p v-if="errors.homeTeamId" class="field-error">{{ errors.homeTeamId }}</p>
+        <p v-if="errors.homeTeamId" class="text-xs text-red-600">{{ errors.homeTeamId }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="awayTeam">Away team</label>
-        <select id="awayTeam" v-model.number="formState.awayTeamId">
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="awayTeam" class="text-sm font-semibold text-slate-900">Away team</label>
+        <select
+          id="awayTeam"
+          v-model.number="formState.awayTeamId"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        >
           <option disabled value="0">Select a team</option>
           <option v-for="team in props.teams" :key="team.id" :value="team.id">
             {{ team.name }}
           </option>
         </select>
-        <p v-if="errors.awayTeamId" class="field-error">{{ errors.awayTeamId }}</p>
+        <p v-if="errors.awayTeamId" class="text-xs text-red-600">{{ errors.awayTeamId }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="homeScore">Home goals</label>
-        <input id="homeScore" v-model.number="formState.homeScore" type="number" min="0" />
-        <p v-if="errors.homeScore" class="field-error">{{ errors.homeScore }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="homeScore" class="text-sm font-semibold text-slate-900">Home goals</label>
+        <input
+          id="homeScore"
+          v-model.number="formState.homeScore"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.homeScore" class="text-xs text-red-600">{{ errors.homeScore }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="awayScore">Away goals</label>
-        <input id="awayScore" v-model.number="formState.awayScore" type="number" min="0" />
-        <p v-if="errors.awayScore" class="field-error">{{ errors.awayScore }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="awayScore" class="text-sm font-semibold text-slate-900">Away goals</label>
+        <input
+          id="awayScore"
+          v-model.number="formState.awayScore"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.awayScore" class="text-xs text-red-600">{{ errors.awayScore }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="possessionHome">Home possession (%)</label>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="possessionHome" class="text-sm font-semibold text-slate-900">
+          Home possession (%)
+        </label>
         <input
           id="possessionHome"
           v-model.number="formState.possessionHome"
           type="number"
           min="0"
           max="100"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
         />
-        <p v-if="errors.possessionHome" class="field-error">{{ errors.possessionHome }}</p>
+        <p v-if="errors.possessionHome" class="text-xs text-red-600">
+          {{ errors.possessionHome }}
+        </p>
       </div>
 
-      <div class="field-group">
-        <label for="possessionAway">Away possession (%)</label>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="possessionAway" class="text-sm font-semibold text-slate-900">
+          Away possession (%)
+        </label>
         <input
           id="possessionAway"
           v-model.number="formState.possessionAway"
           type="number"
           min="0"
           max="100"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
         />
-        <p v-if="errors.possessionAway" class="field-error">{{ errors.possessionAway }}</p>
+        <p v-if="errors.possessionAway" class="text-xs text-red-600">
+          {{ errors.possessionAway }}
+        </p>
       </div>
 
-      <div class="field-group">
-        <label for="shotsHome">Home shots</label>
-        <input id="shotsHome" v-model.number="formState.shotsHome" type="number" min="0" />
-        <p v-if="errors.shotsHome" class="field-error">{{ errors.shotsHome }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="shotsHome" class="text-sm font-semibold text-slate-900">Home shots</label>
+        <input
+          id="shotsHome"
+          v-model.number="formState.shotsHome"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.shotsHome" class="text-xs text-red-600">{{ errors.shotsHome }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="shotsAway">Away shots</label>
-        <input id="shotsAway" v-model.number="formState.shotsAway" type="number" min="0" />
-        <p v-if="errors.shotsAway" class="field-error">{{ errors.shotsAway }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="shotsAway" class="text-sm font-semibold text-slate-900">Away shots</label>
+        <input
+          id="shotsAway"
+          v-model.number="formState.shotsAway"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.shotsAway" class="text-xs text-red-600">{{ errors.shotsAway }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="foulsHome">Home fouls</label>
-        <input id="foulsHome" v-model.number="formState.foulsHome" type="number" min="0" />
-        <p v-if="errors.foulsHome" class="field-error">{{ errors.foulsHome }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="foulsHome" class="text-sm font-semibold text-slate-900">Home fouls</label>
+        <input
+          id="foulsHome"
+          v-model.number="formState.foulsHome"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.foulsHome" class="text-xs text-red-600">{{ errors.foulsHome }}</p>
       </div>
 
-      <div class="field-group">
-        <label for="foulsAway">Away fouls</label>
-        <input id="foulsAway" v-model.number="formState.foulsAway" type="number" min="0" />
-        <p v-if="errors.foulsAway" class="field-error">{{ errors.foulsAway }}</p>
+      <div class="flex flex-col gap-[0.35rem]">
+        <label for="foulsAway" class="text-sm font-semibold text-slate-900">Away fouls</label>
+        <input
+          id="foulsAway"
+          v-model.number="formState.foulsAway"
+          type="number"
+          min="0"
+          class="rounded-2xl border border-slate-300/60 bg-white px-[0.9rem] py-[0.65rem] text-[0.95rem] font-medium text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/15"
+        />
+        <p v-if="errors.foulsAway" class="text-xs text-red-600">{{ errors.foulsAway }}</p>
       </div>
 
-      <div class="field-group field-group--full">
-        <button type="submit">{{ actionCopy }}</button>
-        <p v-if="errors.general" class="field-error">{{ errors.general }}</p>
+      <div class="col-span-full flex flex-col gap-[0.35rem]">
+        <button
+          type="submit"
+          class="cursor-pointer rounded-full border-0 bg-gradient-to-r from-[#1d4ed8] to-[#22d3ee] px-6 py-[0.85rem] font-bold text-white shadow-[0_25px_60px_rgba(37,99,235,0.25)] transition-transform duration-200 hover:-translate-y-0.5"
+        >
+          {{ actionCopy }}
+        </button>
+        <p v-if="errors.general" class="text-xs text-red-600">{{ errors.general }}</p>
       </div>
     </form>
   </div>
 </template>
-
-<style scoped>
-.match-form {
-  border-radius: 2rem;
-  border: 1px solid rgba(15, 23, 42, 0.07);
-  background: #fff;
-  padding: 2rem;
-  box-shadow: 0 40px 90px rgba(15, 23, 42, 0.08);
-}
-
-.match-form__header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .match-form__header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.form-chip {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.35em;
-  font-weight: 600;
-  color: #3b82f6;
-}
-
-.match-form__header h2 {
-  margin-top: 0.4rem;
-  font-size: 2rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.match-form__header p {
-  color: #475569;
-}
-
-.danger-chip {
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.1);
-  color: #b91c1c;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 0.5rem 1rem;
-}
-
-.match-form__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.25rem 1rem;
-}
-
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.field-group--full {
-  grid-column: 1 / -1;
-}
-
-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-input,
-select {
-  border-radius: 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  padding: 0.65rem 0.9rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #0f172a;
-  background: #fff;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-button[type='submit'] {
-  border-radius: 999px;
-  background: linear-gradient(120deg, #1d4ed8, #22d3ee);
-  color: #fff;
-  font-weight: 700;
-  padding: 0.85rem 1.5rem;
-  border: none;
-  box-shadow: 0 25px 60px rgba(37, 99, 235, 0.25);
-}
-
-.field-error {
-  font-size: 0.75rem;
-  color: #dc2626;
-}
-</style>
