@@ -1,14 +1,16 @@
+// @author: Camilo | FutStats
+
 // 1. External imports
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcryptjs';
-import type { DeepPartial, Repository } from 'typeorm';
+import { Injectable, OnModuleInit } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import * as bcrypt from 'bcryptjs'
+import type { Repository } from 'typeorm'
 
 // 2. Internal imports
-import { MatchEntity } from '../matches/entities/match.entity';
-import { PlayerEntity } from '../players/entities/player.entity';
-import { TeamEntity } from '../teams/entities/team.entity';
-import { UserEntity } from '../users/entities/user.entity';
+import { MatchEntity } from '../matches/entities/match.entity'
+import { PlayerEntity } from '../players/entities/player.entity'
+import { TeamEntity } from '../teams/entities/team.entity'
+import { UserEntity } from '../users/entities/user.entity'
 
 @Injectable()
 export class DatabaseBootstrapService implements OnModuleInit {
@@ -24,19 +26,19 @@ export class DatabaseBootstrapService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    await this.createUsersWhenEmpty();
-    await this.createDomainDataWhenEmpty();
+    await this.createUsersWhenEmpty()
+    await this.createDomainDataWhenEmpty()
   }
 
   private async createUsersWhenEmpty(): Promise<void> {
-    const usersCount = await this.usersRepository.count();
+    const usersCount = await this.usersRepository.count()
 
     if (usersCount > 0) {
-      return;
+      return
     }
 
-    const adminPasswordHash = await bcrypt.hash('admin123', 10);
-    const userPasswordHash = await bcrypt.hash('user123', 10);
+    const adminPasswordHash = await bcrypt.hash('admin123', 10)
+    const userPasswordHash = await bcrypt.hash('user123', 10)
 
     await this.usersRepository.save([
       {
@@ -53,22 +55,22 @@ export class DatabaseBootstrapService implements OnModuleInit {
         role: 'user',
         isActive: true,
       },
-    ]);
+    ])
   }
 
   private async createDomainDataWhenEmpty(): Promise<void> {
-    const teamsCount = await this.teamsRepository.count();
+    const teamsCount = await this.teamsRepository.count()
 
     if (teamsCount > 0) {
-      return;
+      return
     }
 
-    await this.teamsRepository.save(this.buildTeams());
-    await this.playersRepository.save(this.buildPlayers());
-    await this.matchesRepository.save(this.buildMatches());
+    await this.teamsRepository.save(this.buildTeams())
+    await this.playersRepository.save(this.buildPlayers())
+    await this.matchesRepository.save(this.buildMatches())
   }
 
-  private buildTeams(): Array<DeepPartial<TeamEntity>> {
+  private buildTeams(): Array<Partial<TeamEntity>> {
     return [
       {
         id: 1,
@@ -121,8 +123,7 @@ export class DatabaseBootstrapService implements OnModuleInit {
         country: 'Germany',
         league: 'Bundesliga',
         foundedYear: 1900,
-        imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg',
         matchesPlayed: 10,
         wins: 8,
         draws: 1,
@@ -161,10 +162,10 @@ export class DatabaseBootstrapService implements OnModuleInit {
         goalsAgainst: 11,
         points: 17,
       },
-    ];
+    ]
   }
 
-  private buildPlayers(): Array<DeepPartial<PlayerEntity>> {
+  private buildPlayers(): Array<Partial<PlayerEntity>> {
     return [
       {
         id: 1,
@@ -506,10 +507,10 @@ export class DatabaseBootstrapService implements OnModuleInit {
         minutesPlayed: 845,
         teamId: 6,
       },
-    ];
+    ]
   }
 
-  private buildMatches(): Array<DeepPartial<MatchEntity>> {
+  private buildMatches(): Array<Partial<MatchEntity>> {
     return [
       {
         id: 1,
@@ -661,6 +662,6 @@ export class DatabaseBootstrapService implements OnModuleInit {
         homeTeamId: 6,
         awayTeamId: 2,
       },
-    ];
+    ]
   }
 }
