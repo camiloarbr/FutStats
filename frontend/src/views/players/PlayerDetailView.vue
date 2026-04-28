@@ -2,15 +2,10 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
-
-import BarChart from '@/components/charts/BarChart.vue'
-
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
-
+import PlayerPerformanceChart from '@/components/players/PlayerPerformanceChart.vue'
 import { Formatters } from '@/utils/Formatters'
-
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -84,47 +79,6 @@ const extendedStats = computed(() => {
   ]
 })
 
-const performanceChartData = computed<ChartData<'bar'>>(() => {
-  if (!player.value) {
-    return { labels: [], datasets: [] }
-  }
-
-  return {
-    labels: ['Goals', 'Assists', 'Shots', 'Passes'],
-    datasets: [
-      {
-        label: player.value.fullName,
-        data: [player.value.goals, player.value.assists, player.value.shots, player.value.passes],
-        backgroundColor: ['#2563eb', '#22d3ee', '#0ea5e9', '#38bdf8'],
-        borderRadius: 12,
-        borderSkipped: false,
-      },
-    ],
-  }
-})
-
-const performanceChartOptions = computed<ChartOptions<'bar'>>(() => ({
-  maintainAspectRatio: false,
-  responsive: true,
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      callbacks: {
-        label(context: TooltipItem<'bar'>) {
-          const value = context.parsed.y ?? 0
-          return Formatters.formatChartTooltip(value, context.label.toLowerCase())
-        },
-      },
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: { precision: 0 },
-    },
-  },
-}))
-
 watch(
   () => ({ player: player.value, ready: playersReady.value }),
   ({ player: currentPlayer, ready }) => {
@@ -172,12 +126,7 @@ watch(
     </div>
 
     <div class="detail-grid">
-      <BarChart
-        :data="performanceChartData"
-        :options="performanceChartOptions"
-        :height="320"
-        title="Attacking Output"
-      />
+      <PlayerPerformanceChart :player="player" />
 
       <div class="metrics-card">
         <h3>Match Impact</h3>

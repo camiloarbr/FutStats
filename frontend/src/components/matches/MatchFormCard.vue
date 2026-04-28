@@ -103,7 +103,6 @@ function validateField(key: keyof MatchFormState, value: unknown): void {
 
 function validateForm(): boolean {
   clearErrors()
-
   ;(Object.keys(formState) as (keyof MatchFormState)[]).forEach((key) => {
     validateField(key, formState[key])
   })

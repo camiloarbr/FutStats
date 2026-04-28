@@ -1,13 +1,12 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ChartData, ChartOptions } from 'chart.js'
-import type { TopScorerRow } from '@/interfaces/DashboardInterface'
-import BarChart from '@/components/charts/BarChart.vue'
-import { TeamService } from '@/services/TeamService'
-import { PlayerService } from '@/services/PlayerService'
-import { MatchService } from '@/services/MatchService'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { MatchService } from '@/services/MatchService'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
+import DashboardGoalsChart from '@/components/charts/DashboardGoalsChart.vue'
+import type { TopScorerRow } from '@/interfaces/DashboardInterface'
 import { Formatters } from '@/utils/Formatters'
 
 const authStore = useAuthStore()
@@ -17,6 +16,7 @@ const username = computed((): string => authStore.currentUser?.username ?? 'User
 const totalTeams = computed((): number => TeamService.getAll().length)
 const totalPlayers = computed((): number => PlayerService.getAll().length)
 const totalMatches = computed((): number => MatchService.getAll().length)
+const teams = computed(() => TeamService.getAll())
 
 const topScorers = computed((): TopScorerRow[] => {
   const teams = TeamService.getAll()
@@ -34,73 +34,6 @@ const topScorers = computed((): TopScorerRow[] => {
     }
   })
 })
-
-const teamsByGoals = computed(() => {
-  return [...TeamService.getAll()]
-    .sort((firstTeam, secondTeam) => secondTeam.goalsFor - firstTeam.goalsFor)
-    .slice(0, 6)
-})
-
-const goalsChartData = computed((): ChartData<'bar'> => {
-  return {
-    labels: teamsByGoals.value.map((team) => team.name),
-    datasets: [
-      {
-        label: 'Goals',
-        data: teamsByGoals.value.map((team) => team.goalsFor),
-        backgroundColor: ['#1b69ff', '#3d82ff', '#5b96ff', '#7baeff', '#9ac4ff', '#bfdcff'],
-        borderRadius: 8,
-        borderSkipped: false,
-        barThickness: 22,
-      },
-    ],
-  }
-})
-
-const goalsChartOptions: ChartOptions<'bar'> = {
-  indexAxis: 'y',
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    tooltip: {
-      backgroundColor: '#0d1525',
-      titleColor: '#ffffff',
-      bodyColor: '#ffffff',
-      displayColors: false,
-    },
-  },
-  scales: {
-    x: {
-      beginAtZero: true,
-      grid: {
-        color: '#e5e7eb',
-      },
-      ticks: {
-        precision: 0,
-        color: '#64748b',
-        font: {
-          size: 12,
-          weight: 600,
-        },
-      },
-    },
-    y: {
-      grid: {
-        display: false,
-      },
-      ticks: {
-        color: '#64748b',
-        font: {
-          size: 12,
-          weight: 600,
-        },
-      },
-    },
-  },
-}
 </script>
 
 <template>
@@ -207,12 +140,7 @@ const goalsChartOptions: ChartOptions<'bar'> = {
           <span>Updated automatically</span>
         </div>
 
-        <BarChart
-          :data="goalsChartData"
-          :options="goalsChartOptions"
-          :height="420"
-          :show-card="false"
-        />
+        <DashboardGoalsChart :teams="teams" />
       </article>
     </section>
   </section>

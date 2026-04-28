@@ -7,10 +7,3 @@ export interface TopScorerRow {
   goals: number
   assists: number
 }
-
-export interface TeamPerformanceRow {
-  name: string
-  goals: number
-  width: number
-  barClass: string
-}

@@ -2,17 +2,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
-
-import BarChart from '@/components/charts/BarChart.vue'
-import DataTable from '@/components/tables/DataTable.vue'
-import SelectFilter from '@/components/filters/SelectFilter.vue'
-
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
-
+import DataTable from '@/components/tables/DataTable.vue'
+import PlayerTopScorersChart from '@/components/players/PlayerTopScorersChart.vue'
+import PlayersFilterPanel from '@/components/players/PlayersFilterPanel.vue'
 import { Formatters } from '@/utils/Formatters'
-
+import type {
+  DataTableColumnInterface,
+  DataTableRowInterface,
+} from '@/interfaces/DataTableInterface'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -21,22 +20,13 @@ interface SelectOption {
   label: string
 }
 
-interface PlayerTableRow {
-  id: number
+interface PlayerTableRow extends DataTableRowInterface {
   name: string
   team: string
   position: string
   goals: number
   assists: number
   matchesPlayed: number
-}
-
-type PlayerColumnKey = Exclude<keyof PlayerTableRow, 'id'>
-
-interface TableColumn {
-  key: PlayerColumnKey
-  label: string
-  sortable?: boolean
 }
 
 const router = useRouter()
@@ -91,7 +81,7 @@ const filteredPlayers = computed<PlayerInterface[]>(() => {
   })
 })
 
-const tableColumns: TableColumn[] = [
+const tableColumns: DataTableColumnInterface[] = [
   { key: 'name', label: 'Name', sortable: true },
   { key: 'team', label: 'Team', sortable: true },
   { key: 'position', label: 'Position', sortable: true },
@@ -112,54 +102,7 @@ const tableRows = computed<PlayerTableRow[]>(() =>
   }))
 )
 
-const chartPlayers = computed<PlayerInterface[]>(() =>
-  [...filteredPlayers.value].sort((a, b) => b.goals - a.goals).slice(0, 10)
-)
-
-const topScorersChartData = computed<ChartData<'bar'>>(() => ({
-  labels: chartPlayers.value.map((player) => player.fullName),
-  datasets: [
-    {
-      label: 'Goals',
-      data: chartPlayers.value.map((player) => player.goals),
-      backgroundColor: '#2563eb',
-      borderRadius: 10,
-      borderSkipped: false,
-    },
-  ],
-}))
-
-const topScorersChartOptions = computed<ChartOptions<'bar'>>(() => ({
-  maintainAspectRatio: false,
-  responsive: true,
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      callbacks: {
-        label(context: TooltipItem<'bar'>) {
-          const goals = context.parsed.y ?? 0
-          return Formatters.formatChartTooltip(goals, 'goals')
-        },
-      },
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: { precision: 0 },
-      title: { display: true, text: 'Goals' },
-    },
-    x: {
-      ticks: {
-        autoSkip: true,
-        maxRotation: 40,
-        minRotation: 0,
-      },
-    },
-  },
-}))
-
-function handleRowClick(row: PlayerTableRow): void {
+function handleRowClick(row: DataTableRowInterface): void {
   router.push({ name: 'players.show', params: { id: row.id.toString() } })
 }
 
@@ -197,27 +140,14 @@ const totalPlayersCopy = computed(() =>
     </header>
 
     <div class="grid gap-6">
-      <div class="filters-panel">
-        <SelectFilter
-          v-model="selectedTeamId"
-          label="Team"
-          placeholder="All teams"
-          :options="teamOptions"
-        />
-        <SelectFilter
-          v-model="selectedPosition"
-          label="Position"
-          placeholder="All positions"
-          :options="positionOptions"
-        />
-      </div>
-
-      <BarChart
-        :data="topScorersChartData"
-        :options="topScorersChartOptions"
-        :height="280"
-        title="Top Scorers (Goals)"
+      <PlayersFilterPanel
+        v-model:selected-team-id="selectedTeamId"
+        v-model:selected-position="selectedPosition"
+        :team-options="teamOptions"
+        :position-options="positionOptions"
       />
+
+      <PlayerTopScorersChart :players="filteredPlayers" />
 
       <div class="table-card">
         <DataTable :columns="tableColumns" :rows="tableRows" @rowClick="handleRowClick" />
@@ -282,17 +212,6 @@ const totalPlayersCopy = computed(() =>
   display: block;
   font-size: 1.65rem;
   font-weight: 800;
-}
-
-.filters-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.25rem;
-  border-radius: 1.75rem;
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  background: #fff;
-  padding: 1.5rem;
-  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
 }
 
 .table-card {

@@ -1,7 +1,7 @@
 // @author: Samuel | FutStats
 import { useMatchesStore } from '@/stores/useMatchesStore'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
-import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
+import type { CreateMatchDTO, UpdateMatchDTO } from '@/interfaces/MatchDTO'
 
 export class MatchService {
   static getAll(): MatchInterface[] {
@@ -37,7 +37,7 @@ export class MatchService {
     return newMatch
   }
 
-  static update(id: number, dto: CreateMatchDTO): MatchInterface | undefined {
+  static update(id: number, dto: UpdateMatchDTO): MatchInterface | undefined {
     const matchesStore = useMatchesStore()
 
     const existingMatch = matchesStore.matches.find((match: MatchInterface) => match.id === id)

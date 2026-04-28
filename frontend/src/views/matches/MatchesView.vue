@@ -2,34 +2,26 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
-
-import LineChart from '@/components/charts/LineChart.vue'
-import DataTable from '@/components/tables/DataTable.vue'
-import MatchesHero from '@/components/matches/MatchesHero.vue'
-import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
-
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
-
+import DataTable from '@/components/tables/DataTable.vue'
+import MatchGoalsChart from '@/components/matches/MatchGoalsChart.vue'
+import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
+import MatchesHero from '@/components/matches/MatchesHero.vue'
 import { Formatters } from '@/utils/Formatters'
-
+import type {
+  DataTableColumnInterface,
+  DataTableRowInterface,
+} from '@/interfaces/DataTableInterface'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
-interface MatchTableRow {
-  id: number
+interface MatchTableRow extends DataTableRowInterface {
   date: string
   homeTeam: string
   score: string
   awayTeam: string
   stadium: string
-}
-
-interface TableColumn {
-  key: keyof MatchTableRow
-  label: string
-  sortable?: boolean
 }
 
 interface SummaryStat {
@@ -197,7 +189,7 @@ const summaryStats = computed<SummaryStat[]>(() => {
   ]
 })
 
-const tableColumns: TableColumn[] = [
+const tableColumns: DataTableColumnInterface[] = [
   { key: 'date', label: 'Date', sortable: true },
   { key: 'homeTeam', label: 'Home Team', sortable: true },
   { key: 'score', label: 'Score' },
@@ -224,72 +216,7 @@ const tableRows = computed<MatchTableRow[]>(() =>
     }))
 )
 
-const goalsChartData = computed<ChartData<'line'>>(() => {
-  const chronologicMatches = [...filteredMatches.value].sort((firstMatch, secondMatch) => {
-    const firstDate = firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
-    const secondDate =
-      secondMatch.date instanceof Date ? secondMatch.date : new Date(secondMatch.date)
-    return firstDate.getTime() - secondDate.getTime()
-  })
-
-  const labels = chronologicMatches.map((match) => Formatters.formatMatchDate(match.date))
-  const totals = chronologicMatches.map((match) => match.homeScore + match.awayScore)
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: 'Goals per Match',
-        data: totals,
-        borderColor: '#2563eb',
-        pointBackgroundColor: '#1d4ed8',
-        backgroundColor: 'rgba(37, 99, 235, 0.15)',
-        fill: true,
-        tension: 0.35,
-        borderWidth: 2,
-        pointRadius: 4,
-      },
-    ],
-  }
-})
-
-const goalsChartOptions = computed<ChartOptions<'line'>>(() => ({
-  maintainAspectRatio: false,
-  responsive: true,
-  plugins: {
-    legend: {
-      display: true,
-    },
-    tooltip: {
-      callbacks: {
-        label(context: TooltipItem<'line'>) {
-          const goals = context.parsed.y ?? 0
-          return Formatters.formatChartTooltip(goals, 'goals')
-        },
-      },
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: {
-        precision: 0,
-      },
-      title: {
-        display: true,
-        text: 'Total Goals',
-      },
-    },
-    x: {
-      title: {
-        display: true,
-        text: 'Match Date',
-      },
-    },
-  },
-}))
-
-function handleRowClick(row: MatchTableRow): void {
+function handleRowClick(row: DataTableRowInterface): void {
   router.push({ name: 'matches.show', params: { id: row.id.toString() } })
 }
 </script>
@@ -301,13 +228,7 @@ function handleRowClick(row: MatchTableRow): void {
     <div class="grid gap-6">
       <MatchesFilterPanel v-model="selectedTeamId" :options="teamOptions" />
 
-      <LineChart
-        class="rounded-2xl border border-blue-50 bg-white p-4 shadow-xl shadow-blue-500/10"
-        :height="240"
-        :data="goalsChartData"
-        :options="goalsChartOptions"
-        title="Goals per Match"
-      />
+      <MatchGoalsChart :matches="filteredMatches" />
 
       <div class="rounded-3xl bg-white/95 p-1 shadow-[0_35px_80px_rgba(15,23,42,0.12)]">
         <DataTable :columns="tableColumns" :rows="tableRows" @rowClick="handleRowClick" />

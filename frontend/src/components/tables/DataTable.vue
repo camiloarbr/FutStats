@@ -1,31 +1,27 @@
 // @author: Camilo | FutStats
-<script setup lang="ts" generic="T">
+<script setup lang="ts">
 import { computed, ref } from 'vue'
+import type {
+  DataTableColumnInterface,
+  DataTableRowInterface,
+} from '@/interfaces/DataTableInterface'
 
-interface Column {
-  key: string
-  label: string
-  sortable?: boolean
+interface Props {
+  columns: DataTableColumnInterface[]
+  rows: DataTableRowInterface[]
+  onEdit?: (row: DataTableRowInterface) => void
+  onDelete?: (row: DataTableRowInterface) => void
 }
 
-interface Props<T> {
-  columns: Column[]
-  rows: T[]
-  onEdit?: (row: T) => void
-  onDelete?: (row: T) => void
-}
-
-const props = defineProps<Props<T>>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'rowClick', row: T): void
+  (e: 'rowClick', row: DataTableRowInterface): void
 }>()
 
-// Sort state
 const sortKey = ref<string>('')
 const sortOrder = ref<'asc' | 'desc'>('asc')
 
-// Handle sort column click
 function handleSort(key: string): void {
   if (sortKey.value === key) {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
@@ -35,12 +31,11 @@ function handleSort(key: string): void {
   }
 }
 
-// Sorted rows computed
-const sortedRows = computed((): T[] => {
+const sortedRows = computed((): DataTableRowInterface[] => {
   if (!sortKey.value) return props.rows
   return [...props.rows].sort((a, b) => {
-    const aVal = (a as Record<string, unknown>)[sortKey.value]
-    const bVal = (b as Record<string, unknown>)[sortKey.value]
+    const aVal = a[sortKey.value]
+    const bVal = b[sortKey.value]
     if (aVal == null || bVal == null) return 0
     if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1
     if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1
@@ -48,13 +43,8 @@ const sortedRows = computed((): T[] => {
   })
 })
 
-function resolveRowKey(row: T, index: number): string | number {
-  const rowRecord = row as Record<string, string | number | undefined>
-  return rowRecord.id ?? index
-}
-
-function getCellValue(row: T, key: string): unknown {
-  return (row as Record<string, unknown>)[key]
+function getCellValue(row: DataTableRowInterface, key: string): string | number {
+  return row[key] ?? ''
 }
 </script>
 
@@ -97,8 +87,8 @@ function getCellValue(row: T, key: string): unknown {
       <!-- body -->
       <tbody class="bg-white divide-y divide-gray-200">
         <tr
-          v-for="(row, index) in sortedRows"
-          :key="resolveRowKey(row, index)"
+          v-for="row in sortedRows"
+          :key="row.id"
           class="hover:bg-gray-50 cursor-pointer transition-colors"
           @click="emit('rowClick', row)"
         >

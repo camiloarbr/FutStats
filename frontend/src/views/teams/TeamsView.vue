@@ -2,11 +2,14 @@
 <script setup lang="ts">
 import { computed, ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { ChartData, ChartOptions } from 'chart.js'
-import SelectFilter from '@/components/filters/SelectFilter.vue'
-import DataTable from '@/components/tables/DataTable.vue'
-import BarChart from '@/components/charts/BarChart.vue'
 import { TeamService } from '@/services/TeamService'
+import DataTable from '@/components/tables/DataTable.vue'
+import TeamPointsChart from '@/components/teams/TeamPointsChart.vue'
+import TeamsFilterPanel from '@/components/teams/TeamsFilterPanel.vue'
+import type {
+  DataTableColumnInterface,
+  DataTableRowInterface,
+} from '@/interfaces/DataTableInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 interface FilterOption {
@@ -14,8 +17,7 @@ interface FilterOption {
   label: string
 }
 
-interface TeamTableRow {
-  id: number
+interface TeamTableRow extends DataTableRowInterface {
   name: string
   country: string
   league: string
@@ -84,7 +86,7 @@ const teamRows = computed((): TeamTableRow[] => {
   }))
 })
 
-const columns = [
+const columns: DataTableColumnInterface[] = [
   { key: 'name', label: 'Name', sortable: true },
   { key: 'country', label: 'Country', sortable: true },
   { key: 'league', label: 'League', sortable: true },
@@ -94,68 +96,7 @@ const columns = [
   { key: 'points', label: 'Points', sortable: true },
 ]
 
-const chartData = computed((): ChartData<'bar'> => {
-  return {
-    labels: filteredTeams.value.map((team: TeamInterface) => team.name),
-    datasets: [
-      {
-        label: 'Points',
-        data: filteredTeams.value.map((team: TeamInterface) => team.points),
-        backgroundColor: ['#1b69ff', '#3d82ff', '#5b96ff', '#7baeff', '#9ac4ff', '#bfdcff'],
-        borderRadius: 8,
-        borderSkipped: false,
-        barThickness: 32,
-      },
-    ],
-  }
-})
-
-const chartOptions: ChartOptions<'bar'> = {
-  indexAxis: 'y',
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    tooltip: {
-      backgroundColor: '#0d1525',
-      titleColor: '#ffffff',
-      bodyColor: '#ffffff',
-      displayColors: false,
-    },
-  },
-  scales: {
-    x: {
-      beginAtZero: true,
-      grid: {
-        color: '#e5e7eb',
-      },
-      ticks: {
-        precision: 0,
-        color: '#64748b',
-        font: {
-          size: 12,
-          weight: 600,
-        },
-      },
-    },
-    y: {
-      grid: {
-        display: false,
-      },
-      ticks: {
-        color: '#64748b',
-        font: {
-          size: 12,
-          weight: 600,
-        },
-      },
-    },
-  },
-}
-
-function handleRowClick(row: TeamTableRow): void {
+function handleRowClick(row: DataTableRowInterface): void {
   router.push({ name: 'teams.show', params: { id: row.id } })
 }
 </script>
@@ -211,27 +152,12 @@ function handleRowClick(row: TeamTableRow): void {
       </article>
     </section>
 
-    <section class="filters-panel">
-      <div>
-        <p class="panel-label">Filters</p>
-        <h2>Refine by league and country</h2>
-        <p>Selections update every table and visualization instantly.</p>
-      </div>
-      <div class="filters-grid">
-        <SelectFilter
-          v-model="selectedLeague"
-          label="League"
-          placeholder="All leagues"
-          :options="leagueOptions"
-        />
-        <SelectFilter
-          v-model="selectedCountry"
-          label="Country"
-          placeholder="All countries"
-          :options="countryOptions"
-        />
-      </div>
-    </section>
+    <TeamsFilterPanel
+      v-model:selected-league="selectedLeague"
+      v-model:selected-country="selectedCountry"
+      :league-options="leagueOptions"
+      :country-options="countryOptions"
+    />
 
     <section class="layout-grid">
       <article class="panel-card">
@@ -255,7 +181,7 @@ function handleRowClick(row: TeamTableRow): void {
           <span>Auto refreshed</span>
         </div>
 
-        <BarChart :data="chartData" :options="chartOptions" :height="420" :show-card="false" />
+        <TeamPointsChart :teams="filteredTeams" />
       </article>
     </section>
   </section>

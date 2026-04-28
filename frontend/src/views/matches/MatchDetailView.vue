@@ -2,17 +2,12 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { ChartData, ChartOptions } from 'chart.js'
-
-import BarChart from '@/components/charts/BarChart.vue'
-import MatchScoreboardHero from '@/components/matches/MatchScoreboardHero.vue'
-import MatchStatsSummaryCard from '@/components/matches/MatchStatsSummaryCard.vue'
-
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
-
+import MatchComparisonChart from '@/components/matches/MatchComparisonChart.vue'
+import MatchScoreboardHero from '@/components/matches/MatchScoreboardHero.vue'
+import MatchStatsSummaryCard from '@/components/matches/MatchStatsSummaryCard.vue'
 import { Formatters } from '@/utils/Formatters'
-
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
@@ -22,6 +17,12 @@ interface StatComparison {
   homeValue: number
   awayValue: number
   unit?: string
+}
+
+interface ComparisonChartInput {
+  match: MatchInterface
+  homeTeamName: string
+  awayTeamName: string
 }
 
 const route = useRoute()
@@ -105,73 +106,6 @@ const statComparisons = computed<StatComparison[]>(() => {
   ]
 })
 
-const statsChartData = computed<ChartData<'bar'>>(() => {
-  if (!match.value || !homeTeam.value || !awayTeam.value) {
-    return {
-      labels: [],
-      datasets: [],
-    }
-  }
-
-  return {
-    labels: ['Possession %', 'Shots', 'Fouls'],
-    datasets: [
-      {
-        label: homeTeam.value.name,
-        data: [match.value.possessionHome, match.value.shotsHome, match.value.foulsHome],
-        backgroundColor: '#1d4ed8',
-        borderRadius: 10,
-        barThickness: 32,
-      },
-      {
-        label: awayTeam.value.name,
-        data: [match.value.possessionAway, match.value.shotsAway, match.value.foulsAway],
-        backgroundColor: '#38bdf8',
-        borderRadius: 10,
-        barThickness: 32,
-      },
-    ],
-  }
-})
-
-const statsChartOptions = computed<ChartOptions<'bar'>>(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'bottom',
-      labels: {
-        usePointStyle: true,
-        pointStyle: 'circle',
-      },
-    },
-  },
-  scales: {
-    x: {
-      grid: {
-        display: false,
-      },
-      ticks: {
-        color: '#0f172a',
-        font: {
-          family: '"Space Grotesk", "Inter", sans-serif',
-        },
-      },
-    },
-    y: {
-      beginAtZero: true,
-      grid: {
-        color: 'rgba(148, 163, 184, 0.3)',
-        drawTicks: false,
-      },
-      ticks: {
-        color: '#475569',
-        precision: 0,
-      },
-    },
-  },
-}))
-
 const heroHighlights = computed(() => {
   const possession = statComparisons.value.find((stat) => stat.id === 'possession')
   const shots = statComparisons.value.find((stat) => stat.id === 'shots')
@@ -189,6 +123,18 @@ const heroHighlights = computed(() => {
     { label: 'Possession', value: possessionCopy, tone: 'emerald' as const },
     { label: 'Intensity', value: intensityCopy, tone: 'sky' as const },
   ]
+})
+
+const comparisonChartInput = computed<ComparisonChartInput | null>(() => {
+  if (match.value === undefined || homeTeam.value === undefined || awayTeam.value === undefined) {
+    return null
+  }
+
+  return {
+    match: match.value,
+    homeTeamName: homeTeam.value.name,
+    awayTeamName: awayTeam.value.name,
+  }
 })
 
 watch(
@@ -224,11 +170,11 @@ watch(
 
     <div class="grid gap-6 lg:grid-cols-3">
       <div class="lg:col-span-2">
-        <BarChart
-          :height="320"
-          :data="statsChartData"
-          :options="statsChartOptions"
-          title="Home vs Away Metrics"
+        <MatchComparisonChart
+          v-if="comparisonChartInput"
+          :match="comparisonChartInput.match"
+          :home-team-name="comparisonChartInput.homeTeamName"
+          :away-team-name="comparisonChartInput.awayTeamName"
         />
       </div>
       <MatchStatsSummaryCard :stat-comparisons="statComparisons" />

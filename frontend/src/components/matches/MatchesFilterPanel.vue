@@ -1,24 +1,18 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import SelectFilter from '@/components/filters/SelectFilter.vue'
-
 interface OptionItem {
-  value: string | number
+  value: string
   label: string
 }
 
 const props = defineProps<{
-  modelValue: string | number
+  modelValue: string
   options: OptionItem[]
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | number): void
+  (e: 'update:modelValue', value: string): void
 }>()
-
-function handleUpdate(value: string | number): void {
-  emit('update:modelValue', value)
-}
 </script>
 
 <template>
@@ -29,13 +23,18 @@ function handleUpdate(value: string | number): void {
       <p>Compare league-wide momentum or zoom into one team to inspect their match streak.</p>
     </div>
     <div class="filter-panel__control">
-      <SelectFilter
-        :model-value="props.modelValue"
-        label="Team"
-        :options="props.options"
-        placeholder="All teams"
-        @update:model-value="handleUpdate"
-      />
+      <label class="team-filter">
+        <span>Team</span>
+        <select
+          :value="props.modelValue"
+          @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
+        >
+          <option value="">All teams</option>
+          <option v-for="option in props.options" :key="option.value" :value="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </label>
     </div>
   </div>
 </template>
@@ -89,5 +88,29 @@ function handleUpdate(value: string | number): void {
 .filter-panel__control {
   width: 100%;
   max-width: 16rem;
+}
+
+.team-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.team-filter span {
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.team-filter select {
+  border-radius: 1rem;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  background: #fff;
+  color: #0f172a;
+  padding: 0.75rem 1rem;
+  outline: none;
+  width: 100%;
 }
 </style>
