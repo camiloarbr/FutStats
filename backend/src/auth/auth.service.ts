@@ -6,8 +6,10 @@ import * as bcrypt from 'bcryptjs';
 
 // 2. Internal imports
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import type { AuthResponseInterface } from './interfaces/auth-response.interface';
 import type { JwtPayloadInterface } from './interfaces/jwt-payload.interface';
+import type { UserEntity } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -31,6 +33,20 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password.');
     }
 
+    return this.buildAuthResponse(user);
+  }
+
+  async register(registerDto: RegisterDto): Promise<AuthResponseInterface> {
+    const user = await this.usersService.create(
+      registerDto.username,
+      registerDto.email,
+      registerDto.password,
+    );
+
+    return this.buildAuthResponse(user);
+  }
+
+  private async buildAuthResponse(user: UserEntity): Promise<AuthResponseInterface> {
     const payload: JwtPayloadInterface = {
       sub: user.id,
       email: user.email,
