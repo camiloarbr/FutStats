@@ -1,15 +1,16 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-// 1. External imports
 import { computed, ref, watch } from 'vue'
 
-// 2. Internal imports
-import MatchFormCard from '@/components/matches/MatchFormCard.vue'
-import type { CreateMatchDTO } from '@/dtos/MatchDTO'
-import type { MatchInterface } from '@/interfaces/MatchInterface'
-import type { TeamInterface } from '@/interfaces/TeamInterface'
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
+
+import MatchFormCard from '@/components/matches/MatchFormCard.vue'
+
+import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
+import type { MatchInterface } from '@/interfaces/MatchInterface'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
+
 import { Formatters } from '@/utils/Formatters'
 
 type MatchesAccordionSection = 'matchesCreate' | 'matchesEdit'
@@ -175,33 +176,50 @@ function handleMatchDelete(): void {
 
 <template>
   <section class="space-y-8">
-    <header class="hero">
+    <header
+      class="rounded-[1.75rem] bg-gradient-to-br from-[#0f172a] via-[#1d4ed8] to-[#22d3ee] p-8 text-white shadow-[0_35px_80px_rgba(15,23,42,0.35)]"
+    >
       <div>
-        <p class="hero-chip">Admin Center</p>
-        <h1>Matches Administration</h1>
-        <p>Create, update, and remove matches while preserving team pair integrity.</p>
+        <p class="text-[0.7rem] font-bold uppercase tracking-[0.35em] text-white/70">
+          Admin Center
+        </p>
+        <h1 class="text-[clamp(2rem,4vw,2.8rem)] font-extrabold">Matches Administration</h1>
+        <p class="max-w-[32rem] text-white/90">
+          Create, update, and remove matches while preserving team pair integrity.
+        </p>
       </div>
     </header>
 
-    <div class="accordion-group">
-      <article class="accordion">
+    <div class="flex flex-col gap-4">
+      <article
+        class="rounded-[1.5rem] border border-slate-900/[0.08] bg-white shadow-[0_25px_70px_rgba(15,23,42,0.08)]"
+      >
         <button
           type="button"
-          class="accordion__trigger"
+          class="flex w-full cursor-pointer items-center justify-between border-none bg-transparent px-6 py-5 text-left"
           :aria-expanded="isSectionOpen('matchesCreate')"
           @click="toggleSection('matchesCreate')"
         >
           <div>
-            <p>Matches</p>
-            <h3>Register new match</h3>
+            <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Matches</p>
+            <h3 class="text-[1.3rem] font-bold text-slate-900">Register new match</h3>
           </div>
-          <span :class="['chevron', { 'chevron--open': isSectionOpen('matchesCreate') }]">
+          <span
+            class="rounded-full border border-slate-900/10 px-[0.65rem] py-[0.4rem] transition-transform duration-200"
+            :class="{ 'rotate-180': isSectionOpen('matchesCreate') }"
+          >
             <i class="fa-solid fa-chevron-down"></i>
           </span>
         </button>
 
-        <div v-show="isSectionOpen('matchesCreate')" class="accordion__panel">
-          <div v-if="teams.length < 2" class="warning">
+        <div
+          v-show="isSectionOpen('matchesCreate')"
+          class="flex flex-col gap-4 border-t border-slate-200/70 p-6"
+        >
+          <div
+            v-if="teams.length < 2"
+            class="rounded-[1.25rem] border border-dashed border-amber-500/60 bg-amber-400/20 p-4 px-5 text-amber-900"
+          >
             Register at least two teams before creating a match. Head over to Teams to add the
             missing clubs.
           </div>
@@ -212,44 +230,70 @@ function handleMatchDelete(): void {
             :teams="teams"
             @submit="handleMatchCreate"
           />
-          <p v-if="matchCreateFeedback === 'success'" class="success-banner">
+          <p
+            v-if="matchCreateFeedback === 'success'"
+            class="rounded-full bg-emerald-500/15 px-5 py-[0.65rem] text-center font-semibold text-emerald-800"
+          >
             Match stored successfully. Review it later inside Matches view.
           </p>
-          <p v-else-if="matchCreateFeedback === 'error'" class="error-banner">
+          <p
+            v-else-if="matchCreateFeedback === 'error'"
+            class="rounded-full bg-red-400/10 px-5 py-[0.65rem] text-center font-semibold text-red-700"
+          >
             Something went wrong while saving. Please try again.
           </p>
         </div>
       </article>
 
-      <article class="accordion">
+      <article
+        class="rounded-[1.5rem] border border-slate-900/[0.08] bg-white shadow-[0_25px_70px_rgba(15,23,42,0.08)]"
+      >
         <button
           type="button"
-          class="accordion__trigger"
+          class="flex w-full cursor-pointer items-center justify-between border-none bg-transparent px-6 py-5 text-left"
           :aria-expanded="isSectionOpen('matchesEdit')"
           @click="toggleSection('matchesEdit')"
         >
           <div>
-            <p>Matches</p>
-            <h3>Edit or delete match</h3>
+            <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Matches</p>
+            <h3 class="text-[1.3rem] font-bold text-slate-900">Edit or delete match</h3>
           </div>
-          <span :class="['chevron', { 'chevron--open': isSectionOpen('matchesEdit') }]">
+          <span
+            class="rounded-full border border-slate-900/10 px-[0.65rem] py-[0.4rem] transition-transform duration-200"
+            :class="{ 'rotate-180': isSectionOpen('matchesEdit') }"
+          >
             <i class="fa-solid fa-chevron-down"></i>
           </span>
         </button>
 
-        <div v-show="isSectionOpen('matchesEdit')" class="accordion__panel">
-          <div v-if="matches.length === 0" class="warning">
+        <div
+          v-show="isSectionOpen('matchesEdit')"
+          class="flex flex-col gap-4 border-t border-slate-200/70 p-6"
+        >
+          <div
+            v-if="matches.length === 0"
+            class="rounded-[1.25rem] border border-dashed border-amber-500/60 bg-amber-400/20 p-4 px-5 text-amber-900"
+          >
             No matches exist yet. Create one to unlock editing tools.
           </div>
-          <div v-else class="selector">
-            <label for="match-select">Select a match</label>
-            <select id="match-select" v-model="selectedMatchId">
+          <div v-else class="flex flex-col gap-2">
+            <label for="match-select" class="text-sm font-semibold text-slate-900">
+              Select a match
+            </label>
+            <select
+              id="match-select"
+              v-model="selectedMatchId"
+              class="rounded-2xl border border-slate-300/60 px-[0.9rem] py-[0.6rem] font-medium text-slate-900"
+            >
               <option v-for="option in matchOptions" :key="option.value" :value="option.value">
                 {{ option.label }}
               </option>
             </select>
           </div>
-          <div v-if="teams.length < 2" class="warning">
+          <div
+            v-if="teams.length < 2"
+            class="rounded-[1.25rem] border border-dashed border-amber-500/60 bg-amber-400/20 p-4 px-5 text-amber-900"
+          >
             You need at least two active teams before editing match data.
           </div>
           <MatchFormCard
@@ -261,10 +305,16 @@ function handleMatchDelete(): void {
             @submit="handleMatchUpdate"
             @delete="handleMatchDelete"
           />
-          <p v-if="matchEditFeedback === 'success'" class="success-banner">
+          <p
+            v-if="matchEditFeedback === 'success'"
+            class="rounded-full bg-emerald-500/15 px-5 py-[0.65rem] text-center font-semibold text-emerald-800"
+          >
             Changes applied to the selected match.
           </p>
-          <p v-else-if="matchEditFeedback === 'error'" class="error-banner">
+          <p
+            v-else-if="matchEditFeedback === 'error'"
+            class="rounded-full bg-red-400/10 px-5 py-[0.65rem] text-center font-semibold text-red-700"
+          >
             Unable to process that action. Double-check the current selection.
           </p>
         </div>
@@ -272,134 +322,3 @@ function handleMatchDelete(): void {
     </div>
   </section>
 </template>
-
-<style scoped>
-.hero {
-  border-radius: 1.75rem;
-  background: linear-gradient(120deg, #0f172a, #1d4ed8, #22d3ee);
-  padding: 2rem;
-  color: #fff;
-  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.35);
-}
-
-.hero-chip {
-  text-transform: uppercase;
-  letter-spacing: 0.35em;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.hero h1 {
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 800;
-}
-
-.hero p {
-  color: rgba(255, 255, 255, 0.9);
-  max-width: 32rem;
-}
-
-.accordion-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.accordion {
-  border-radius: 1.5rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: #fff;
-  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.08);
-}
-
-.accordion__trigger {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1.5rem;
-  border: none;
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-}
-
-.accordion__trigger p {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: #64748b;
-}
-
-.accordion__trigger h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.chevron {
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  padding: 0.4rem 0.65rem;
-  transition: transform 0.2s ease;
-}
-
-.chevron--open {
-  transform: rotate(180deg);
-}
-
-.accordion__panel {
-  border-top: 1px solid rgba(226, 232, 240, 0.7);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.selector {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.selector label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.selector select {
-  border-radius: 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  padding: 0.6rem 0.9rem;
-  font-weight: 500;
-  color: #0f172a;
-}
-
-.warning {
-  border-radius: 1.25rem;
-  border: 1px dashed rgba(245, 158, 11, 0.6);
-  background: rgba(251, 191, 36, 0.2);
-  color: #92400e;
-  padding: 1rem 1.25rem;
-}
-
-.success-banner,
-.error-banner {
-  border-radius: 999px;
-  padding: 0.65rem 1.25rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-.success-banner {
-  background: rgba(16, 185, 129, 0.15);
-  color: #047857;
-}
-
-.error-banner {
-  background: rgba(248, 113, 113, 0.1);
-  color: #b91c1c;
-}
-</style>

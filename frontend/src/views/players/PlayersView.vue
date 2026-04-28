@@ -83,23 +83,31 @@ const totalPlayersCopy = computed(() =>
 
 <template>
   <section class="space-y-10">
-    <header class="players-hero">
+    <header
+      class="flex flex-col gap-6 rounded-[2rem] bg-gradient-to-br from-[#0f172a] via-[#1d4ed8] to-[#22d3ee] p-8 text-white shadow-[0_35px_80px_rgba(15,23,42,0.35)] md:flex-row md:items-center md:justify-between"
+    >
       <div>
-        <p class="hero-chip">Player Intelligence</p>
-        <h1>Players Overview</h1>
-        <p>
+        <p class="text-[0.75rem] font-bold uppercase tracking-[0.35em] text-white/75">
+          Player Intelligence
+        </p>
+        <h1 class="mt-[0.25rem] text-[clamp(2rem,4vw,2.75rem)] font-extrabold">
+          Players Overview
+        </h1>
+        <p class="max-w-[32rem] text-white/90">
           Audit every squad member with live filters, sortable tables, and immediate insight into
           who is producing the most end product.
         </p>
       </div>
-      <div class="hero-metrics">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
         <div>
-          <span>Roster</span>
-          <strong>{{ totalPlayersCopy }}</strong>
+          <span class="text-[0.75rem] uppercase tracking-[0.2em] text-white/70">Roster</span>
+          <strong class="block text-[1.65rem] font-extrabold">{{ totalPlayersCopy }}</strong>
         </div>
         <div>
-          <span>Teams tracked</span>
-          <strong>{{ teams.length }}</strong>
+          <span class="text-[0.75rem] uppercase tracking-[0.2em] text-white/70"
+            >Teams tracked</span
+          >
+          <strong class="block text-[1.65rem] font-extrabold">{{ teams.length }}</strong>
         </div>
       </div>
     </header>
@@ -114,7 +122,7 @@ const totalPlayersCopy = computed(() =>
 
       <PlayerTopScorersChart :players="filteredPlayers" />
 
-      <div class="table-card">
+      <div class="rounded-[1.75rem] bg-white p-4 shadow-[0_35px_80px_rgba(15,23,42,0.12)]">
         <PlayersTable
           :players="filteredPlayers"
           :team-names="teamNameMap"
@@ -124,69 +132,3 @@ const totalPlayersCopy = computed(() =>
     </div>
   </section>
 </template>
-
-<style scoped>
-.players-hero {
-  border-radius: 2rem;
-  background: linear-gradient(130deg, #0f172a, #1d4ed8, #22d3ee);
-  color: #fff;
-  padding: 2rem;
-  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.35);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .players-hero {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.hero-chip {
-  font-size: 0.75rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.players-hero h1 {
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 800;
-  margin-top: 0.25rem;
-}
-
-.players-hero p {
-  color: rgba(255, 255, 255, 0.9);
-  max-width: 32rem;
-}
-
-.hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-}
-
-.hero-metrics span {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.hero-metrics strong {
-  display: block;
-  font-size: 1.65rem;
-  font-weight: 800;
-}
-
-.table-card {
-  border-radius: 1.75rem;
-  background: #fff;
-  padding: 1rem;
-  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.12);
-}
-</style>
