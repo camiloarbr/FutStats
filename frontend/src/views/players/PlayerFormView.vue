@@ -1,16 +1,16 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+// 2. Internal imports
 import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
-
-import { PlayerService } from '@/services/PlayerService'
-import { TeamService } from '@/services/TeamService'
-
-import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+import type { CreatePlayerDTO } from '@/dtos/PlayerDTO'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
 
 const route = useRoute()
 const router = useRouter()
@@ -65,22 +65,22 @@ watch(
   { immediate: true }
 )
 
-function handleSubmit(payload: CreatePlayerDTO): void {
+async function handleSubmit(payload: CreatePlayerDTO): Promise<void> {
   if (mode.value === 'create') {
-    PlayerService.create(payload)
+    await PlayerService.create(payload)
   } else if (playerId.value && !Number.isNaN(playerId.value)) {
-    PlayerService.update(playerId.value, payload)
+    await PlayerService.update(playerId.value, payload)
   }
 
-  router.push({ name: 'players.index' })
+  await router.push({ name: 'players.index' })
 }
 
-function handleDelete(): void {
+async function handleDelete(): Promise<void> {
   if (mode.value === 'edit' && playerId.value && !Number.isNaN(playerId.value)) {
-    PlayerService.delete(playerId.value)
+    await PlayerService.delete(playerId.value)
   }
 
-  router.push({ name: 'players.index' })
+  await router.push({ name: 'players.index' })
 }
 
 const showTeamsWarning = computed(() => teams.value.length === 0)

@@ -1,28 +1,50 @@
 // @author: Samuel | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+// 2. Internal imports
 import { AuthService } from '@/services/AuthService'
+
+type FormMode = 'login' | 'register'
 
 const router = useRouter()
 
+const mode: Ref<FormMode> = ref('login')
+const username: Ref<string> = ref('')
 const email: Ref<string> = ref('')
 const password: Ref<string> = ref('')
 const error: Ref<string | null> = ref(null)
 const isSubmitting: Ref<boolean> = ref(false)
 const showPassword: Ref<boolean> = ref(false)
 
+function switchMode(next: FormMode): void {
+  mode.value = next
+  error.value = null
+  username.value = ''
+  email.value = ''
+  password.value = ''
+}
+
 async function handleSubmit(): Promise<void> {
   error.value = null
   isSubmitting.value = true
 
   try {
-    const isAuthenticated = AuthService.login(email.value, password.value)
-
-    if (!isAuthenticated) {
-      error.value = 'Invalid email or password'
-      return
+    if (mode.value === 'login') {
+      const ok = await AuthService.login(email.value, password.value)
+      if (!ok) {
+        error.value = 'Invalid email or password'
+        return
+      }
+    } else {
+      try {
+        await AuthService.register(username.value, email.value, password.value)
+      } catch (err: unknown) {
+        error.value = err instanceof Error ? err.message : 'Registration failed. Please try again.'
+        return
+      }
     }
 
     await router.push({ name: 'home' })
@@ -126,14 +148,43 @@ async function handleSubmit(): Promise<void> {
 
           <div class="mb-10">
             <h3 class="text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Welcome Back
+              {{ mode === 'login' ? 'Welcome Back' : 'Create Account' }}
             </h3>
             <p class="mt-3 text-lg text-slate-500 dark:text-slate-400">
-              Enter your credentials to access the data suite
+              {{
+                mode === 'login'
+                  ? 'Enter your credentials to access the data suite'
+                  : 'Register to start tracking football stats'
+              }}
             </p>
           </div>
 
           <form class="space-y-7" @submit.prevent="handleSubmit">
+            <div v-if="mode === 'register'">
+              <label
+                for="username"
+                class="mb-3 block text-base font-semibold text-slate-700 dark:text-slate-300"
+              >
+                Username
+              </label>
+              <div class="relative">
+                <span
+                  class="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-lg text-slate-400"
+                >
+                  👤
+                </span>
+                <input
+                  id="username"
+                  v-model="username"
+                  type="text"
+                  required
+                  autocomplete="username"
+                  placeholder="Your name"
+                  class="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-14 pr-5 text-lg text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+            </div>
+
             <div>
               <label
                 for="email"
@@ -141,14 +192,12 @@ async function handleSubmit(): Promise<void> {
               >
                 Email
               </label>
-
               <div class="relative">
                 <span
                   class="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-lg text-slate-400"
                 >
                   @
                 </span>
-
                 <input
                   id="email"
                   v-model="email"
@@ -168,24 +217,21 @@ async function handleSubmit(): Promise<void> {
               >
                 Password
               </label>
-
               <div class="relative">
                 <span
                   class="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-lg text-slate-400"
                 >
                   •
                 </span>
-
                 <input
                   id="password"
                   v-model="password"
                   :type="showPassword ? 'text' : 'password'"
                   required
-                  autocomplete="current-password"
+                  :autocomplete="mode === 'login' ? 'current-password' : 'new-password'"
                   placeholder="••••••••"
                   class="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-14 pr-20 text-lg text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 />
-
                 <button
                   type="button"
                   class="absolute right-5 top-1/2 -translate-y-1/2 text-base font-medium text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-200"
@@ -208,14 +254,31 @@ async function handleSubmit(): Promise<void> {
               :disabled="isSubmitting"
               class="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-lg font-bold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <span>{{ isSubmitting ? 'Signing In...' : 'Sign In to Dashboard' }}</span>
+              <span>{{
+                isSubmitting
+                  ? mode === 'login'
+                    ? 'Signing In...'
+                    : 'Creating Account...'
+                  : mode === 'login'
+                    ? 'Sign In to Dashboard'
+                    : 'Create Account'
+              }}</span>
               <span aria-hidden="true">→</span>
             </button>
           </form>
 
           <div class="mt-10 text-center">
             <p class="text-base text-slate-500 dark:text-slate-400">
-              Use your registered FutStats credentials to continue
+              {{
+                mode === 'login' ? "Don't have an account?" : 'Already have an account?'
+              }}
+              <button
+                type="button"
+                class="ml-1 font-semibold text-blue-600 transition hover:text-blue-700 dark:text-blue-400"
+                @click="switchMode(mode === 'login' ? 'register' : 'login')"
+              >
+                {{ mode === 'login' ? 'Sign up' : 'Sign in' }}
+              </button>
             </p>
           </div>
         </div>

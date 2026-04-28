@@ -1,14 +1,14 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+// 2. Internal imports
 import TeamFormCard from '@/components/teams/TeamFormCard.vue'
-
-import { TeamService } from '@/services/TeamService'
-
-import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
+import type { CreateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { TeamService } from '@/services/TeamService'
 
 const route = useRoute()
 const router = useRouter()
@@ -61,22 +61,22 @@ watch(
   { immediate: true }
 )
 
-function handleSubmit(payload: CreateTeamDTO): void {
+async function handleSubmit(payload: CreateTeamDTO): Promise<void> {
   if (mode.value === 'create') {
-    TeamService.create(payload)
+    await TeamService.create(payload)
   } else if (teamId.value && !Number.isNaN(teamId.value)) {
-    TeamService.update(teamId.value, payload)
+    await TeamService.update(teamId.value, payload)
   }
 
-  router.push({ name: 'teams.index' })
+  await router.push({ name: 'teams.index' })
 }
 
-function handleDelete(): void {
+async function handleDelete(): Promise<void> {
   if (mode.value === 'edit' && teamId.value && !Number.isNaN(teamId.value)) {
-    TeamService.delete(teamId.value)
+    await TeamService.delete(teamId.value)
   }
 
-  router.push({ name: 'teams.index' })
+  await router.push({ name: 'teams.index' })
 }
 </script>
 

@@ -1,18 +1,16 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
 
-import BarChart from '@/components/charts/BarChart.vue'
-
-import { PlayerService } from '@/services/PlayerService'
-import { TeamService } from '@/services/TeamService'
-
-import { Formatters } from '@/utils/Formatters'
-
+// 2. Internal imports
+import PlayerPerformanceChart from '@/components/players/PlayerPerformanceChart.vue'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
+import { Formatters } from '@/utils/Formatters'
 
 const route = useRoute()
 const router = useRouter()
@@ -84,47 +82,6 @@ const extendedStats = computed(() => {
   ]
 })
 
-const performanceChartData = computed<ChartData<'bar'>>(() => {
-  if (!player.value) {
-    return { labels: [], datasets: [] }
-  }
-
-  return {
-    labels: ['Goals', 'Assists', 'Shots', 'Passes'],
-    datasets: [
-      {
-        label: player.value.fullName,
-        data: [player.value.goals, player.value.assists, player.value.shots, player.value.passes],
-        backgroundColor: ['#2563eb', '#22d3ee', '#0ea5e9', '#38bdf8'],
-        borderRadius: 12,
-        borderSkipped: false,
-      },
-    ],
-  }
-})
-
-const performanceChartOptions = computed<ChartOptions<'bar'>>(() => ({
-  maintainAspectRatio: false,
-  responsive: true,
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      callbacks: {
-        label(context: TooltipItem<'bar'>) {
-          const value = context.parsed.y ?? 0
-          return Formatters.formatChartTooltip(value, context.label.toLowerCase())
-        },
-      },
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: { precision: 0 },
-    },
-  },
-}))
-
 watch(
   () => ({ player: player.value, ready: playersReady.value }),
   ({ player: currentPlayer, ready }) => {
@@ -145,223 +102,81 @@ watch(
 
 <template>
   <section v-if="player" class="space-y-8">
-    <article class="player-hero">
-      <div class="player-hero__content">
-        <p class="hero-chip">Player Profile</p>
-        <h1>{{ player.fullName }}</h1>
-        <p>{{ player.position }} • {{ player.nationality }} • Shirt #{{ player.shirtNumber }}</p>
-        <div class="player-meta">
-          <span>Team</span>
-          <strong>{{ team?.name ?? 'Free Agent' }}</strong>
+    <article
+      class="flex flex-col gap-6 rounded-[2rem] bg-gradient-to-br from-[#0f172a] via-[#1d4ed8] to-[#22d3ee] p-8 text-white shadow-[0_35px_80px_rgba(15,23,42,0.35)] md:flex-row md:items-center md:justify-between"
+    >
+      <div>
+        <p class="text-[0.75rem] font-bold uppercase tracking-[0.35em] text-white/70">
+          Player Profile
+        </p>
+        <h1 class="mt-[0.25rem] text-[clamp(2rem,4vw,3rem)] font-extrabold">
+          {{ player.fullName }}
+        </h1>
+        <p class="text-white/90">
+          {{ player.position }} • {{ player.nationality }} • Shirt #{{ player.shirtNumber }}
+        </p>
+        <div
+          class="mt-4 flex flex-col gap-[0.35rem] text-[0.75rem] uppercase tracking-[0.25em]"
+        >
+          <span class="text-white/70">Team</span>
+          <strong class="text-[1.4rem] font-extrabold normal-case tracking-normal">{{
+            team?.name ?? 'Free Agent'
+          }}</strong>
         </div>
       </div>
-      <div class="player-hero__image">
-        <img :src="playerImage" :alt="`${player.fullName} portrait`" />
+      <div
+        class="mx-auto max-w-[320px] overflow-hidden rounded-3xl border border-white/40"
+      >
+        <img
+          :src="playerImage"
+          :alt="`${player.fullName} portrait`"
+          class="block w-full object-cover"
+        />
       </div>
     </article>
 
-    <div class="stat-grid">
-      <div v-for="stat in spotlightStats" :key="stat.id" class="stat-card">
-        <div class="stat-card__bg" :class="[`bg-gradient-to-br`, stat.accent]"></div>
-        <div class="stat-card__content">
-          <p>{{ stat.label }}</p>
-          <strong>{{ stat.value }}</strong>
-          <span>{{ stat.helper }}</span>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-5">
+      <div
+        v-for="stat in spotlightStats"
+        :key="stat.id"
+        class="relative overflow-hidden rounded-3xl p-6 text-white shadow-[0_20px_60px_rgba(15,23,42,0.2)]"
+      >
+        <div
+          class="absolute inset-0 opacity-85 bg-gradient-to-br"
+          :class="stat.accent"
+        ></div>
+        <div class="relative flex flex-col gap-[0.2rem]">
+          <p class="text-[0.75rem] uppercase tracking-[0.3em] text-white/85">{{ stat.label }}</p>
+          <strong class="text-[2rem] font-extrabold">{{ stat.value }}</strong>
+          <span class="text-white/90">{{ stat.helper }}</span>
         </div>
       </div>
     </div>
 
-    <div class="detail-grid">
-      <BarChart
-        :data="performanceChartData"
-        :options="performanceChartOptions"
-        :height="320"
-        title="Attacking Output"
-      />
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
+      <PlayerPerformanceChart :player="player" />
 
-      <div class="metrics-card">
-        <h3>Match Impact</h3>
-        <dl>
-          <div v-for="metric in extendedStats" :key="metric.id" class="metric-row">
-            <dt>{{ metric.label }}</dt>
-            <dd>{{ metric.value }}</dd>
+      <div
+        class="rounded-3xl border border-slate-900/[0.07] bg-white p-7 shadow-[0_30px_70px_rgba(15,23,42,0.08)]"
+      >
+        <h3 class="mb-5 text-[1.1rem] font-bold">Match Impact</h3>
+        <dl class="flex flex-col gap-4">
+          <div
+            v-for="metric in extendedStats"
+            :key="metric.id"
+            class="flex items-center justify-between border-b border-slate-300/30 pb-3 last:border-b-0 last:pb-0"
+          >
+            <dt class="text-[0.9rem] text-slate-500">{{ metric.label }}</dt>
+            <dd class="text-[1.2rem] font-bold text-slate-900">{{ metric.value }}</dd>
           </div>
         </dl>
       </div>
     </div>
   </section>
-  <section v-else class="missing-player">
+  <section
+    v-else
+    class="rounded-3xl border border-dashed border-slate-300/50 p-8 text-center text-slate-500"
+  >
     <p>Loading player data...</p>
   </section>
 </template>
-
-<style scoped>
-.player-hero {
-  border-radius: 2rem;
-  padding: 2rem;
-  background: linear-gradient(120deg, #0f172a, #1d4ed8, #22d3ee);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.35);
-}
-
-@media (min-width: 768px) {
-  .player-hero {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.hero-chip {
-  font-size: 0.75rem;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.player-hero h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
-  margin-top: 0.25rem;
-}
-
-.player-hero p {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.player-meta {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  font-size: 0.75rem;
-}
-
-.player-meta strong {
-  font-size: 1.4rem;
-  letter-spacing: normal;
-  text-transform: none;
-}
-
-.player-hero__image {
-  border-radius: 1.5rem;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  max-width: 320px;
-  margin: 0 auto;
-}
-
-.player-hero__image img {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.25rem;
-}
-
-.stat-card {
-  position: relative;
-  border-radius: 1.5rem;
-  padding: 1.5rem;
-  overflow: hidden;
-  color: #fff;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
-}
-
-.stat-card__bg {
-  position: absolute;
-  inset: 0;
-  opacity: 0.85;
-}
-
-.stat-card__content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.stat-card__content p {
-  font-size: 0.75rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.stat-card__content strong {
-  font-size: 2rem;
-  font-weight: 800;
-}
-
-.stat-card__content span {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.metrics-card {
-  border-radius: 1.5rem;
-  border: 1px solid rgba(15, 23, 42, 0.07);
-  background: #fff;
-  padding: 1.75rem;
-  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.08);
-}
-
-.metrics-card h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 1.25rem;
-}
-
-.metrics-card dl {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.metric-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
-  padding-bottom: 0.75rem;
-}
-
-.metric-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.metric-row dt {
-  font-size: 0.9rem;
-  color: #475569;
-}
-
-.metric-row dd {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.missing-player {
-  border-radius: 1.5rem;
-  padding: 2rem;
-  border: 1px dashed rgba(148, 163, 184, 0.5);
-  text-align: center;
-  color: #475569;
-}
-</style>

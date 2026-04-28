@@ -1,36 +1,27 @@
 // @author: Camilo | FutStats
-import '@/assets/css/input.css'
-import { createApp, watch } from 'vue'
-import { createPinia } from 'pinia'
+// 1. External imports
+import { createApp } from 'vue'
+
+// 2. Internal imports
 import App from '@/App.vue'
+import '@/assets/css/input.css'
 import router from '@/router'
-import { LocalStorageUtils } from '@/utils/LocalStorageUtils'
+import { AuthService } from '@/services/AuthService'
+import { FutStatsDataService } from '@/services/FutStatsDataService'
+import { createPiniaConfig } from '@/stores/piniaConfig'
 
 const app = createApp(App)
-const pinia = createPinia()
+const pinia = createPiniaConfig()
 
 app.use(pinia)
 
-let persistedPiniaState = LocalStorageUtils.loadPiniaState()
+AuthService.restoreSession()
 
-// Fallback: if piniaState doesn't exist, try to load from legacy individual keys
-if (persistedPiniaState === null) {
-  persistedPiniaState = LocalStorageUtils.loadLegacyState()
+try {
+  await FutStatsDataService.loadInitialData()
+} catch (error) {
+  console.error('Unable to load FutStats data from the back-end.', error)
 }
-
-if (persistedPiniaState !== null) {
-  pinia.state.value = persistedPiniaState
-}
-
-LocalStorageUtils.seed()
-
-watch(
-  pinia.state,
-  (state) => {
-    LocalStorageUtils.savePiniaState(state)
-  },
-  { deep: true }
-)
 
 app.use(router)
 app.mount('#app')

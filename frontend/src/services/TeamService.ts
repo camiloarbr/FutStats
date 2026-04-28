@@ -1,10 +1,26 @@
 // @author: Samuel | FutStats
-import { useTeamsStore } from '@/stores/useTeamsStore'
+// 1. External imports
+
+// 2. Internal imports
+import type { CreateTeamDTO, UpdateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
-import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
-import type { TeamPerformanceRow } from '@/interfaces/DashboardInterface'
+import { apiClient } from '@/services/ApiClient'
+import { MatchService } from '@/services/MatchService'
+import { PlayerService } from '@/services/PlayerService'
+import { useTeamsStore } from '@/stores/useTeamsStore'
+
+interface DeleteResponse {
+  deleted: boolean
+}
 
 export class TeamService {
+  static async loadAll(): Promise<TeamInterface[]> {
+    const response = await apiClient.get<TeamInterface[]>('/teams')
+    const teamsStore = useTeamsStore()
+    teamsStore.setTeams(response.data)
+    return response.data
+  }
+
   static getAll(): TeamInterface[] {
     const teamsStore = useTeamsStore()
     return teamsStore.teams
@@ -14,39 +30,18 @@ export class TeamService {
     return this.getAll().find((team: TeamInterface) => team.id === id)
   }
 
-  static create(dto: CreateTeamDTO): TeamInterface {
+  static async create(dto: CreateTeamDTO): Promise<TeamInterface> {
     const teamsStore = useTeamsStore()
-
-    const nextId =
-      teamsStore.teams.length > 0
-        ? Math.max(...teamsStore.teams.map((team: TeamInterface) => team.id)) + 1
-        : 1
-
-    const newTeam: TeamInterface = {
-      id: nextId,
-      ...dto,
-    }
-
+    const response = await apiClient.post<TeamInterface>('/teams', dto)
+    const newTeam = response.data
     teamsStore.setTeams([...teamsStore.teams, newTeam])
-
     return newTeam
   }
 
-  static update(id: number, dto: CreateTeamDTO): TeamInterface | undefined {
+  static async update(id: number, dto: UpdateTeamDTO): Promise<TeamInterface | undefined> {
     const teamsStore = useTeamsStore()
-
-    const existingTeam = teamsStore.teams.find((team: TeamInterface) => team.id === id)
-
-    if (!existingTeam) {
-      return undefined
-    }
-
-    const updatedTeam: TeamInterface = {
-      ...existingTeam,
-      ...dto,
-      id,
-    }
-
+    const response = await apiClient.patch<TeamInterface>(`/teams/${id}`, dto)
+    const updatedTeam = response.data
     const updatedTeams: TeamInterface[] = teamsStore.teams.map((team: TeamInterface) =>
       team.id === id ? updatedTeam : team
     )
@@ -56,49 +51,15 @@ export class TeamService {
     return updatedTeam
   }
 
-  static delete(id: number): boolean {
+  static async delete(id: number): Promise<boolean> {
     const teamsStore = useTeamsStore()
-
-    const teamExists = teamsStore.teams.some((team: TeamInterface) => team.id === id)
-
-    if (!teamExists) {
-      return false
-    }
-
+    const response = await apiClient.delete<DeleteResponse>(`/teams/${id}`)
     const filteredTeams: TeamInterface[] = teamsStore.teams.filter(
       (team: TeamInterface) => team.id !== id
     )
 
     teamsStore.setTeams(filteredTeams)
-
-    return true
-  }
-
-  static getTeamPerformance(): TeamPerformanceRow[] {
-    const sortedTeams = [...this.getAll()]
-      .sort((firstTeam, secondTeam) => secondTeam.goalsFor - firstTeam.goalsFor)
-      .slice(0, 6)
-
-    const highestGoals = sortedTeams[0]?.goalsFor ?? 1
-
-    const barClasses: string[] = [
-      'bg-[#1b69ff]',
-      'bg-[#3d82ff]',
-      'bg-[#5b96ff]',
-      'bg-[#7baeff]',
-      'bg-[#9ac4ff]',
-      'bg-[#bfdcff]',
-    ]
-
-    return sortedTeams.map((team, index) => {
-      const resolvedClass = barClasses[index] ?? 'bg-[#1b69ff]'
-
-      return {
-        name: team.name,
-        goals: team.goalsFor,
-        width: Math.max(12, Math.round((team.goalsFor / highestGoals) * 100)),
-        barClass: resolvedClass,
-      }
-    })
+    await Promise.all([PlayerService.loadAll(), MatchService.loadAll()])
+    return response.data.deleted
   }
 }

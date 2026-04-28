@@ -1,10 +1,13 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
+import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend } from 'chart.js'
+import type { ChartData, ChartOptions } from 'chart.js'
 import { computed } from 'vue'
 import type { CSSProperties } from 'vue'
-import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend } from 'chart.js'
 import { Doughnut } from 'vue-chartjs'
-import type { ChartData, ChartOptions } from 'chart.js'
+
+// 2. Internal imports
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend)
 

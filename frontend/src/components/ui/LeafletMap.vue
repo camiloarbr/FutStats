@@ -1,11 +1,14 @@
 // @author: Camilo | FutStats
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch, ref } from 'vue'
+// 1. External imports
 import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import 'leaflet/dist/leaflet.css'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
+
+// 2. Internal imports
 
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
 

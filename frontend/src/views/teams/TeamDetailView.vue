@@ -1,14 +1,16 @@
 // @author: Samuel | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { ChartData, ChartOptions } from 'chart.js'
-import DoughnutChart from '@/components/charts/DoughnutChart.vue'
+
+// 2. Internal imports
+import TeamSeasonChart from '@/components/teams/TeamSeasonChart.vue'
 import LeafletMap from '@/components/ui/LeafletMap.vue'
-import { TeamService } from '@/services/TeamService'
-import { PlayerService } from '@/services/PlayerService'
-import type { TeamInterface } from '@/interfaces/TeamInterface'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
 
 const route = useRoute()
 const router = useRouter()
@@ -35,58 +37,6 @@ watchEffect((): void => {
 
   document.title = `FutStats | ${team.value.name}`
 })
-
-const seasonChartData = computed((): ChartData<'doughnut'> => {
-  if (!team.value) {
-    return {
-      labels: ['Wins', 'Draws', 'Losses'],
-      datasets: [
-        {
-          data: [0, 0, 0],
-          backgroundColor: ['#1b69ff', '#94a3b8', '#0d1525'],
-          borderWidth: 0,
-        },
-      ],
-    }
-  }
-
-  return {
-    labels: ['Wins', 'Draws', 'Losses'],
-    datasets: [
-      {
-        data: [team.value.wins, team.value.draws, team.value.losses],
-        backgroundColor: ['#1b69ff', '#94a3b8', '#0d1525'],
-        borderWidth: 0,
-      },
-    ],
-  }
-})
-
-const seasonChartOptions: ChartOptions<'doughnut'> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'bottom',
-      labels: {
-        color: '#475569',
-        font: {
-          size: 12,
-          weight: 600,
-        },
-        usePointStyle: true,
-        padding: 16,
-      },
-    },
-    tooltip: {
-      backgroundColor: '#0d1525',
-      titleColor: '#ffffff',
-      bodyColor: '#ffffff',
-      displayColors: true,
-    },
-  },
-  cutout: '68%',
-}
 </script>
 
 <template>
@@ -219,11 +169,7 @@ const seasonChartOptions: ChartOptions<'doughnut'> = {
             <p class="text-sm text-slate-500">Wins, draws, and losses breakdown.</p>
           </div>
 
-          <DoughnutChart
-            :data="seasonChartData"
-            :options="seasonChartOptions"
-            heightClass="h-[320px]"
-          />
+          <TeamSeasonChart :team="team" />
         </article>
       </section>
 

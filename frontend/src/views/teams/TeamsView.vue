@@ -1,28 +1,19 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { ChartData, ChartOptions } from 'chart.js'
-import SelectFilter from '@/components/filters/SelectFilter.vue'
-import DataTable from '@/components/tables/DataTable.vue'
-import BarChart from '@/components/charts/BarChart.vue'
-import { TeamService } from '@/services/TeamService'
+
+// 2. Internal imports
+import TeamPointsChart from '@/components/teams/TeamPointsChart.vue'
+import TeamsFilterPanel from '@/components/teams/TeamsFilterPanel.vue'
+import TeamsTable from '@/components/teams/TeamsTable.vue'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { TeamService } from '@/services/TeamService'
 
 interface FilterOption {
   value: string
   label: string
-}
-
-interface TeamTableRow {
-  id: number
-  name: string
-  country: string
-  league: string
-  wins: number
-  draws: number
-  losses: number
-  points: number
 }
 
 const router = useRouter()
@@ -71,386 +62,127 @@ const countryOptions = computed((): FilterOption[] => {
   }))
 })
 
-const teamRows = computed((): TeamTableRow[] => {
-  return filteredTeams.value.map((team: TeamInterface) => ({
-    id: team.id,
-    name: team.name,
-    country: team.country,
-    league: team.league,
-    wins: team.wins,
-    draws: team.draws,
-    losses: team.losses,
-    points: team.points,
-  }))
-})
-
-const columns = [
-  { key: 'name', label: 'Name', sortable: true },
-  { key: 'country', label: 'Country', sortable: true },
-  { key: 'league', label: 'League', sortable: true },
-  { key: 'wins', label: 'W', sortable: true },
-  { key: 'draws', label: 'D', sortable: true },
-  { key: 'losses', label: 'L', sortable: true },
-  { key: 'points', label: 'Points', sortable: true },
-]
-
-const chartData = computed((): ChartData<'bar'> => {
-  return {
-    labels: filteredTeams.value.map((team: TeamInterface) => team.name),
-    datasets: [
-      {
-        label: 'Points',
-        data: filteredTeams.value.map((team: TeamInterface) => team.points),
-        backgroundColor: ['#1b69ff', '#3d82ff', '#5b96ff', '#7baeff', '#9ac4ff', '#bfdcff'],
-        borderRadius: 8,
-        borderSkipped: false,
-        barThickness: 32,
-      },
-    ],
-  }
-})
-
-const chartOptions: ChartOptions<'bar'> = {
-  indexAxis: 'y',
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    tooltip: {
-      backgroundColor: '#0d1525',
-      titleColor: '#ffffff',
-      bodyColor: '#ffffff',
-      displayColors: false,
-    },
-  },
-  scales: {
-    x: {
-      beginAtZero: true,
-      grid: {
-        color: '#e5e7eb',
-      },
-      ticks: {
-        precision: 0,
-        color: '#64748b',
-        font: {
-          size: 12,
-          weight: 600,
-        },
-      },
-    },
-    y: {
-      grid: {
-        display: false,
-      },
-      ticks: {
-        color: '#64748b',
-        font: {
-          size: 12,
-          weight: 600,
-        },
-      },
-    },
-  },
-}
-
-function handleRowClick(row: TeamTableRow): void {
-  router.push({ name: 'teams.show', params: { id: row.id } })
+function handleTeamClick(id: number): void {
+  router.push({ name: 'teams.show', params: { id } })
 }
 </script>
 
 <template>
   <section class="space-y-10">
-    <header class="teams-hero">
+    <header
+      class="flex flex-col gap-6 rounded-[2rem] bg-gradient-to-br from-[#0f172a] via-[#1d4ed8] to-[#22d3ee] p-8 text-white shadow-[0_35px_80px_rgba(15,23,42,0.35)] md:flex-row md:items-center md:justify-between"
+    >
       <div>
-        <p class="hero-chip">Teams Intelligence</p>
-        <h1>Teams Overview</h1>
-        <p>Compare clubs across leagues and countries with live filters and rich tables.</p>
+        <p class="text-[0.75rem] font-bold uppercase tracking-[0.35em] text-white/70">
+          Teams Intelligence
+        </p>
+        <h1 class="my-[0.3rem] text-[clamp(2rem,4vw,2.8rem)] font-extrabold">Teams Overview</h1>
+        <p class="text-white/85">
+          Compare clubs across leagues and countries with live filters and rich tables.
+        </p>
       </div>
-      <div class="hero-metrics">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
         <div>
-          <span>Teams</span>
-          <strong>{{ totalTeams }}</strong>
+          <span class="text-[0.75rem] uppercase tracking-[0.25em] text-white/70">Teams</span>
+          <strong class="block text-[1.8rem] font-extrabold">{{ totalTeams }}</strong>
         </div>
         <div>
-          <span>Leagues</span>
-          <strong>{{ totalLeagues }}</strong>
+          <span class="text-[0.75rem] uppercase tracking-[0.25em] text-white/70">Leagues</span>
+          <strong class="block text-[1.8rem] font-extrabold">{{ totalLeagues }}</strong>
         </div>
         <div>
-          <span>Countries</span>
-          <strong>{{ totalCountries }}</strong>
+          <span class="text-[0.75rem] uppercase tracking-[0.25em] text-white/70">Countries</span>
+          <strong class="block text-[1.8rem] font-extrabold">{{ totalCountries }}</strong>
         </div>
       </div>
     </header>
 
-    <section class="insights-grid">
-      <article class="insight-card insight-card--primary">
-        <div class="insight-card__icon">👥</div>
-        <div>
-          <p>Total Teams</p>
-          <h3>{{ totalTeams }}</h3>
+    <section class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
+      <article
+        class="flex flex-col gap-[0.4rem] overflow-hidden rounded-3xl bg-gradient-to-br from-[#2563eb] to-[#38bdf8] p-7 text-white shadow-[0_25px_60px_rgba(15,23,42,0.2)]"
+      >
+        <div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/20 text-[1.25rem]">
+          👥
         </div>
-        <span>Active clubs</span>
+        <div>
+          <p class="text-[0.85rem] uppercase tracking-[0.2em]">Total Teams</p>
+          <h3 class="text-[2.2rem] font-extrabold">{{ totalTeams }}</h3>
+        </div>
+        <span class="text-[0.9rem] text-white/80">Active clubs</span>
       </article>
-      <article class="insight-card insight-card--neutral">
-        <div class="insight-card__icon">🏆</div>
-        <div>
-          <p>Leagues filtered</p>
-          <h3>{{ totalLeagues }}</h3>
+
+      <article
+        class="flex flex-col gap-[0.4rem] overflow-hidden rounded-3xl bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] p-7 text-slate-900 shadow-[0_20px_50px_rgba(14,165,233,0.2)]"
+      >
+        <div
+          class="grid h-10 w-10 place-items-center rounded-2xl bg-slate-900/[0.08] text-[1.25rem]"
+        >
+          🏆
         </div>
-        <span>Realtime scope</span>
+        <div>
+          <p class="text-[0.85rem] uppercase tracking-[0.2em]">Leagues filtered</p>
+          <h3 class="text-[2.2rem] font-extrabold">{{ totalLeagues }}</h3>
+        </div>
+        <span class="text-[0.9rem] text-slate-700">Realtime scope</span>
       </article>
-      <article class="insight-card insight-card--dark">
-        <div class="insight-card__icon">📍</div>
-        <div>
-          <p>Countries represented</p>
-          <h3>{{ totalCountries }}</h3>
+
+      <article
+        class="flex flex-col gap-[0.4rem] overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-7 text-white shadow-[0_25px_60px_rgba(15,23,42,0.2)]"
+      >
+        <div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/20 text-[1.25rem]">
+          📍
         </div>
-        <span>Global spread</span>
+        <div>
+          <p class="text-[0.85rem] uppercase tracking-[0.2em]">Countries represented</p>
+          <h3 class="text-[2.2rem] font-extrabold">{{ totalCountries }}</h3>
+        </div>
+        <span class="text-[0.9rem] text-white/80">Global spread</span>
       </article>
     </section>
 
-    <section class="filters-panel">
-      <div>
-        <p class="panel-label">Filters</p>
-        <h2>Refine by league and country</h2>
-        <p>Selections update every table and visualization instantly.</p>
-      </div>
-      <div class="filters-grid">
-        <SelectFilter
-          v-model="selectedLeague"
-          label="League"
-          placeholder="All leagues"
-          :options="leagueOptions"
-        />
-        <SelectFilter
-          v-model="selectedCountry"
-          label="Country"
-          placeholder="All countries"
-          :options="countryOptions"
-        />
-      </div>
-    </section>
+    <TeamsFilterPanel
+      v-model:selected-league="selectedLeague"
+      v-model:selected-country="selectedCountry"
+      :league-options="leagueOptions"
+      :country-options="countryOptions"
+    />
 
-    <section class="layout-grid">
-      <article class="panel-card">
-        <div class="panel-card__header">
+    <section class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
+      <article
+        class="flex flex-col gap-4 rounded-[1.75rem] border border-slate-900/[0.07] bg-white p-6 shadow-[0_35px_80px_rgba(15,23,42,0.1)]"
+      >
+        <div class="flex items-center justify-between">
           <div>
-            <p class="panel-label">Roster grid</p>
-            <h2>Teams Table</h2>
+            <p class="mb-[0.4rem] text-[0.75rem] uppercase tracking-[0.35em] text-blue-500">
+              Roster grid
+            </p>
+            <h2 class="text-[1.3rem] font-bold text-slate-900">Teams Table</h2>
           </div>
-          <span>{{ totalTeams }} results</span>
+          <span class="text-[0.8rem] uppercase tracking-[0.2em] text-slate-400"
+            >{{ totalTeams }} results</span
+          >
         </div>
 
-        <DataTable :columns="columns" :rows="teamRows" @rowClick="handleRowClick" />
+        <TeamsTable :teams="filteredTeams" @team-click="handleTeamClick" />
       </article>
 
-      <article class="panel-card">
-        <div class="panel-card__header">
+      <article
+        class="flex flex-col gap-4 rounded-[1.75rem] border border-slate-900/[0.07] bg-white p-6 shadow-[0_35px_80px_rgba(15,23,42,0.1)]"
+      >
+        <div class="flex items-center justify-between">
           <div>
-            <p class="panel-label">Points heat</p>
-            <h2>Points per Team</h2>
+            <p class="mb-[0.4rem] text-[0.75rem] uppercase tracking-[0.35em] text-blue-500">
+              Points heat
+            </p>
+            <h2 class="text-[1.3rem] font-bold text-slate-900">Points per Team</h2>
           </div>
-          <span>Auto refreshed</span>
+          <span class="text-[0.8rem] uppercase tracking-[0.2em] text-slate-400"
+            >Auto refreshed</span
+          >
         </div>
 
-        <BarChart :data="chartData" :options="chartOptions" :height="420" :show-card="false" />
+        <TeamPointsChart :teams="filteredTeams" />
       </article>
     </section>
   </section>
 </template>
-
-<style scoped>
-.teams-hero {
-  border-radius: 2rem;
-  background: linear-gradient(130deg, #0f172a, #1d4ed8, #22d3ee);
-  color: #fff;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.35);
-}
-
-@media (min-width: 768px) {
-  .teams-hero {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-}
-
-.teams-hero h1 {
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 800;
-  margin: 0.3rem 0;
-}
-
-.teams-hero p {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.hero-chip {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.35em;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-}
-
-.hero-metrics span {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.hero-metrics strong {
-  display: block;
-  font-size: 1.8rem;
-  font-weight: 800;
-}
-
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.25rem;
-}
-
-.insight-card {
-  border-radius: 1.5rem;
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  color: #fff;
-  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2);
-}
-
-.insight-card__icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  display: grid;
-  place-items: center;
-  font-size: 1.25rem;
-}
-
-.insight-card p {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-}
-
-.insight-card h3 {
-  font-size: 2.2rem;
-  font-weight: 800;
-}
-
-.insight-card span {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.insight-card--primary {
-  background: linear-gradient(130deg, #2563eb, #38bdf8);
-}
-
-.insight-card--neutral {
-  background: linear-gradient(130deg, #ecfeff, #e0f2fe);
-  color: #0f172a;
-  box-shadow: 0 20px 50px rgba(14, 165, 233, 0.2);
-}
-
-.insight-card--neutral .insight-card__icon {
-  background: rgba(15, 23, 42, 0.08);
-}
-
-.insight-card--neutral span {
-  color: #334155;
-}
-
-.insight-card--dark {
-  background: linear-gradient(130deg, #0f172a, #1e293b);
-}
-
-.filters-panel {
-  border-radius: 1.75rem;
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  background: #fff;
-  padding: 1.75rem;
-  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.filters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.panel-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.35em;
-  color: #3b82f6;
-  margin-bottom: 0.4rem;
-}
-
-.filters-panel h2 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.filters-panel p {
-  color: #64748b;
-  max-width: 36rem;
-}
-
-.layout-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.panel-card {
-  border-radius: 1.75rem;
-  background: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.07);
-  padding: 1.5rem;
-  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.panel-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.panel-card__header h2 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.panel-card__header span {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #94a3b8;
-}
-</style>

@@ -1,7 +1,6 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { CSSProperties } from 'vue'
+// 1. External imports
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -12,8 +11,12 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import { Radar } from 'vue-chartjs'
 import type { ChartData, ChartOptions } from 'chart.js'
+import { computed } from 'vue'
+import type { CSSProperties } from 'vue'
+import { Radar } from 'vue-chartjs'
+
+// 2. Internal imports
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Title, Tooltip, Legend)
 

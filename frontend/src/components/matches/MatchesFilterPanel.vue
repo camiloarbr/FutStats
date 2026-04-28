@@ -1,93 +1,45 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import SelectFilter from '@/components/filters/SelectFilter.vue'
-
 interface OptionItem {
-  value: string | number
+  value: string
   label: string
 }
 
 const props = defineProps<{
-  modelValue: string | number
+  modelValue: string
   options: OptionItem[]
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | number): void
+  (e: 'update:modelValue', value: string): void
 }>()
-
-function handleUpdate(value: string | number): void {
-  emit('update:modelValue', value)
-}
 </script>
 
 <template>
-  <div class="filter-panel">
-    <div class="filter-panel__copy">
-      <p class="filter-chip">Filters</p>
-      <h3>Focus on a single club</h3>
-      <p>Compare league-wide momentum or zoom into one team to inspect their match streak.</p>
+  <div
+    class="flex flex-col gap-6 rounded-[1.5rem] border border-blue-500/20 bg-white/90 p-6 shadow-[0_25px_60px_rgba(59,130,246,0.12)] backdrop-blur-[6px] md:flex-row md:items-center md:justify-between"
+  >
+    <div class="flex flex-col gap-2">
+      <p class="text-[0.7rem] font-bold uppercase tracking-[0.3em] text-blue-500">Filters</p>
+      <h3 class="text-[1.25rem] font-semibold text-slate-900">Focus on a single club</h3>
+      <p class="text-sm text-slate-500">
+        Compare league-wide momentum or zoom into one team to inspect their match streak.
+      </p>
     </div>
-    <div class="filter-panel__control">
-      <SelectFilter
-        :model-value="props.modelValue"
-        label="Team"
-        :options="props.options"
-        placeholder="All teams"
-        @update:model-value="handleUpdate"
-      />
+    <div class="w-full max-w-[16rem]">
+      <label class="flex flex-col gap-2">
+        <span class="text-xs font-bold uppercase tracking-[0.3em] text-blue-600">Team</span>
+        <select
+          class="w-full rounded-2xl border border-blue-600/20 bg-white px-4 py-3 text-slate-900 outline-none"
+          :value="props.modelValue"
+          @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
+        >
+          <option value="">All teams</option>
+          <option v-for="option in props.options" :key="option.value" :value="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </label>
     </div>
   </div>
 </template>
-
-<style scoped>
-.filter-panel {
-  border-radius: 1.5rem;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  background: rgba(255, 255, 255, 0.9);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 0 25px 60px rgba(59, 130, 246, 0.12);
-  backdrop-filter: blur(6px);
-}
-
-@media (min-width: 768px) {
-  .filter-panel {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.filter-panel__copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.filter-chip {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  font-weight: 700;
-  color: #3b82f6;
-}
-
-.filter-panel__copy h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.filter-panel__copy p {
-  color: #475569;
-  font-size: 0.9rem;
-}
-
-.filter-panel__control {
-  width: 100%;
-  max-width: 16rem;
-}
-</style>

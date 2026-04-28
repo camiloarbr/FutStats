@@ -1,9 +1,24 @@
 // @author: Victor Chavez | FutStats
-import { usePlayersStore } from '@/stores/usePlayersStore'
+// 1. External imports
+
+// 2. Internal imports
+import type { CreatePlayerDTO, UpdatePlayerDTO } from '@/dtos/PlayerDTO'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
-import type { CreatePlayerDTO, UpdatePlayerDTO } from '@/interfaces/PlayerDTO'
+import { apiClient } from '@/services/ApiClient'
+import { usePlayersStore } from '@/stores/usePlayersStore'
+
+interface DeleteResponse {
+  deleted: boolean
+}
 
 export class PlayerService {
+  static async loadAll(): Promise<PlayerInterface[]> {
+    const response = await apiClient.get<PlayerInterface[]>('/players')
+    const playersStore = usePlayersStore()
+    playersStore.setPlayers(response.data)
+    return response.data
+  }
+
   static getAll(): PlayerInterface[] {
     const playersStore = usePlayersStore()
     return playersStore.players
@@ -23,39 +38,20 @@ export class PlayerService {
       .slice(0, limit)
   }
 
-  static create(dto: CreatePlayerDTO): PlayerInterface {
+  static async create(dto: CreatePlayerDTO): Promise<PlayerInterface> {
     const playersStore = usePlayersStore()
     const currentPlayers = playersStore.players
-
-    const nextId =
-      currentPlayers.length > 0
-        ? Math.max(...currentPlayers.map((player: PlayerInterface) => player.id)) + 1
-        : 1
-
-    const newPlayer: PlayerInterface = {
-      id: nextId,
-      ...dto,
-    }
-
+    const response = await apiClient.post<PlayerInterface>('/players', dto)
+    const newPlayer = response.data
     playersStore.setPlayers([...currentPlayers, newPlayer])
     return newPlayer
   }
 
-  static update(id: number, dto: UpdatePlayerDTO): PlayerInterface | undefined {
+  static async update(id: number, dto: UpdatePlayerDTO): Promise<PlayerInterface | undefined> {
     const playersStore = usePlayersStore()
     const currentPlayers = playersStore.players
-    const existingPlayer = currentPlayers.find((player: PlayerInterface) => player.id === id)
-
-    if (!existingPlayer) {
-      return undefined
-    }
-
-    const updatedPlayer: PlayerInterface = {
-      ...existingPlayer,
-      ...dto,
-      id,
-    }
-
+    const response = await apiClient.patch<PlayerInterface>(`/players/${id}`, dto)
+    const updatedPlayer = response.data
     const nextPlayers = currentPlayers.map((player: PlayerInterface) =>
       player.id === id ? updatedPlayer : player
     )
@@ -64,17 +60,12 @@ export class PlayerService {
     return updatedPlayer
   }
 
-  static delete(id: number): boolean {
+  static async delete(id: number): Promise<boolean> {
     const playersStore = usePlayersStore()
     const currentPlayers = playersStore.players
-    const exists = currentPlayers.some((player: PlayerInterface) => player.id === id)
-
-    if (!exists) {
-      return false
-    }
-
+    const response = await apiClient.delete<DeleteResponse>(`/players/${id}`)
     const nextPlayers = currentPlayers.filter((player: PlayerInterface) => player.id !== id)
     playersStore.setPlayers(nextPlayers)
-    return true
+    return response.data.deleted
   }
 }
