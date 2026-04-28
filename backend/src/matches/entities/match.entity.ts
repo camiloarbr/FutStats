@@ -12,41 +12,41 @@ export class MatchEntity {
   @Column({ type: 'datetime' })
   date: Date;
 
-  @Column({ length: 120 })
+  @Column({ type: 'text', length: 120 })
   stadium: string;
 
-  @Column()
+  @Column({ type: 'integer' })
   homeScore: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   awayScore: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   possessionHome: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   possessionAway: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   shotsHome: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   shotsAway: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   foulsHome: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   foulsAway: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   homeTeamId: number;
 
   @ManyToOne(() => TeamEntity, (team) => team.homeMatches, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'homeTeamId' })
   homeTeam: TeamEntity;
 
-  @Column()
+  @Column({ type: 'integer' })
   awayTeamId: number;
 
   @ManyToOne(() => TeamEntity, (team) => team.awayMatches, { onDelete: 'CASCADE' })

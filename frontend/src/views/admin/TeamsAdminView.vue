@@ -6,7 +6,7 @@ import { TeamService } from '@/services/TeamService'
 
 import TeamFormCard from '@/components/teams/TeamFormCard.vue'
 
-import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
+import type { CreateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 type TeamsAccordionSection = 'teamsCreate' | 'teamsEdit'

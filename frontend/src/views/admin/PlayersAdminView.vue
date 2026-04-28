@@ -7,7 +7,7 @@ import { TeamService } from '@/services/TeamService'
 
 import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
 
-import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+import type { CreatePlayerDTO } from '@/dtos/PlayerDTO'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 

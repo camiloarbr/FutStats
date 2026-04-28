@@ -1,5 +1,5 @@
 // 1. External imports
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 
 // 2. Internal imports
 import { AuthService } from './auth.service';
@@ -9,7 +9,7 @@ import type { AuthResponseInterface } from './interfaces/auth-response.interface
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
   @Post('login')
   login(@Body() loginDto: LoginDto): Promise<AuthResponseInterface> {

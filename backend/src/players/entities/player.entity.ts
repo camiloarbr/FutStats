@@ -9,46 +9,46 @@ export class PlayerEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'text' })
   imageUrl: string;
 
-  @Column({ length: 120 })
+  @Column({ type: 'text', length: 120 })
   fullName: string;
 
-  @Column({ length: 60 })
+  @Column({ type: 'text', length: 60 })
   position: string;
 
-  @Column({ length: 80 })
+  @Column({ type: 'text', length: 80 })
   nationality: string;
 
-  @Column()
+  @Column({ type: 'integer' })
   shirtNumber: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   matchesPlayed: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   goals: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   assists: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   shots: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   passes: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   yellowCards: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   redCards: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   minutesPlayed: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   teamId: number;
 
   @ManyToOne(() => TeamEntity, (team) => team.players, { onDelete: 'CASCADE' })

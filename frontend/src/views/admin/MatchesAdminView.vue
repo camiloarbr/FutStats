@@ -7,7 +7,7 @@ import { TeamService } from '@/services/TeamService'
 
 import MatchFormCard from '@/components/matches/MatchFormCard.vue'
 
-import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
+import type { CreateMatchDTO } from '@/dtos/MatchDTO'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 

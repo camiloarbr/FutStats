@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue'
 
-import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
+import type { CreateTeamDTO } from '@/dtos/TeamDTO'
 
 type FormMode = 'create' | 'edit'
 

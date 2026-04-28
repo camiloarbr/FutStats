@@ -10,21 +10,21 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 80 })
+  @Column({ type: 'text', length: 80 })
   username: string;
 
-  @Column({ length: 120, unique: true })
+  @Column({ type: 'text', length: 120, unique: true })
   email: string;
 
-  @Column()
+  @Column({ type: 'text' })
   passwordHash: string;
 
-  @Column({ default: 'user', length: 20 })
+  @Column({ type: 'text', default: 'user', length: 20 })
   role: UserRole;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @Column({ default: true })
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
 }

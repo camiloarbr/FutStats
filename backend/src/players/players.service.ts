@@ -1,5 +1,5 @@
 // 1. External imports
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
 
@@ -14,7 +14,7 @@ export class PlayersService {
   constructor(
     @InjectRepository(PlayerEntity)
     private readonly playersRepository: Repository<PlayerEntity>,
-    private readonly teamsService: TeamsService,
+    @Inject(TeamsService) private readonly teamsService: TeamsService,
   ) {}
 
   findAll(): Promise<PlayerEntity[]> {

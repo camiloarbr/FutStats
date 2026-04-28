@@ -10,40 +10,40 @@ export class TeamEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'text' })
   imageUrl: string;
 
-  @Column({ length: 80 })
+  @Column({ type: 'text', length: 80 })
   name: string;
 
-  @Column({ length: 80 })
+  @Column({ type: 'text', length: 80 })
   country: string;
 
-  @Column({ length: 80 })
+  @Column({ type: 'text', length: 80 })
   league: string;
 
-  @Column()
+  @Column({ type: 'integer' })
   foundedYear: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   matchesPlayed: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   wins: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   draws: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   losses: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   goalsFor: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   goalsAgainst: number;
 
-  @Column()
+  @Column({ type: 'integer' })
   points: number;
 
   @OneToMany(() => PlayerEntity, (player) => player.team)

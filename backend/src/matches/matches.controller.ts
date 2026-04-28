@@ -1,5 +1,5 @@
 // 1. External imports
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
 
 // 2. Internal imports
 import { CreateMatchDto } from './dto/create-match.dto';
@@ -12,7 +12,7 @@ import { UpdateMatchDto } from './dto/update-match.dto';
 
 @Controller('matches')
 export class MatchesController {
-  constructor(private readonly matchesService: MatchesService) {}
+  constructor(@Inject(MatchesService) private readonly matchesService: MatchesService) {}
 
   @Get()
   findAll(): Promise<MatchEntity[]> {

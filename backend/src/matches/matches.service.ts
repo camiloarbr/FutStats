@@ -1,5 +1,5 @@
 // 1. External imports
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
 
@@ -14,7 +14,7 @@ export class MatchesService {
   constructor(
     @InjectRepository(MatchEntity)
     private readonly matchesRepository: Repository<MatchEntity>,
-    private readonly teamsService: TeamsService,
+    @Inject(TeamsService) private readonly teamsService: TeamsService,
   ) {}
 
   findAll(): Promise<MatchEntity[]> {

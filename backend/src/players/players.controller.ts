@@ -1,5 +1,5 @@
 // 1. External imports
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
 
 // 2. Internal imports
 import { CreatePlayerDto } from './dto/create-player.dto';
@@ -12,7 +12,7 @@ import { UpdatePlayerDto } from './dto/update-player.dto';
 
 @Controller('players')
 export class PlayersController {
-  constructor(private readonly playersService: PlayersService) {}
+  constructor(@Inject(PlayersService) private readonly playersService: PlayersService) {}
 
   @Get()
   findAll(): Promise<PlayerEntity[]> {

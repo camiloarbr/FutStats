@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { reactive, watch, computed } from 'vue'
 
-import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
+import type { CreateMatchDTO } from '@/dtos/MatchDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 type FormMode = 'create' | 'edit'
