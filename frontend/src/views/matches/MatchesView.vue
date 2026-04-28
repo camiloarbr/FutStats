@@ -4,25 +4,13 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
-import DataTable from '@/components/tables/DataTable.vue'
 import MatchGoalsChart from '@/components/matches/MatchGoalsChart.vue'
 import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
 import MatchesHero from '@/components/matches/MatchesHero.vue'
+import MatchesTable from '@/components/matches/MatchesTable.vue'
 import { Formatters } from '@/utils/Formatters'
-import type {
-  DataTableColumnInterface,
-  DataTableRowInterface,
-} from '@/interfaces/DataTableInterface'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
-
-interface MatchTableRow extends DataTableRowInterface {
-  date: string
-  homeTeam: string
-  score: string
-  awayTeam: string
-  stadium: string
-}
 
 interface SummaryStat {
   id: string
@@ -189,35 +177,8 @@ const summaryStats = computed<SummaryStat[]>(() => {
   ]
 })
 
-const tableColumns: DataTableColumnInterface[] = [
-  { key: 'date', label: 'Date', sortable: true },
-  { key: 'homeTeam', label: 'Home Team', sortable: true },
-  { key: 'score', label: 'Score' },
-  { key: 'awayTeam', label: 'Away Team', sortable: true },
-  { key: 'stadium', label: 'Stadium', sortable: true },
-]
-
-const tableRows = computed<MatchTableRow[]>(() =>
-  [...filteredMatches.value]
-    .sort((firstMatch, secondMatch) => {
-      const firstDate =
-        firstMatch.date instanceof Date ? firstMatch.date : new Date(firstMatch.date)
-      const secondDate =
-        secondMatch.date instanceof Date ? secondMatch.date : new Date(secondMatch.date)
-      return secondDate.getTime() - firstDate.getTime()
-    })
-    .map((match: MatchInterface) => ({
-      id: match.id,
-      date: Formatters.formatMatchDate(match.date),
-      homeTeam: resolveTeamName(match.homeTeamId),
-      score: Formatters.formatScore(match.homeScore, match.awayScore),
-      awayTeam: resolveTeamName(match.awayTeamId),
-      stadium: match.stadium,
-    }))
-)
-
-function handleRowClick(row: DataTableRowInterface): void {
-  router.push({ name: 'matches.show', params: { id: row.id.toString() } })
+function handleMatchClick(id: number): void {
+  router.push({ name: 'matches.show', params: { id: id.toString() } })
 }
 </script>
 
@@ -231,7 +192,11 @@ function handleRowClick(row: DataTableRowInterface): void {
       <MatchGoalsChart :matches="filteredMatches" />
 
       <div class="rounded-3xl bg-white/95 p-1 shadow-[0_35px_80px_rgba(15,23,42,0.12)]">
-        <DataTable :columns="tableColumns" :rows="tableRows" @rowClick="handleRowClick" />
+        <MatchesTable
+          :matches="filteredMatches"
+          :team-names="teamNameMap"
+          @match-click="handleMatchClick"
+        />
       </div>
     </div>
   </section>

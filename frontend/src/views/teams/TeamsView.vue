@@ -3,28 +3,14 @@
 import { computed, ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { TeamService } from '@/services/TeamService'
-import DataTable from '@/components/tables/DataTable.vue'
 import TeamPointsChart from '@/components/teams/TeamPointsChart.vue'
+import TeamsTable from '@/components/teams/TeamsTable.vue'
 import TeamsFilterPanel from '@/components/teams/TeamsFilterPanel.vue'
-import type {
-  DataTableColumnInterface,
-  DataTableRowInterface,
-} from '@/interfaces/DataTableInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 interface FilterOption {
   value: string
   label: string
-}
-
-interface TeamTableRow extends DataTableRowInterface {
-  name: string
-  country: string
-  league: string
-  wins: number
-  draws: number
-  losses: number
-  points: number
 }
 
 const router = useRouter()
@@ -73,31 +59,8 @@ const countryOptions = computed((): FilterOption[] => {
   }))
 })
 
-const teamRows = computed((): TeamTableRow[] => {
-  return filteredTeams.value.map((team: TeamInterface) => ({
-    id: team.id,
-    name: team.name,
-    country: team.country,
-    league: team.league,
-    wins: team.wins,
-    draws: team.draws,
-    losses: team.losses,
-    points: team.points,
-  }))
-})
-
-const columns: DataTableColumnInterface[] = [
-  { key: 'name', label: 'Name', sortable: true },
-  { key: 'country', label: 'Country', sortable: true },
-  { key: 'league', label: 'League', sortable: true },
-  { key: 'wins', label: 'W', sortable: true },
-  { key: 'draws', label: 'D', sortable: true },
-  { key: 'losses', label: 'L', sortable: true },
-  { key: 'points', label: 'Points', sortable: true },
-]
-
-function handleRowClick(row: DataTableRowInterface): void {
-  router.push({ name: 'teams.show', params: { id: row.id } })
+function handleTeamClick(id: number): void {
+  router.push({ name: 'teams.show', params: { id } })
 }
 </script>
 
@@ -169,7 +132,7 @@ function handleRowClick(row: DataTableRowInterface): void {
           <span>{{ totalTeams }} results</span>
         </div>
 
-        <DataTable :columns="columns" :rows="teamRows" @rowClick="handleRowClick" />
+        <TeamsTable :teams="filteredTeams" @team-click="handleTeamClick" />
       </article>
 
       <article class="panel-card">

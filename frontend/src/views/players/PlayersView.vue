@@ -4,29 +4,16 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
-import DataTable from '@/components/tables/DataTable.vue'
 import PlayerTopScorersChart from '@/components/players/PlayerTopScorersChart.vue'
+import PlayersTable from '@/components/players/PlayersTable.vue'
 import PlayersFilterPanel from '@/components/players/PlayersFilterPanel.vue'
 import { Formatters } from '@/utils/Formatters'
-import type {
-  DataTableColumnInterface,
-  DataTableRowInterface,
-} from '@/interfaces/DataTableInterface'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 interface SelectOption {
   value: string
   label: string
-}
-
-interface PlayerTableRow extends DataTableRowInterface {
-  name: string
-  team: string
-  position: string
-  goals: number
-  assists: number
-  matchesPlayed: number
 }
 
 const router = useRouter()
@@ -67,10 +54,6 @@ const positionOptions = computed<SelectOption[]>(() => {
     .map((position) => ({ value: position, label: position }))
 })
 
-function resolveTeamName(teamId: number): string {
-  return teamNameMap.value[teamId] ?? 'Unknown Team'
-}
-
 const filteredPlayers = computed<PlayerInterface[]>(() => {
   return players.value.filter((player) => {
     const matchesTeam = selectedTeamId.value ? player.teamId === Number(selectedTeamId.value) : true
@@ -81,29 +64,8 @@ const filteredPlayers = computed<PlayerInterface[]>(() => {
   })
 })
 
-const tableColumns: DataTableColumnInterface[] = [
-  { key: 'name', label: 'Name', sortable: true },
-  { key: 'team', label: 'Team', sortable: true },
-  { key: 'position', label: 'Position', sortable: true },
-  { key: 'goals', label: 'Goals', sortable: true },
-  { key: 'assists', label: 'Assists', sortable: true },
-  { key: 'matchesPlayed', label: 'Matches', sortable: true },
-]
-
-const tableRows = computed<PlayerTableRow[]>(() =>
-  filteredPlayers.value.map((player) => ({
-    id: player.id,
-    name: player.fullName,
-    team: resolveTeamName(player.teamId),
-    position: player.position,
-    goals: player.goals,
-    assists: player.assists,
-    matchesPlayed: player.matchesPlayed,
-  }))
-)
-
-function handleRowClick(row: DataTableRowInterface): void {
-  router.push({ name: 'players.show', params: { id: row.id.toString() } })
+function handlePlayerClick(id: number): void {
+  router.push({ name: 'players.show', params: { id: id.toString() } })
 }
 
 const totalPlayersCopy = computed(() =>
@@ -150,7 +112,11 @@ const totalPlayersCopy = computed(() =>
       <PlayerTopScorersChart :players="filteredPlayers" />
 
       <div class="table-card">
-        <DataTable :columns="tableColumns" :rows="tableRows" @rowClick="handleRowClick" />
+        <PlayersTable
+          :players="filteredPlayers"
+          :team-names="teamNameMap"
+          @player-click="handlePlayerClick"
+        />
       </div>
     </div>
   </section>
