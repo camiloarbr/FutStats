@@ -131,9 +131,9 @@ watch(
   { immediate: true }
 )
 
-function handleMatchCreate(payload: CreateMatchDTO): void {
+async function handleMatchCreate(payload: CreateMatchDTO): Promise<void> {
   try {
-    MatchService.create(payload)
+    await MatchService.create(payload)
     matchCreateFeedback.value = 'success'
     matchFormSeed.value += 1
   } catch (error) {
@@ -142,14 +142,14 @@ function handleMatchCreate(payload: CreateMatchDTO): void {
   }
 }
 
-function handleMatchUpdate(payload: CreateMatchDTO): void {
+async function handleMatchUpdate(payload: CreateMatchDTO): Promise<void> {
   if (!editableMatch.value) {
     matchEditFeedback.value = 'error'
     return
   }
 
   try {
-    MatchService.update(editableMatch.value.id, payload)
+    await MatchService.update(editableMatch.value.id, payload)
     matchEditFeedback.value = 'success'
   } catch (error) {
     console.error(error)
@@ -157,18 +157,23 @@ function handleMatchUpdate(payload: CreateMatchDTO): void {
   }
 }
 
-function handleMatchDelete(): void {
+async function handleMatchDelete(): Promise<void> {
   if (!editableMatch.value) {
     matchEditFeedback.value = 'error'
     return
   }
 
-  const deleted = MatchService.delete(editableMatch.value.id)
-  matchEditFeedback.value = deleted ? 'success' : 'error'
+  try {
+    const deleted = await MatchService.delete(editableMatch.value.id)
+    matchEditFeedback.value = deleted ? 'success' : 'error'
 
-  if (deleted) {
-    const nextId = matches.value[0]?.id
-    selectedMatchId.value = nextId ? nextId.toString() : ''
+    if (deleted) {
+      const nextId = matches.value[0]?.id
+      selectedMatchId.value = nextId ? nextId.toString() : ''
+    }
+  } catch (error) {
+    console.error(error)
+    matchEditFeedback.value = 'error'
   }
 }
 </script>

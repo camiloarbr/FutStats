@@ -1,19 +1,75 @@
-// @author: Camilo | FutStats
 // 1. External imports
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcryptjs';
+import type { DeepPartial, Repository } from 'typeorm';
 
 // 2. Internal imports
-import type { MatchInterface } from '@/interfaces/MatchInterface'
-import type { PlayerInterface } from '@/interfaces/PlayerInterface'
-import type { TeamInterface } from '@/interfaces/TeamInterface'
-import type { UserInterface } from '@/interfaces/UserInterface'
-import { useAuthStore } from '@/stores/useAuthStore'
-import { useMatchesStore } from '@/stores/useMatchesStore'
-import { usePlayersStore } from '@/stores/usePlayersStore'
-import { useTeamsStore } from '@/stores/useTeamsStore'
+import { MatchEntity } from '../matches/entities/match.entity';
+import { PlayerEntity } from '../players/entities/player.entity';
+import { TeamEntity } from '../teams/entities/team.entity';
+import { UserEntity } from '../users/entities/user.entity';
 
-export class Seeders {
-  static run(): void {
-    const teams: TeamInterface[] = [
+@Injectable()
+export class DatabaseBootstrapService implements OnModuleInit {
+  constructor(
+    @InjectRepository(MatchEntity)
+    private readonly matchesRepository: Repository<MatchEntity>,
+    @InjectRepository(PlayerEntity)
+    private readonly playersRepository: Repository<PlayerEntity>,
+    @InjectRepository(TeamEntity)
+    private readonly teamsRepository: Repository<TeamEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
+  ) {}
+
+  async onModuleInit(): Promise<void> {
+    await this.createUsersWhenEmpty();
+    await this.createDomainDataWhenEmpty();
+  }
+
+  private async createUsersWhenEmpty(): Promise<void> {
+    const usersCount = await this.usersRepository.count();
+
+    if (usersCount > 0) {
+      return;
+    }
+
+    const adminPasswordHash = await bcrypt.hash('admin123', 10);
+    const userPasswordHash = await bcrypt.hash('user123', 10);
+
+    await this.usersRepository.save([
+      {
+        username: 'Admin User',
+        email: 'admin@futstats.com',
+        passwordHash: adminPasswordHash,
+        role: 'admin',
+        isActive: true,
+      },
+      {
+        username: 'Standard User',
+        email: 'user@futstats.com',
+        passwordHash: userPasswordHash,
+        role: 'user',
+        isActive: true,
+      },
+    ]);
+  }
+
+  private async createDomainDataWhenEmpty(): Promise<void> {
+    const teamsCount = await this.teamsRepository.count();
+
+    if (teamsCount > 0) {
+      return;
+    }
+
+    await this.teamsRepository.save(this.buildTeams());
+    await this.playersRepository.save(this.buildPlayers());
+    await this.matchesRepository.save(this.buildMatches());
+  }
+
+  private buildTeams(): Array<DeepPartial<TeamEntity>> {
+    return [
       {
         id: 1,
         name: 'Real Madrid',
@@ -105,9 +161,11 @@ export class Seeders {
         goalsAgainst: 11,
         points: 17,
       },
-    ]
+    ];
+  }
 
-    const players: PlayerInterface[] = [
+  private buildPlayers(): Array<DeepPartial<PlayerEntity>> {
+    return [
       {
         id: 1,
         imageUrl: 'https://example.com/players/courtois.jpg',
@@ -448,9 +506,11 @@ export class Seeders {
         minutesPlayed: 845,
         teamId: 6,
       },
-    ]
+    ];
+  }
 
-    const matches: MatchInterface[] = [
+  private buildMatches(): Array<DeepPartial<MatchEntity>> {
+    return [
       {
         id: 1,
         date: new Date('2025-12-14T20:00:00'),
@@ -601,32 +661,6 @@ export class Seeders {
         homeTeamId: 6,
         awayTeamId: 2,
       },
-    ]
-
-    const users: UserInterface[] = [
-      {
-        id: 1,
-        username: 'Admin User',
-        email: 'admin@futstats.com',
-        passwordHash: 'admin123',
-        role: 'admin',
-        createdAt: new Date('2024-01-01'),
-        isActive: true,
-      },
-      {
-        id: 2,
-        username: 'Standard User',
-        email: 'user@futstats.com',
-        passwordHash: 'user123',
-        role: 'user',
-        createdAt: new Date('2024-01-01'),
-        isActive: true,
-      },
-    ]
-
-    useTeamsStore().setTeams(teams)
-    usePlayersStore().setPlayers(players)
-    useMatchesStore().setMatches(matches)
-    useAuthStore().setUsers(users)
+    ];
   }
 }

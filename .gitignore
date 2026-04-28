@@ -1,0 +1,14 @@
+node_modules/
+**/node_modules/
+
+.env
+backend/.env
+frontend/.env
+
+backend/dist/
+backend/*.sqlite
+backend/*.sqlite-*
+
+*.tsbuildinfo
+node_modules/.cache/
+output/dev/

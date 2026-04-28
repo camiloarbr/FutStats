@@ -1,8 +1,10 @@
 // @author: Samuel | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+// 2. Internal imports
 import { AuthService } from '@/services/AuthService'
 
 const router = useRouter()
@@ -18,7 +20,7 @@ async function handleSubmit(): Promise<void> {
   isSubmitting.value = true
 
   try {
-    const isAuthenticated = AuthService.login(email.value, password.value)
+    const isAuthenticated = await AuthService.login(email.value, password.value)
 
     if (!isAuthenticated) {
       error.value = 'Invalid email or password'

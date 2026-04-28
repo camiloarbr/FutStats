@@ -108,9 +108,9 @@ watch(
   { immediate: true }
 )
 
-function handlePlayerCreate(payload: CreatePlayerDTO): void {
+async function handlePlayerCreate(payload: CreatePlayerDTO): Promise<void> {
   try {
-    PlayerService.create(payload)
+    await PlayerService.create(payload)
     playerCreateFeedback.value = 'success'
     playerFormSeed.value += 1
   } catch (error) {
@@ -119,14 +119,14 @@ function handlePlayerCreate(payload: CreatePlayerDTO): void {
   }
 }
 
-function handlePlayerUpdate(payload: CreatePlayerDTO): void {
+async function handlePlayerUpdate(payload: CreatePlayerDTO): Promise<void> {
   if (!editablePlayer.value) {
     playerEditFeedback.value = 'error'
     return
   }
 
   try {
-    PlayerService.update(editablePlayer.value.id, payload)
+    await PlayerService.update(editablePlayer.value.id, payload)
     playerEditFeedback.value = 'success'
   } catch (error) {
     console.error(error)
@@ -134,18 +134,23 @@ function handlePlayerUpdate(payload: CreatePlayerDTO): void {
   }
 }
 
-function handlePlayerDelete(): void {
+async function handlePlayerDelete(): Promise<void> {
   if (!editablePlayer.value) {
     playerEditFeedback.value = 'error'
     return
   }
 
-  const deleted = PlayerService.delete(editablePlayer.value.id)
-  playerEditFeedback.value = deleted ? 'success' : 'error'
+  try {
+    const deleted = await PlayerService.delete(editablePlayer.value.id)
+    playerEditFeedback.value = deleted ? 'success' : 'error'
 
-  if (deleted) {
-    const nextId = players.value[0]?.id
-    selectedPlayerId.value = nextId ? nextId.toString() : ''
+    if (deleted) {
+      const nextId = players.value[0]?.id
+      selectedPlayerId.value = nextId ? nextId.toString() : ''
+    }
+  } catch (error) {
+    console.error(error)
+    playerEditFeedback.value = 'error'
   }
 }
 </script>

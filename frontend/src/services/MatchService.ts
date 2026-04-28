@@ -4,9 +4,22 @@
 // 2. Internal imports
 import type { CreateMatchDTO, UpdateMatchDTO } from '@/dtos/MatchDTO'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
+import { apiClient } from '@/services/ApiClient'
 import { useMatchesStore } from '@/stores/useMatchesStore'
 
+interface DeleteResponse {
+  deleted: boolean
+}
+
 export class MatchService {
+  static async loadAll(): Promise<MatchInterface[]> {
+    const response = await apiClient.get<MatchInterface[]>('/matches')
+    const matches = response.data.map((match) => MatchService.normalizeMatch(match))
+    const matchesStore = useMatchesStore()
+    matchesStore.setMatches(matches)
+    return matches
+  }
+
   static getAll(): MatchInterface[] {
     const matchesStore = useMatchesStore()
     return matchesStore.matches
@@ -22,39 +35,18 @@ export class MatchService {
     )
   }
 
-  static create(dto: CreateMatchDTO): MatchInterface {
+  static async create(dto: CreateMatchDTO): Promise<MatchInterface> {
     const matchesStore = useMatchesStore()
-
-    const nextId =
-      matchesStore.matches.length > 0
-        ? Math.max(...matchesStore.matches.map((match: MatchInterface) => match.id)) + 1
-        : 1
-
-    const newMatch: MatchInterface = {
-      id: nextId,
-      ...dto,
-    }
-
+    const response = await apiClient.post<MatchInterface>('/matches', dto)
+    const newMatch = MatchService.normalizeMatch(response.data)
     matchesStore.setMatches([...matchesStore.matches, newMatch])
-
     return newMatch
   }
 
-  static update(id: number, dto: UpdateMatchDTO): MatchInterface | undefined {
+  static async update(id: number, dto: UpdateMatchDTO): Promise<MatchInterface | undefined> {
     const matchesStore = useMatchesStore()
-
-    const existingMatch = matchesStore.matches.find((match: MatchInterface) => match.id === id)
-
-    if (!existingMatch) {
-      return undefined
-    }
-
-    const updatedMatch: MatchInterface = {
-      ...existingMatch,
-      ...dto,
-      id,
-    }
-
+    const response = await apiClient.patch<MatchInterface>(`/matches/${id}`, dto)
+    const updatedMatch = MatchService.normalizeMatch(response.data)
     const updatedMatches: MatchInterface[] = matchesStore.matches.map((match: MatchInterface) =>
       match.id === id ? updatedMatch : match
     )
@@ -64,21 +56,21 @@ export class MatchService {
     return updatedMatch
   }
 
-  static delete(id: number): boolean {
+  static async delete(id: number): Promise<boolean> {
     const matchesStore = useMatchesStore()
-
-    const matchExists = matchesStore.matches.some((match: MatchInterface) => match.id === id)
-
-    if (!matchExists) {
-      return false
-    }
-
+    const response = await apiClient.delete<DeleteResponse>(`/matches/${id}`)
     const filteredMatches: MatchInterface[] = matchesStore.matches.filter(
       (match: MatchInterface) => match.id !== id
     )
 
     matchesStore.setMatches(filteredMatches)
+    return response.data.deleted
+  }
 
-    return true
+  private static normalizeMatch(match: MatchInterface): MatchInterface {
+    return {
+      ...match,
+      date: new Date(match.date),
+    }
   }
 }

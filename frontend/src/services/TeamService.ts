@@ -4,9 +4,23 @@
 // 2. Internal imports
 import type { CreateTeamDTO, UpdateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { apiClient } from '@/services/ApiClient'
+import { MatchService } from '@/services/MatchService'
+import { PlayerService } from '@/services/PlayerService'
 import { useTeamsStore } from '@/stores/useTeamsStore'
 
+interface DeleteResponse {
+  deleted: boolean
+}
+
 export class TeamService {
+  static async loadAll(): Promise<TeamInterface[]> {
+    const response = await apiClient.get<TeamInterface[]>('/teams')
+    const teamsStore = useTeamsStore()
+    teamsStore.setTeams(response.data)
+    return response.data
+  }
+
   static getAll(): TeamInterface[] {
     const teamsStore = useTeamsStore()
     return teamsStore.teams
@@ -16,39 +30,18 @@ export class TeamService {
     return this.getAll().find((team: TeamInterface) => team.id === id)
   }
 
-  static create(dto: CreateTeamDTO): TeamInterface {
+  static async create(dto: CreateTeamDTO): Promise<TeamInterface> {
     const teamsStore = useTeamsStore()
-
-    const nextId =
-      teamsStore.teams.length > 0
-        ? Math.max(...teamsStore.teams.map((team: TeamInterface) => team.id)) + 1
-        : 1
-
-    const newTeam: TeamInterface = {
-      id: nextId,
-      ...dto,
-    }
-
+    const response = await apiClient.post<TeamInterface>('/teams', dto)
+    const newTeam = response.data
     teamsStore.setTeams([...teamsStore.teams, newTeam])
-
     return newTeam
   }
 
-  static update(id: number, dto: UpdateTeamDTO): TeamInterface | undefined {
+  static async update(id: number, dto: UpdateTeamDTO): Promise<TeamInterface | undefined> {
     const teamsStore = useTeamsStore()
-
-    const existingTeam = teamsStore.teams.find((team: TeamInterface) => team.id === id)
-
-    if (!existingTeam) {
-      return undefined
-    }
-
-    const updatedTeam: TeamInterface = {
-      ...existingTeam,
-      ...dto,
-      id,
-    }
-
+    const response = await apiClient.patch<TeamInterface>(`/teams/${id}`, dto)
+    const updatedTeam = response.data
     const updatedTeams: TeamInterface[] = teamsStore.teams.map((team: TeamInterface) =>
       team.id === id ? updatedTeam : team
     )
@@ -58,21 +51,15 @@ export class TeamService {
     return updatedTeam
   }
 
-  static delete(id: number): boolean {
+  static async delete(id: number): Promise<boolean> {
     const teamsStore = useTeamsStore()
-
-    const teamExists = teamsStore.teams.some((team: TeamInterface) => team.id === id)
-
-    if (!teamExists) {
-      return false
-    }
-
+    const response = await apiClient.delete<DeleteResponse>(`/teams/${id}`)
     const filteredTeams: TeamInterface[] = teamsStore.teams.filter(
       (team: TeamInterface) => team.id !== id
     )
 
     teamsStore.setTeams(filteredTeams)
-
-    return true
+    await Promise.all([PlayerService.loadAll(), MatchService.loadAll()])
+    return response.data.deleted
   }
 }

@@ -61,22 +61,22 @@ watch(
   { immediate: true }
 )
 
-function handleSubmit(payload: CreateTeamDTO): void {
+async function handleSubmit(payload: CreateTeamDTO): Promise<void> {
   if (mode.value === 'create') {
-    TeamService.create(payload)
+    await TeamService.create(payload)
   } else if (teamId.value && !Number.isNaN(teamId.value)) {
-    TeamService.update(teamId.value, payload)
+    await TeamService.update(teamId.value, payload)
   }
 
-  router.push({ name: 'teams.index' })
+  await router.push({ name: 'teams.index' })
 }
 
-function handleDelete(): void {
+async function handleDelete(): Promise<void> {
   if (mode.value === 'edit' && teamId.value && !Number.isNaN(teamId.value)) {
-    TeamService.delete(teamId.value)
+    await TeamService.delete(teamId.value)
   }
 
-  router.push({ name: 'teams.index' })
+  await router.push({ name: 'teams.index' })
 }
 </script>
 

@@ -65,22 +65,22 @@ watch(
   { immediate: true }
 )
 
-function handleSubmit(payload: CreatePlayerDTO): void {
+async function handleSubmit(payload: CreatePlayerDTO): Promise<void> {
   if (mode.value === 'create') {
-    PlayerService.create(payload)
+    await PlayerService.create(payload)
   } else if (playerId.value && !Number.isNaN(playerId.value)) {
-    PlayerService.update(playerId.value, payload)
+    await PlayerService.update(playerId.value, payload)
   }
 
-  router.push({ name: 'players.index' })
+  await router.push({ name: 'players.index' })
 }
 
-function handleDelete(): void {
+async function handleDelete(): Promise<void> {
   if (mode.value === 'edit' && playerId.value && !Number.isNaN(playerId.value)) {
-    PlayerService.delete(playerId.value)
+    await PlayerService.delete(playerId.value)
   }
 
-  router.push({ name: 'players.index' })
+  await router.push({ name: 'players.index' })
 }
 
 const showTeamsWarning = computed(() => teams.value.length === 0)

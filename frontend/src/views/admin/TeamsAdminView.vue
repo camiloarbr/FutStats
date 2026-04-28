@@ -101,9 +101,9 @@ watch(
   { immediate: true }
 )
 
-function handleTeamCreate(payload: CreateTeamDTO): void {
+async function handleTeamCreate(payload: CreateTeamDTO): Promise<void> {
   try {
-    TeamService.create(payload)
+    await TeamService.create(payload)
     teamCreateFeedback.value = 'success'
     teamFormSeed.value += 1
   } catch (error) {
@@ -112,14 +112,14 @@ function handleTeamCreate(payload: CreateTeamDTO): void {
   }
 }
 
-function handleTeamUpdate(payload: CreateTeamDTO): void {
+async function handleTeamUpdate(payload: CreateTeamDTO): Promise<void> {
   if (!editableTeam.value) {
     teamEditFeedback.value = 'error'
     return
   }
 
   try {
-    const updated = TeamService.update(editableTeam.value.id, payload)
+    const updated = await TeamService.update(editableTeam.value.id, payload)
     teamEditFeedback.value = updated ? 'success' : 'error'
   } catch (error) {
     console.error(error)
@@ -127,18 +127,23 @@ function handleTeamUpdate(payload: CreateTeamDTO): void {
   }
 }
 
-function handleTeamDelete(): void {
+async function handleTeamDelete(): Promise<void> {
   if (!editableTeam.value) {
     teamEditFeedback.value = 'error'
     return
   }
 
-  const deleted = TeamService.delete(editableTeam.value.id)
-  teamEditFeedback.value = deleted ? 'success' : 'error'
+  try {
+    const deleted = await TeamService.delete(editableTeam.value.id)
+    teamEditFeedback.value = deleted ? 'success' : 'error'
 
-  if (deleted) {
-    const nextId = teams.value[0]?.id
-    selectedTeamId.value = nextId ? nextId.toString() : ''
+    if (deleted) {
+      const nextId = teams.value[0]?.id
+      selectedTeamId.value = nextId ? nextId.toString() : ''
+    }
+  } catch (error) {
+    console.error(error)
+    teamEditFeedback.value = 'error'
   }
 }
 </script>
