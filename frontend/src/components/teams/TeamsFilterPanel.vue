@@ -54,11 +54,7 @@ const emit = defineEmits<{
           @change="emit('update:selectedCountry', ($event.target as HTMLSelectElement).value)"
         >
           <option value="">All countries</option>
-          <option
-            v-for="option in props.countryOptions"
-            :key="option.value"
-            :value="option.value"
-          >
+          <option v-for="option in props.countryOptions" :key="option.value" :value="option.value">
             {{ option.label }}
           </option>
         </select>

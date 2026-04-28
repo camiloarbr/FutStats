@@ -12,7 +12,7 @@ El front-end conserva la base construida en Vue 3, TypeScript, Vite, Pinia, Vue 
 - Mantener Pinia solo para estado de interfaz, sesion y cache temporal cuando sea necesario.
 - Mover las operaciones de lectura y escritura hacia servicios que consuman la API del back-end.
 - Conservar las vistas y componentes como capas de presentacion: no deben conocer detalles de base de datos ni autenticacion interna.
-- Manejar estados de carga, error y respuesta vacia en tablas, formularios y vistas de detalle.
+- Manejar estados de carga, error y respuesta vacia en tablas, formularios y vistas principales.
 - Usar DTOs tipados para crear y actualizar equipos, jugadores y partidos.
 - Proteger las rutas administrativas mediante el estado real de autenticacion recibido desde el back-end.
 
@@ -76,6 +76,30 @@ Reglas del formato:
 5. Los servicios del front-end consultan endpoints como `/api/teams`, `/api/players` y `/api/matches`.
 6. El back-end valida permisos, ejecuta reglas de negocio y persiste cambios en la base de datos.
 
+## 3. Configuracion y datos iniciales
+
+El proyecto no debe depender de seeders para funcionar. En una base de datos limpia, el primer
+usuario registrado desde el formulario de la aplicacion recibe el rol `admin`; los siguientes
+usuarios reciben el rol `user`.
+
+La configuracion sensible se define mediante variables de entorno:
+
+- `JWT_SECRET`: secreto usado para firmar tokens.
+- `JWT_EXPIRES_IN`: duracion del token.
+- `DATABASE_PATH`: archivo SQLite local.
+- `TYPEORM_SYNCHRONIZE`: sincronizacion de esquema en desarrollo.
+- `CORS_ORIGIN`: origenes permitidos separados por coma.
+
+El front-end usa `VITE_API_BASE_URL` para decidir a que API REST conectarse.
+
+## 4. Estados de interfaz
+
+Las vistas principales muestran:
+
+- Estado de carga mientras se consultan equipos, jugadores y partidos.
+- Estado de error con accion de reintento cuando el back-end no responde.
+- Estado vacio en tablas o secciones cuando no hay resultados para mostrar.
+
 ## Criterios de Revision Interna
 
 Antes de entregar, el equipo debe revisar:
@@ -85,6 +109,7 @@ Antes de entregar, el equipo debe revisar:
 - Login funcional con usuario valido e invalido.
 - Rutas protegidas inaccesibles sin token.
 - CRUD funcional para los dominios principales.
-- Seeders y datos quemados removidos del flujo productivo del front-end.
+- Seeders y datos quemados removidos del flujo productivo.
 - Variables de entorno documentadas en `.env.example`.
 - Wiki actualizada con guia de estilo y reglas del back-end.
+- Wiki local publicada en GitHub Wiki antes de compartir el enlace final.

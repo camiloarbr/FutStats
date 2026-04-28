@@ -269,9 +269,7 @@ async function handleSubmit(): Promise<void> {
 
           <div class="mt-10 text-center">
             <p class="text-base text-slate-500 dark:text-slate-400">
-              {{
-                mode === 'login' ? "Don't have an account?" : 'Already have an account?'
-              }}
+              {{ mode === 'login' ? "Don't have an account?" : 'Already have an account?' }}
               <button
                 type="button"
                 class="ml-1 font-semibold text-blue-600 transition hover:text-blue-700 dark:text-blue-400"

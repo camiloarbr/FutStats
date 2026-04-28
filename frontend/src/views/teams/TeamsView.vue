@@ -8,8 +8,11 @@ import { useRouter } from 'vue-router'
 import TeamPointsChart from '@/components/teams/TeamPointsChart.vue'
 import TeamsFilterPanel from '@/components/teams/TeamsFilterPanel.vue'
 import TeamsTable from '@/components/teams/TeamsTable.vue'
+import DataStateBanner from '@/components/ui/DataStateBanner.vue'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { FutStatsDataService } from '@/services/FutStatsDataService'
 import { TeamService } from '@/services/TeamService'
+import { useDataStatusStore } from '@/stores/useDataStatusStore'
 
 interface FilterOption {
   value: string
@@ -17,6 +20,7 @@ interface FilterOption {
 }
 
 const router = useRouter()
+const dataStatusStore = useDataStatusStore()
 
 const selectedLeague: Ref<string> = ref('')
 const selectedCountry: Ref<string> = ref('')
@@ -65,6 +69,10 @@ const countryOptions = computed((): FilterOption[] => {
 function handleTeamClick(id: number): void {
   router.push({ name: 'teams.show', params: { id } })
 }
+
+function reloadData(): void {
+  void FutStatsDataService.loadInitialData()
+}
 </script>
 
 <template>
@@ -96,6 +104,12 @@ function handleTeamClick(id: number): void {
         </div>
       </div>
     </header>
+
+    <DataStateBanner
+      :error-message="dataStatusStore.errorMessage"
+      :is-loading="dataStatusStore.isLoading"
+      @retry="reloadData"
+    />
 
     <section class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
       <article

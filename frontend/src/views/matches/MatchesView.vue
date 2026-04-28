@@ -9,10 +9,13 @@ import MatchesFilterPanel from '@/components/matches/MatchesFilterPanel.vue'
 import MatchesHero from '@/components/matches/MatchesHero.vue'
 import MatchesTable from '@/components/matches/MatchesTable.vue'
 import MatchGoalsChart from '@/components/matches/MatchGoalsChart.vue'
+import DataStateBanner from '@/components/ui/DataStateBanner.vue'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { FutStatsDataService } from '@/services/FutStatsDataService'
 import { MatchService } from '@/services/MatchService'
 import { TeamService } from '@/services/TeamService'
+import { useDataStatusStore } from '@/stores/useDataStatusStore'
 import { Formatters } from '@/utils/Formatters'
 
 interface SummaryStat {
@@ -24,6 +27,7 @@ interface SummaryStat {
 }
 
 const router = useRouter()
+const dataStatusStore = useDataStatusStore()
 const selectedTeamId = ref<string>('')
 
 const matches = computed<MatchInterface[]>(() => MatchService.getAll())
@@ -183,11 +187,21 @@ const summaryStats = computed<SummaryStat[]>(() => {
 function handleMatchClick(id: number): void {
   router.push({ name: 'matches.show', params: { id: id.toString() } })
 }
+
+function reloadData(): void {
+  void FutStatsDataService.loadInitialData()
+}
 </script>
 
 <template>
   <section class="space-y-10">
     <MatchesHero :summary-stats="summaryStats" />
+
+    <DataStateBanner
+      :error-message="dataStatusStore.errorMessage"
+      :is-loading="dataStatusStore.isLoading"
+      @retry="reloadData"
+    />
 
     <div class="grid gap-6">
       <MatchesFilterPanel v-model="selectedTeamId" :options="teamOptions" />

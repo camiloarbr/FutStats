@@ -1,5 +1,15 @@
 // 1. External imports
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
 // 2. Internal imports
 import { CreateTeamDto } from './dto/create-team.dto';

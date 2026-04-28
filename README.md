@@ -113,12 +113,10 @@ FutStats/
 - Front-end seeders and LocalStorage data persistence were removed.
 - Authentication is handled by the back-end with JWT tokens.
 
-## Demo Credentials
+## First User
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | admin@futstats.com | admin123 |
-| User | user@futstats.com | user123 |
+FutStats does not ship hardcoded users or passwords. In a clean database, the first account created
+from the registration form receives the `admin` role; subsequent accounts receive the `user` role.
 
 ## Documentation
 
@@ -131,6 +129,40 @@ Local wiki drafts for Entregable 2:
 - [Reglas de programacion Back-end](docs/wiki/Reglas-de-programacion-Backend.md)
 
 For detailed coding conventions and project rules, see [Copilot Instructions](.github/copilot-instructions.md).
+
+## Delivery Checks
+
+Run local verification before publishing:
+
+```bash
+cd backend
+npm run test
+npm run build
+
+cd ../frontend
+npm run type-check
+npm run build
+```
+
+If Windows blocks the PowerShell npm shim, run the same scripts with `npm.cmd`.
+
+Publish the local wiki drafts to GitHub Wiki before submitting:
+
+```powershell
+git clone https://github.com/camiloarbr/FutStats.wiki.git FutStats.wiki
+Copy-Item docs/wiki/*.md FutStats.wiki/
+cd FutStats.wiki
+git add .
+git commit -m "docs: update entregable 2 wiki"
+git push
+```
+
+Verify the deployed API and front-end URL from the delivery machine:
+
+```powershell
+curl <GCP_API_URL>/api/teams
+curl <GCP_FRONTEND_URL>
+```
 
 ## License
 

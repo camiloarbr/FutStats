@@ -1,5 +1,11 @@
 // 1. External imports
-import { CanActivate, ExecutionContext, Inject, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 // 2. Internal imports

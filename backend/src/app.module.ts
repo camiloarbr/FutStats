@@ -1,12 +1,10 @@
 // 1. External imports
-import { Module, OnApplicationBootstrap } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { InjectDataSource, TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 // 2. Internal imports
 import { AuthModule } from './auth/auth.module';
-import { seedAdmin } from './database/seeder';
 import { MatchEntity } from './matches/entities/match.entity';
 import { MatchesModule } from './matches/matches.module';
 import { PlayerEntity } from './players/entities/player.entity';
@@ -38,10 +36,4 @@ import { UsersModule } from './users/users.module';
     UsersModule,
   ],
 })
-export class AppModule implements OnApplicationBootstrap {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-
-  async onApplicationBootstrap(): Promise<void> {
-    await seedAdmin(this.dataSource);
-  }
-}
+export class AppModule {}

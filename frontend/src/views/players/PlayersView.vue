@@ -8,10 +8,13 @@ import { useRouter } from 'vue-router'
 import PlayersFilterPanel from '@/components/players/PlayersFilterPanel.vue'
 import PlayersTable from '@/components/players/PlayersTable.vue'
 import PlayerTopScorersChart from '@/components/players/PlayerTopScorersChart.vue'
+import DataStateBanner from '@/components/ui/DataStateBanner.vue'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { FutStatsDataService } from '@/services/FutStatsDataService'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
+import { useDataStatusStore } from '@/stores/useDataStatusStore'
 import { Formatters } from '@/utils/Formatters'
 
 interface SelectOption {
@@ -20,6 +23,7 @@ interface SelectOption {
 }
 
 const router = useRouter()
+const dataStatusStore = useDataStatusStore()
 
 const selectedTeamId = ref<string>('')
 const selectedPosition = ref<string>('')
@@ -79,6 +83,10 @@ const totalPlayersCopy = computed(() =>
     Boolean(selectedTeamId.value || selectedPosition.value)
   )
 )
+
+function reloadData(): void {
+  void FutStatsDataService.loadInitialData()
+}
 </script>
 
 <template>
@@ -90,9 +98,7 @@ const totalPlayersCopy = computed(() =>
         <p class="text-[0.75rem] font-bold uppercase tracking-[0.35em] text-white/75">
           Player Intelligence
         </p>
-        <h1 class="mt-[0.25rem] text-[clamp(2rem,4vw,2.75rem)] font-extrabold">
-          Players Overview
-        </h1>
+        <h1 class="mt-[0.25rem] text-[clamp(2rem,4vw,2.75rem)] font-extrabold">Players Overview</h1>
         <p class="max-w-[32rem] text-white/90">
           Audit every squad member with live filters, sortable tables, and immediate insight into
           who is producing the most end product.
@@ -104,13 +110,17 @@ const totalPlayersCopy = computed(() =>
           <strong class="block text-[1.65rem] font-extrabold">{{ totalPlayersCopy }}</strong>
         </div>
         <div>
-          <span class="text-[0.75rem] uppercase tracking-[0.2em] text-white/70"
-            >Teams tracked</span
-          >
+          <span class="text-[0.75rem] uppercase tracking-[0.2em] text-white/70">Teams tracked</span>
           <strong class="block text-[1.65rem] font-extrabold">{{ teams.length }}</strong>
         </div>
       </div>
     </header>
+
+    <DataStateBanner
+      :error-message="dataStatusStore.errorMessage"
+      :is-loading="dataStatusStore.isLoading"
+      @retry="reloadData"
+    />
 
     <div class="grid gap-6">
       <PlayersFilterPanel

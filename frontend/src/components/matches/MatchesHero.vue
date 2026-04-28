@@ -57,10 +57,7 @@ const props = defineProps<{
             class="relative overflow-hidden rounded-[1.25rem] border border-white/20 p-5 shadow-[0_15px_35px_rgba(15,23,42,0.25)] opacity-0 translate-y-4 scale-[0.98] animate-[matchesFade_0.7s_ease_forwards]"
             :style="{ animationDelay: `${index * 120}ms` }"
           >
-            <div
-              class="absolute inset-0 opacity-85 bg-gradient-to-br"
-              :class="stat.accent"
-            ></div>
+            <div class="absolute inset-0 opacity-85 bg-gradient-to-br" :class="stat.accent"></div>
             <div class="relative flex flex-col gap-[0.2rem]">
               <dt class="text-[0.7rem] font-semibold uppercase tracking-[0.35em] text-white/75">
                 {{ stat.label }}
@@ -75,7 +72,7 @@ const props = defineProps<{
 
     <div
       class="pointer-events-none absolute -bottom-[120px] -right-10 h-[320px] w-[320px] rounded-full opacity-35 blur-[80px] animate-[heroBlob_18s_ease-in-out_infinite]"
-      style="background: radial-gradient(circle, rgba(56,189,248,0.8), transparent 70%)"
+      style="background: radial-gradient(circle, rgba(56, 189, 248, 0.8), transparent 70%)"
     ></div>
     <div
       class="pointer-events-none absolute -left-[60px] -top-[80px] h-[320px] w-[320px] rounded-full opacity-35 blur-[80px] animate-[heroBlob_18s_ease-in-out_infinite]"

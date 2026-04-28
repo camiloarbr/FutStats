@@ -17,11 +17,7 @@ app.use(pinia)
 
 AuthService.restoreSession()
 
-try {
-  await FutStatsDataService.loadInitialData()
-} catch (error) {
-  console.error('Unable to load FutStats data from the back-end.', error)
-}
-
 app.use(router)
 app.mount('#app')
+
+void FutStatsDataService.loadInitialData()

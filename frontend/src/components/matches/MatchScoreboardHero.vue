@@ -29,7 +29,9 @@ const props = defineProps<{
   <div
     class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#22d3ee] p-8 text-white shadow-[0_40px_90px_rgba(15,23,42,0.45)]"
   >
-    <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+    <div
+      class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10"
+    >
       <div class="flex flex-1 flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex flex-col items-center gap-2 text-center">
           <div
@@ -95,12 +97,12 @@ const props = defineProps<{
 
     <div
       class="pointer-events-none absolute -bottom-[140px] -right-[60px] h-[420px] w-[420px] rounded-full opacity-35 blur-[110px] animate-[scoreboardPulse_18s_ease-in-out_infinite]"
-      style="background: radial-gradient(circle, rgba(14,165,233,0.7), transparent 65%)"
+      style="background: radial-gradient(circle, rgba(14, 165, 233, 0.7), transparent 65%)"
     ></div>
     <div
       class="pointer-events-none absolute -left-[90px] -top-[120px] h-[360px] w-[360px] rounded-full opacity-35 blur-[110px] animate-[scoreboardPulse_18s_ease-in-out_infinite]"
       style="
-        background: radial-gradient(circle, rgba(59,130,246,0.7), transparent 60%);
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.7), transparent 60%);
         animation-delay: 6s;
       "
     ></div>

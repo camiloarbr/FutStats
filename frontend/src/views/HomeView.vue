@@ -5,14 +5,18 @@ import { computed } from 'vue'
 
 // 2. Internal imports
 import DashboardGoalsChart from '@/components/charts/DashboardGoalsChart.vue'
+import DataStateBanner from '@/components/ui/DataStateBanner.vue'
 import type { TopScorerRow } from '@/interfaces/DashboardInterface'
 import { MatchService } from '@/services/MatchService'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
+import { FutStatsDataService } from '@/services/FutStatsDataService'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { useDataStatusStore } from '@/stores/useDataStatusStore'
 import { Formatters } from '@/utils/Formatters'
 
 const authStore = useAuthStore()
+const dataStatusStore = useDataStatusStore()
 
 const username = computed((): string => authStore.currentUser?.username ?? 'User')
 
@@ -37,6 +41,10 @@ const topScorers = computed((): TopScorerRow[] => {
     }
   })
 })
+
+function reloadData(): void {
+  void FutStatsDataService.loadInitialData()
+}
 </script>
 
 <template>
@@ -72,13 +80,17 @@ const topScorers = computed((): TopScorerRow[] => {
       </div>
     </header>
 
+    <DataStateBanner
+      :error-message="dataStatusStore.errorMessage"
+      :is-loading="dataStatusStore.isLoading"
+      @retry="reloadData"
+    />
+
     <section class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
       <article
         class="flex flex-col gap-2 overflow-hidden rounded-3xl bg-gradient-to-br from-[#2563eb] to-[#38bdf8] p-7 text-white shadow-[0_25px_60px_rgba(15,23,42,0.2)]"
       >
-        <div
-          class="grid h-10 w-10 place-items-center rounded-2xl bg-white/20 text-[1.25rem]"
-        >
+        <div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/20 text-[1.25rem]">
           👥
         </div>
         <div>
@@ -106,9 +118,7 @@ const topScorers = computed((): TopScorerRow[] => {
       <article
         class="flex flex-col gap-2 overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-7 text-white shadow-[0_25px_60px_rgba(15,23,42,0.2)]"
       >
-        <div
-          class="grid h-10 w-10 place-items-center rounded-2xl bg-white/20 text-[1.25rem]"
-        >
+        <div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/20 text-[1.25rem]">
           ⚽
         </div>
         <div>
@@ -133,7 +143,14 @@ const topScorers = computed((): TopScorerRow[] => {
           <span class="text-[0.8rem] uppercase tracking-[0.2em] text-slate-400">Live ranking</span>
         </div>
 
-        <div class="overflow-x-auto">
+        <div
+          v-if="topScorers.length === 0 && !dataStatusStore.isLoading"
+          class="rounded-xl border border-dashed border-slate-200 py-12 text-center text-sm text-slate-400"
+        >
+          No player scoring data available
+        </div>
+
+        <div v-else class="overflow-x-auto">
           <table class="w-full border-collapse">
             <thead class="bg-slate-100">
               <tr>

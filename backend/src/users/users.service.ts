@@ -6,6 +6,7 @@ import type { Repository } from 'typeorm';
 
 // 2. Internal imports
 import { UserEntity } from './entities/user.entity';
+import type { UserRole } from './entities/user.entity';
 import type { PublicUserInterface } from './interfaces/public-user.interface';
 
 @Injectable()
@@ -23,7 +24,8 @@ export class UsersService {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = this.usersRepository.create({ username, email, passwordHash });
+    const role = await this.resolveRegistrationRole();
+    const user = this.usersRepository.create({ username, email, passwordHash, role });
 
     try {
       return await this.usersRepository.save(user);
@@ -66,5 +68,10 @@ export class UsersService {
       error.message.includes('UNIQUE constraint failed') &&
       error.message.includes('users.email')
     );
+  }
+
+  private async resolveRegistrationRole(): Promise<UserRole> {
+    const usersCount = await this.usersRepository.count();
+    return usersCount === 0 ? 'admin' : 'user';
   }
 }

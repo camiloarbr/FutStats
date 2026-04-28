@@ -46,11 +46,7 @@ const emit = defineEmits<{
         @change="emit('update:selectedPosition', ($event.target as HTMLSelectElement).value)"
       >
         <option value="">All positions</option>
-        <option
-          v-for="option in props.positionOptions"
-          :key="option.value"
-          :value="option.value"
-        >
+        <option v-for="option in props.positionOptions" :key="option.value" :value="option.value">
           {{ option.label }}
         </option>
       </select>

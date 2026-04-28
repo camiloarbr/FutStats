@@ -115,18 +115,14 @@ watch(
         <p class="text-white/90">
           {{ player.position }} • {{ player.nationality }} • Shirt #{{ player.shirtNumber }}
         </p>
-        <div
-          class="mt-4 flex flex-col gap-[0.35rem] text-[0.75rem] uppercase tracking-[0.25em]"
-        >
+        <div class="mt-4 flex flex-col gap-[0.35rem] text-[0.75rem] uppercase tracking-[0.25em]">
           <span class="text-white/70">Team</span>
           <strong class="text-[1.4rem] font-extrabold normal-case tracking-normal">{{
             team?.name ?? 'Free Agent'
           }}</strong>
         </div>
       </div>
-      <div
-        class="mx-auto max-w-[320px] overflow-hidden rounded-3xl border border-white/40"
-      >
+      <div class="mx-auto max-w-[320px] overflow-hidden rounded-3xl border border-white/40">
         <img
           :src="playerImage"
           :alt="`${player.fullName} portrait`"
@@ -141,10 +137,7 @@ watch(
         :key="stat.id"
         class="relative overflow-hidden rounded-3xl p-6 text-white shadow-[0_20px_60px_rgba(15,23,42,0.2)]"
       >
-        <div
-          class="absolute inset-0 opacity-85 bg-gradient-to-br"
-          :class="stat.accent"
-        ></div>
+        <div class="absolute inset-0 opacity-85 bg-gradient-to-br" :class="stat.accent"></div>
         <div class="relative flex flex-col gap-[0.2rem]">
           <p class="text-[0.75rem] uppercase tracking-[0.3em] text-white/85">{{ stat.label }}</p>
           <strong class="text-[2rem] font-extrabold">{{ stat.value }}</strong>
