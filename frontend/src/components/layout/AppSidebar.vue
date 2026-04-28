@@ -1,5 +1,5 @@
+// @author: Camilo | FutStats
 <script setup lang="ts">
-// @author: [Name] | FutStats
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
@@ -43,7 +43,6 @@ const displayEmail = computed(() => currentUser.value?.email ?? 'guest@futstats.
       </RouterLink>
 
       <RouterLink
-        v-if="isAdmin"
         :to="{ name: 'teams.index' }"
         active-class="bg-gray-700"
         class="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition hover:bg-gray-700"
@@ -53,13 +52,22 @@ const displayEmail = computed(() => currentUser.value?.email ?? 'guest@futstats.
       </RouterLink>
 
       <RouterLink
-        v-if="isAdmin"
         :to="{ name: 'matches.index' }"
         active-class="bg-gray-700"
         class="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition hover:bg-gray-700"
       >
         <i class="fa-solid fa-futbol w-4" aria-hidden="true"></i>
         <span>Matches</span>
+      </RouterLink>
+
+      <RouterLink
+        v-if="isAdmin"
+        :to="{ name: 'admin.tools' }"
+        active-class="bg-gray-700"
+        class="flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition hover:bg-gray-700"
+      >
+        <i class="fa-solid fa-toolbox w-4" aria-hidden="true"></i>
+        <span>Admin Tools</span>
       </RouterLink>
     </nav>
 

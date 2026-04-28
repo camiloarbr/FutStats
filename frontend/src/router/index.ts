@@ -1,4 +1,4 @@
-// @author: Samuel | FutStats
+// @author: Camilo | FutStats
 import { createRouter, createWebHistory } from 'vue-router'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
@@ -32,7 +32,7 @@ const router = createRouter({
       path: '/teams',
       name: 'teams.index',
       component: () => import('@/views/teams/TeamsView.vue'),
-      meta: { title: 'Teams', requiresAuth: true, adminOnly: true },
+      meta: { title: 'Teams', requiresAuth: true, adminOnly: false },
     },
     {
       path: '/teams/create',
@@ -80,7 +80,7 @@ const router = createRouter({
       path: '/matches',
       name: 'matches.index',
       component: () => import('@/views/matches/MatchesView.vue'),
-      meta: { title: 'Matches', requiresAuth: true, adminOnly: true },
+      meta: { title: 'Matches', requiresAuth: true, adminOnly: false },
     },
     {
       path: '/matches/create',
@@ -101,6 +101,30 @@ const router = createRouter({
       meta: { title: 'Edit Match', requiresAuth: true, adminOnly: true },
     },
     {
+      path: '/admin/tools',
+      name: 'admin.tools',
+      component: () => import('@/views/admin/AdminToolsView.vue'),
+      meta: { title: 'Admin Tools', requiresAuth: true, adminOnly: true },
+    },
+    {
+      path: '/admin/teams',
+      name: 'admin.teams',
+      component: () => import('@/views/admin/TeamsAdminView.vue'),
+      meta: { title: 'Admin - Teams', requiresAuth: true, adminOnly: true },
+    },
+    {
+      path: '/admin/players',
+      name: 'admin.players',
+      component: () => import('@/views/admin/PlayersAdminView.vue'),
+      meta: { title: 'Admin - Players', requiresAuth: true, adminOnly: true },
+    },
+    {
+      path: '/admin/matches',
+      name: 'admin.matches',
+      component: () => import('@/views/admin/MatchesAdminView.vue'),
+      meta: { title: 'Admin - Matches', requiresAuth: true, adminOnly: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
@@ -111,7 +135,7 @@ router.beforeEach(
   (
     to: RouteLocationNormalized,
     _from: RouteLocationNormalized,
-    next: NavigationGuardNext,
+    next: NavigationGuardNext
   ): void => {
     const authStore = useAuthStore()
     const currentUser = authStore.currentUser
@@ -134,7 +158,7 @@ router.beforeEach(
     }
 
     next()
-  },
+  }
 )
 
 router.afterEach((to: RouteLocationNormalized) => {

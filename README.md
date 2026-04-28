@@ -75,7 +75,7 @@ The application will be available at **http://localhost:5173**
 ```
 frontend/src/
 ├── components/          # Reusable Vue components
-│   ├── charts/         # Chart components (BaseChart)
+│   ├── charts/         # Chart components
 │   ├── filters/        # Filter components (SelectFilter)
 │   ├── layout/         # Layout components (Header, Sidebar, Footer)
 │   ├── tables/         # Table components (DataTable)

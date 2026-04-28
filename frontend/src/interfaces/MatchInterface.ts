@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 
 export interface MatchInterface {
   id: number
@@ -15,5 +15,3 @@ export interface MatchInterface {
   homeTeamId: number
   awayTeamId: number
 }
-
-export type CreateMatchDTO = Omit<MatchInterface, 'id'>

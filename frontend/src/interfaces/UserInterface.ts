@@ -1,4 +1,4 @@
-// @author: [Name] | FutStats
+// @author: Camilo | FutStats
 
 export interface UserInterface {
   id: number
@@ -9,5 +9,3 @@ export interface UserInterface {
   createdAt: Date
   isActive: boolean
 }
-
-export type CreateUserDTO = Omit<UserInterface, 'id' | 'createdAt'>
