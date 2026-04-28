@@ -1,5 +1,6 @@
 // @author: Camilo | FutStats
 // 1. External imports
+import axios from 'axios'
 
 // 2. Internal imports
 import type { UserInterface } from '@/interfaces/UserInterface'
@@ -27,7 +28,7 @@ export class AuthService {
     }
   }
 
-  static async register(username: string, email: string, password: string): Promise<boolean> {
+  static async register(username: string, email: string, password: string): Promise<void> {
     const authStore = useAuthStore()
 
     try {
@@ -37,11 +38,16 @@ export class AuthService {
         password,
       })
       AuthService.persistSession(response.data)
-      return true
-    } catch {
+    } catch (error: unknown) {
       authStore.clearSession()
       AuthStorage.clearSession()
-      return false
+
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        const message = error.response.data.message as string
+        throw new Error(Array.isArray(message) ? message.join(', ') : message)
+      }
+
+      throw new Error('Registration failed. Please try again.')
     }
   }
 

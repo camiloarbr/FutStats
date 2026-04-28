@@ -39,9 +39,10 @@ async function handleSubmit(): Promise<void> {
         return
       }
     } else {
-      const ok = await AuthService.register(username.value, email.value, password.value)
-      if (!ok) {
-        error.value = 'Registration failed. The email may already be in use.'
+      try {
+        await AuthService.register(username.value, email.value, password.value)
+      } catch (err: unknown) {
+        error.value = err instanceof Error ? err.message : 'Registration failed. Please try again.'
         return
       }
     }

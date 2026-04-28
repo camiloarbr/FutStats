@@ -24,7 +24,15 @@ export class UsersService {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = this.usersRepository.create({ username, email, passwordHash });
-    return this.usersRepository.save(user);
+
+    try {
+      return await this.usersRepository.save(user);
+    } catch (error: unknown) {
+      if (this.isDuplicateEmailError(error)) {
+        throw new ConflictException('An account with this email already exists.');
+      }
+      throw error;
+    }
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
@@ -50,5 +58,13 @@ export class UsersService {
       createdAt: user.createdAt,
       isActive: user.isActive,
     };
+  }
+
+  private isDuplicateEmailError(error: unknown): boolean {
+    return (
+      error instanceof Error &&
+      error.message.includes('UNIQUE constraint failed') &&
+      error.message.includes('users.email')
+    );
   }
 }
