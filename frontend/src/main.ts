@@ -1,7 +1,10 @@
 // @author: Camilo | FutStats
-import '@/assets/css/input.css'
+// 1. External imports
 import { createApp } from 'vue'
+
+// 2. Internal imports
 import App from '@/App.vue'
+import '@/assets/css/input.css'
 import router from '@/router'
 import { createPiniaConfig } from '@/stores/piniaConfig'
 import { LocalStorageUtils } from '@/utils/LocalStorageUtils'

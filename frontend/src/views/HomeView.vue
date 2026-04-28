@@ -1,12 +1,15 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed } from 'vue'
-import { useAuthStore } from '@/stores/useAuthStore'
+
+// 2. Internal imports
+import DashboardGoalsChart from '@/components/charts/DashboardGoalsChart.vue'
+import type { TopScorerRow } from '@/interfaces/DashboardInterface'
 import { MatchService } from '@/services/MatchService'
 import { PlayerService } from '@/services/PlayerService'
 import { TeamService } from '@/services/TeamService'
-import DashboardGoalsChart from '@/components/charts/DashboardGoalsChart.vue'
-import type { TopScorerRow } from '@/interfaces/DashboardInterface'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { Formatters } from '@/utils/Formatters'
 
 const authStore = useAuthStore()

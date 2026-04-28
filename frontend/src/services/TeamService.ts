@@ -1,7 +1,10 @@
 // @author: Samuel | FutStats
-import { useTeamsStore } from '@/stores/useTeamsStore'
+// 1. External imports
+
+// 2. Internal imports
+import type { CreateTeamDTO, UpdateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
-import type { CreateTeamDTO, UpdateTeamDTO } from '@/interfaces/TeamDTO'
+import { useTeamsStore } from '@/stores/useTeamsStore'
 
 export class TeamService {
   static getAll(): TeamInterface[] {

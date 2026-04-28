@@ -1,7 +1,10 @@
 // @author: Samuel | FutStats
 <script setup lang="ts">
-import { computed } from 'vue'
+// 1. External imports
 import type { ChartData, ChartOptions } from 'chart.js'
+import { computed } from 'vue'
+
+// 2. Internal imports
 import DoughnutChart from '@/components/charts/DoughnutChart.vue'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 

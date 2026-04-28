@@ -1,16 +1,15 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, ref, watch } from 'vue'
 
-import { MatchService } from '@/services/MatchService'
-import { TeamService } from '@/services/TeamService'
-
+// 2. Internal imports
 import MatchFormCard from '@/components/matches/MatchFormCard.vue'
-
-import type { CreateMatchDTO } from '@/interfaces/MatchDTO'
+import type { CreateMatchDTO } from '@/dtos/MatchDTO'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
-
+import { MatchService } from '@/services/MatchService'
+import { TeamService } from '@/services/TeamService'
 import { Formatters } from '@/utils/Formatters'
 
 type MatchesAccordionSection = 'matchesCreate' | 'matchesEdit'

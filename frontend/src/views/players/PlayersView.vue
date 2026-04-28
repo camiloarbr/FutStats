@@ -1,15 +1,18 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { PlayerService } from '@/services/PlayerService'
-import { TeamService } from '@/services/TeamService'
-import PlayerTopScorersChart from '@/components/players/PlayerTopScorersChart.vue'
-import PlayersTable from '@/components/players/PlayersTable.vue'
+
+// 2. Internal imports
 import PlayersFilterPanel from '@/components/players/PlayersFilterPanel.vue'
-import { Formatters } from '@/utils/Formatters'
+import PlayersTable from '@/components/players/PlayersTable.vue'
+import PlayerTopScorersChart from '@/components/players/PlayerTopScorersChart.vue'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
+import { Formatters } from '@/utils/Formatters'
 
 interface SelectOption {
   value: string

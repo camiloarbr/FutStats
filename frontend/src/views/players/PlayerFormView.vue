@@ -1,16 +1,16 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+// 2. Internal imports
 import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
-
-import { PlayerService } from '@/services/PlayerService'
-import { TeamService } from '@/services/TeamService'
-
-import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+import type { CreatePlayerDTO } from '@/dtos/PlayerDTO'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
 
 const route = useRoute()
 const router = useRouter()

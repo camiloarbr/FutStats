@@ -1,12 +1,15 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { TeamService } from '@/services/TeamService'
+
+// 2. Internal imports
 import TeamPointsChart from '@/components/teams/TeamPointsChart.vue'
-import TeamsTable from '@/components/teams/TeamsTable.vue'
 import TeamsFilterPanel from '@/components/teams/TeamsFilterPanel.vue'
+import TeamsTable from '@/components/teams/TeamsTable.vue'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { TeamService } from '@/services/TeamService'
 
 interface FilterOption {
   value: string

@@ -8,7 +8,7 @@ A comprehensive football statistics dashboard built with modern web technologies
 - **TypeScript** — Type-safe JavaScript
 - **Vite** — Lightning-fast build tool
 - **Pinia** — State management with setup syntax
-- **Vue Router 4** — Client-side routing
+- **Vue Router** — Client-side routing
 - **TailwindCSS** — Utility-first CSS framework
 - **Chart.js** — Powerful charting library
 - **Leaflet** — Interactive maps
@@ -25,7 +25,7 @@ A comprehensive football statistics dashboard built with modern web technologies
 
 ## 📋 Requirements
 
-- Node.js >= 18
+- Node.js >= 20.19
 - npm >= 9
 
 ## ⚙️ Installation & Setup
@@ -75,12 +75,13 @@ The application will be available at **http://localhost:5173**
 ```
 frontend/src/
 ├── components/          # Reusable Vue components
-│   ├── charts/         # Chart components
-│   ├── filters/        # Filter components (SelectFilter)
+│   ├── charts/         # Base chart wrappers
 │   ├── layout/         # Layout components (Header, Sidebar, Footer)
-│   ├── tables/         # Table components (DataTable)
+│   ├── matches/        # Match-specific components
+│   ├── players/        # Player-specific components
+│   ├── teams/          # Team-specific components
 │   └── ui/             # UI components (StatCard, LeafletMap)
-├── composables/         # Reusable Vue composition functions
+├── dtos/                # Create and update DTO types
 ├── interfaces/          # TypeScript interfaces and types
 ├── router/              # Vue Router configuration and navigation guards
 ├── services/            # Business logic and data access layer
@@ -93,8 +94,9 @@ frontend/src/
 ```
 
 **Key Responsibility:**
-- **Services** layer is the only place allowed to access localStorage or backend APIs
-- All data persists in localStorage with mock data during development
+- **Services** layer owns domain reads and writes through Pinia stores
+- LocalStorage access is centralized in `LocalStorageUtils` and `piniaConfig`
+- Seeders are isolated from persistence code and only run during initial app load
 - Architecture supports seamless migration to a backend when ready
 
 ## 🔐 Demo Credentials

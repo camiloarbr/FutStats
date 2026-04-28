@@ -1,7 +1,10 @@
 // @author: Victor Chavez | FutStats
-import { usePlayersStore } from '@/stores/usePlayersStore'
+// 1. External imports
+
+// 2. Internal imports
+import type { CreatePlayerDTO, UpdatePlayerDTO } from '@/dtos/PlayerDTO'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
-import type { CreatePlayerDTO, UpdatePlayerDTO } from '@/interfaces/PlayerDTO'
+import { usePlayersStore } from '@/stores/usePlayersStore'
 
 export class PlayerService {
   static getAll(): PlayerInterface[] {

@@ -1,7 +1,6 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { CSSProperties } from 'vue'
+// 1. External imports
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,8 +10,12 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import { Bar } from 'vue-chartjs'
 import type { ChartData, ChartOptions } from 'chart.js'
+import { computed } from 'vue'
+import type { CSSProperties } from 'vue'
+import { Bar } from 'vue-chartjs'
+
+// 2. Internal imports
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 

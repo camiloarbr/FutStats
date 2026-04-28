@@ -1,6 +1,9 @@
 // @author: Camilo | FutStats
-import { useAuthStore } from '@/stores/useAuthStore'
+// 1. External imports
+
+// 2. Internal imports
 import type { UserInterface } from '@/interfaces/UserInterface'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export class AuthService {
   static login(email: string, password: string): boolean {

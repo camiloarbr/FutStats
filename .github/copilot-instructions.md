@@ -3,15 +3,16 @@
 ## Project Overview
 FutStats is a football statistics dashboard SPA built with Vue 3 + TypeScript + Vite.
 All data is mocked and persisted in LocalStorage. The architecture must anticipate
-a future backend migration — the Services layer is the only layer allowed to touch data.
+a future backend migration: services own domain operations, stores own state, and
+`LocalStorageUtils` owns browser persistence.
 
 ---
 
 ## Tech Stack
 - Vue 3 + TypeScript + Vite
 - Pinia (state management, setup syntax only)
-- Vue Router 4
-- TailwindCSS v3
+- Vue Router
+- TailwindCSS v4
 - Chart.js + vue-chartjs
 - Leaflet + @types/leaflet
 - ESLint + Prettier
@@ -36,12 +37,13 @@ a future backend migration — the Services layer is the only layer allowed to t
 ```
 src/
 ├── components/
-│   ├── charts/       # Chart components
-│   ├── tables/       # DataTable.vue
-│   ├── filters/      # SelectFilter.vue
+│   ├── charts/       # Base chart wrappers
 │   ├── layout/       # AppHeader.vue, AppSidebar.vue, AppFooter.vue
+│   ├── matches/      # Match-specific components
+│   ├── players/      # Player-specific components
+│   ├── teams/        # Team-specific components
 │   └── ui/           # StatCard.vue, LeafletMap.vue
-├── composables/
+├── dtos/             # Create and Update DTO files
 ├── interfaces/       # One file per entity, Interface suffix
 ├── router/           # index.ts with navigation guards
 ├── services/         # Static class methods, one file per domain
@@ -59,9 +61,10 @@ src/
 
 | Element | Convention | Example |
 |---|---|---|
-| Components | PascalCase multi-word | `StatCard.vue`, `DataTable.vue` |
+| Components | PascalCase multi-word | `StatCard.vue`, `TeamFormCard.vue` |
 | Views | PascalCase + View suffix | `TeamsView.vue`, `LoginView.vue` |
 | Stores | camelCase + use prefix | `useTeamsStore`, `useAuthStore` |
+| DTOs | PascalCase + DTO suffix | `CreateTeamDTO`, `UpdateTeamDTO` |
 | Interfaces | PascalCase + Interface suffix | `TeamInterface`, `PlayerInterface` |
 | Services | PascalCase + Service suffix | `TeamService`, `PlayerService` |
 | Utils | PascalCase | `Formatters`, `LocalStorageUtils` |
@@ -142,11 +145,16 @@ export interface UserInterface {
 DTOs are used only for create and update operations.
 Never include `id` or auto-generated fields.
 Always derive from the interface using `Omit`.
+DTO files live in `src/dtos`, never in `src/interfaces`.
 ```typescript
+// @author: [Name] | FutStats
+// 1. External imports
+
+// 2. Internal imports
+import type { TeamInterface } from '@/interfaces/TeamInterface'
+
 export type CreateTeamDTO    = Omit<TeamInterface,   'id'>
-export type CreatePlayerDTO  = Omit<PlayerInterface, 'id'>
-export type CreateMatchDTO   = Omit<MatchInterface,  'id'>
-export type CreateUserDTO    = Omit<UserInterface,   'id' | 'createdAt'>
+export type UpdateTeamDTO    = Partial<Omit<TeamInterface, 'id'>>
 ```
 
 ---
@@ -160,10 +168,15 @@ export type CreateUserDTO    = Omit<UserInterface,   'id' | 'createdAt'>
 // Good
 <script setup lang="ts">
 // @author: [Name] | FutStats
-import { useTeamsStore } from '@/stores/useTeamsStore'
-import DataTable from '@/components/tables/DataTable.vue'
+// 1. External imports
+import { computed } from 'vue'
 
-const store = useTeamsStore()
+// 2. Internal imports
+import TeamsTable from '@/components/teams/TeamsTable.vue'
+import { TeamService } from '@/services/TeamService'
+import type { TeamInterface } from '@/interfaces/TeamInterface'
+
+const teams = computed<TeamInterface[]>(() => TeamService.getAll())
 </script>
 ```
 
@@ -197,8 +210,11 @@ defineEmits<{ (e: 'click', id: number): void }>()
 - Never called directly from templates for writes — use services.
 ```typescript
 // @author: [Name] | FutStats
-import { ref } from 'vue'
+// 1. External imports
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
+
+// 2. Internal imports
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 export const useTeamsStore = defineStore('teams', () => {
@@ -213,14 +229,18 @@ export const useTeamsStore = defineStore('teams', () => {
 ## Services
 
 - Static methods only. Never instantiated.
-- The ONLY layer allowed to read/write data (LocalStorage or future API).
+- The service layer owns domain reads/writes and coordinates the Pinia stores.
+- LocalStorage access stays centralized in `LocalStorageUtils` and Pinia persistence config.
 - When backend is ready, only service internals change — never views or components.
 - `create()` receives a DTO and assigns `id` and auto-generated fields.
 ```typescript
 // @author: [Name] | FutStats
-import { useTeamsStore } from '@/stores/useTeamsStore'
+// 1. External imports
+
+// 2. Internal imports
+import type { CreateTeamDTO, UpdateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
-import type { CreateTeamDTO } from '@/interfaces/TeamInterface'
+import { useTeamsStore } from '@/stores/useTeamsStore'
 
 export class TeamService {
   static getAll(): TeamInterface[] {
@@ -237,7 +257,7 @@ export class TeamService {
     store.teams.push({ id, ...dto })
   }
 
-  static update(id: number, dto: Partial<CreateTeamDTO>): void {
+  static update(id: number, dto: UpdateTeamDTO): void {
     const store = useTeamsStore()
     const index = store.teams.findIndex((t) => t.id === id)
     if (index !== -1) store.teams[index] = { ...store.teams[index], ...dto }
@@ -281,11 +301,19 @@ export class Formatters {
 - RESTful paths only — no verbs.
 - Guards in router file, never in views.
 - Every route must define `meta.title` and `meta.requiresAuth`.
+- View imports must stay at the top of `router/index.ts`, not inside the routes array.
 ```typescript
+// @author: [Name] | FutStats
+// 1. External imports
+import { createRouter, createWebHistory } from 'vue-router'
+
+// 2. Internal imports
+import TeamFormView from '@/views/teams/TeamFormView.vue'
+
 {
   path: '/teams/:id/edit',
   name: 'teams.edit',
-  component: () => import('@/views/teams/TeamFormView.vue'),
+  component: TeamFormView,
   meta: { title: 'Edit Team', requiresAuth: true },
 }
 ```
@@ -325,21 +353,16 @@ export class LocalStorageUtils {
 
 Always in this order, alphabetical within each group:
 ```typescript
-// 1. External packages
+// 1. External imports
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-// 2. Internal — stores
-import { useTeamsStore } from '@/stores/useTeamsStore'
-
-// 3. Internal — services
-import { TeamService } from '@/services/TeamService'
-
-// 4. Internal — components
-import DataTable from '@/components/tables/DataTable.vue'
-
-// 5. Internal — interfaces / types
+// 2. Internal imports
+import TeamFormCard from '@/components/teams/TeamFormCard.vue'
+import type { CreateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { TeamService } from '@/services/TeamService'
+import { useTeamsStore } from '@/stores/useTeamsStore'
 ```
 
 ---

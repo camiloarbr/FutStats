@@ -1,15 +1,15 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, ref, watch } from 'vue'
 
-import { PlayerService } from '@/services/PlayerService'
-import { TeamService } from '@/services/TeamService'
-
+// 2. Internal imports
 import PlayerFormCard from '@/components/players/PlayerFormCard.vue'
-
-import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+import type { CreatePlayerDTO } from '@/dtos/PlayerDTO'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
 
 type PlayersAccordionSection = 'playersCreate' | 'playersEdit'
 

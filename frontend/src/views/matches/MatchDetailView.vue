@@ -1,15 +1,18 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { MatchService } from '@/services/MatchService'
-import { TeamService } from '@/services/TeamService'
+
+// 2. Internal imports
 import MatchComparisonChart from '@/components/matches/MatchComparisonChart.vue'
 import MatchScoreboardHero from '@/components/matches/MatchScoreboardHero.vue'
 import MatchStatsSummaryCard from '@/components/matches/MatchStatsSummaryCard.vue'
-import { Formatters } from '@/utils/Formatters'
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { MatchService } from '@/services/MatchService'
+import { TeamService } from '@/services/TeamService'
+import { Formatters } from '@/utils/Formatters'
 
 interface StatComparison {
   id: string

@@ -1,13 +1,13 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, ref, watch } from 'vue'
 
-import { TeamService } from '@/services/TeamService'
-
+// 2. Internal imports
 import TeamFormCard from '@/components/teams/TeamFormCard.vue'
-
-import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
+import type { CreateTeamDTO } from '@/dtos/TeamDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { TeamService } from '@/services/TeamService'
 
 type TeamsAccordionSection = 'teamsCreate' | 'teamsEdit'
 

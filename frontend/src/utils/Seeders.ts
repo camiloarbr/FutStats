@@ -1,12 +1,15 @@
 // @author: Camilo | FutStats
-import { useAuthStore } from '@/stores/useAuthStore'
-import { useMatchesStore } from '@/stores/useMatchesStore'
-import { usePlayersStore } from '@/stores/usePlayersStore'
-import { useTeamsStore } from '@/stores/useTeamsStore'
+// 1. External imports
+
+// 2. Internal imports
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 import type { UserInterface } from '@/interfaces/UserInterface'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { useMatchesStore } from '@/stores/useMatchesStore'
+import { usePlayersStore } from '@/stores/usePlayersStore'
+import { useTeamsStore } from '@/stores/useTeamsStore'
 
 export class Seeders {
   static run(): void {

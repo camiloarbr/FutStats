@@ -1,8 +1,10 @@
 // @author: Samuel | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+// 2. Internal imports
 import { AuthService } from '@/services/AuthService'
 
 const router = useRouter()

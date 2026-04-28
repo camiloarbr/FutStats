@@ -1,6 +1,9 @@
 // @author: Camilo | FutStats
-import { ref, computed } from 'vue'
+// 1. External imports
 import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+
+// 2. Internal imports
 import type { UserInterface } from '@/interfaces/UserInterface'
 
 export const useAuthStore = defineStore('auth', () => {

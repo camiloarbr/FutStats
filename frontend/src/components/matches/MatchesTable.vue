@@ -1,6 +1,9 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, ref } from 'vue'
+
+// 2. Internal imports
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import { Formatters } from '@/utils/Formatters'
 

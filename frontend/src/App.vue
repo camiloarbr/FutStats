@@ -1,12 +1,14 @@
 // @author: Camilo | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed } from 'vue'
 import { RouterView } from 'vue-router'
 
-import { useAuthStore } from '@/stores/useAuthStore'
+// 2. Internal imports
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => Boolean(authStore.isAuthenticated))

@@ -1,13 +1,16 @@
 // @author: Samuel | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { PlayerService } from '@/services/PlayerService'
-import { TeamService } from '@/services/TeamService'
+
+// 2. Internal imports
 import TeamSeasonChart from '@/components/teams/TeamSeasonChart.vue'
 import LeafletMap from '@/components/ui/LeafletMap.vue'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
+import { PlayerService } from '@/services/PlayerService'
+import { TeamService } from '@/services/TeamService'
 
 const route = useRoute()
 const router = useRouter()

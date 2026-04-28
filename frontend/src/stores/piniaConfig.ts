@@ -1,6 +1,9 @@
 // @author: Camilo | FutStats
-import { watch } from 'vue'
+// 1. External imports
 import { createPinia, type Pinia } from 'pinia'
+import { watch } from 'vue'
+
+// 2. Internal imports
 import { LocalStorageUtils } from '@/utils/LocalStorageUtils'
 
 export function createPiniaConfig(): Pinia {

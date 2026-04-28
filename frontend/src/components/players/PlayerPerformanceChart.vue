@@ -1,7 +1,10 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
-import { computed } from 'vue'
+// 1. External imports
 import type { ChartData, ChartOptions, TooltipItem } from 'chart.js'
+import { computed } from 'vue'
+
+// 2. Internal imports
 import BarChart from '@/components/charts/BarChart.vue'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import { Formatters } from '@/utils/Formatters'

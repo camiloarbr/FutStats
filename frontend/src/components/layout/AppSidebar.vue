@@ -1,8 +1,10 @@
 // @author: Camilo | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
+// 2. Internal imports
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const authStore = useAuthStore()

@@ -1,6 +1,9 @@
 // @author: Camilo | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed } from 'vue'
+
+// 2. Internal imports
 
 interface Props {
   title: string

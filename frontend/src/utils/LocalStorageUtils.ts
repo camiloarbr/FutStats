@@ -1,10 +1,13 @@
 // @author: Camilo | FutStats
+// 1. External imports
 import type { StateTree } from 'pinia'
-import { Seeders } from '@/utils/Seeders'
+
+// 2. Internal imports
 import type { MatchInterface } from '@/interfaces/MatchInterface'
 import type { PlayerInterface } from '@/interfaces/PlayerInterface'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 import type { UserInterface } from '@/interfaces/UserInterface'
+import { Seeders } from '@/utils/Seeders'
 
 export class LocalStorageUtils {
   private static readonly KEY = import.meta.env.VITE_STORAGE_KEY as string

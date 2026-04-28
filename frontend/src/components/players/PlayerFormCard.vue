@@ -1,8 +1,10 @@
 // @author: Camilo | FutStats
 <script setup lang="ts">
-import { reactive, watch, computed } from 'vue'
+// 1. External imports
+import { computed, reactive, watch } from 'vue'
 
-import type { CreatePlayerDTO } from '@/interfaces/PlayerDTO'
+// 2. Internal imports
+import type { CreatePlayerDTO } from '@/dtos/PlayerDTO'
 import type { TeamInterface } from '@/interfaces/TeamInterface'
 
 type FormMode = 'create' | 'edit'

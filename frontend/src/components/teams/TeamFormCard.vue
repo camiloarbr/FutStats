@@ -1,8 +1,10 @@
 // @author: Victor Chavez | FutStats
 <script setup lang="ts">
+// 1. External imports
 import { computed, reactive, watch } from 'vue'
 
-import type { CreateTeamDTO } from '@/interfaces/TeamDTO'
+// 2. Internal imports
+import type { CreateTeamDTO } from '@/dtos/TeamDTO'
 
 type FormMode = 'create' | 'edit'
 
