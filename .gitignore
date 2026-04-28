@@ -6,6 +6,8 @@ backend/.env
 frontend/.env
 
 backend/dist/
+dist/
+frontend/dist/
 backend/*.sqlite
 backend/*.sqlite-*
 
