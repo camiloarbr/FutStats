@@ -1,13 +1,11 @@
 // 1. External imports
-import { createError, defineEventHandler, getRouterParam } from 'h3'
 
 // 2. Internal imports
 import type { Player } from '../../../shared/domains/players/player.types'
 import { getPlayerById } from '../../domains/players/players.repository'
 
 export default defineEventHandler((event): Player => {
-  const idParam = getRouterParam(event, 'id')
-  const playerId = Number(idParam)
+  const playerId = Number(getRouterParam(event, 'id'))
 
   if (!Number.isInteger(playerId)) {
     throw createError({

@@ -1,7 +1,8 @@
-type RouteParam = string | string[] | undefined
+// 1. External imports
+
+// 2. Internal imports
+import { extractRouteParam, type RouteParam } from '~~/shared/utils/route.utils'
 
 export function getPlayerIdFromParam(param: RouteParam): number {
-  const rawParam = Array.isArray(param) ? param[0] : param
-
-  return Number(rawParam)
+  return Number(extractRouteParam(param))
 }

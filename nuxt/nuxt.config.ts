@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   ],
   css: ['~/assets/css/main.css'],
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint'],
+  modules: ['@nuxt/eslint', '@nuxtjs/tailwindcss'],
   nitro: {
     prerender: {
       routes: blogRoutes,
