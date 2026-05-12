@@ -6,22 +6,15 @@ import {
   calculateContributionRate,
   calculateGoalParticipation,
 } from '../../domains/players/player.metrics'
-import { getPlayerIdFromParam } from '../../domains/players/player-route.utils'
+import { getPlayerSlugFromParam } from '../../domains/players/player-route.utils'
 import type { Player } from '../../domains/players/player.types'
 
 // 3. Route & data
 const route = useRoute()
-const playerId = getPlayerIdFromParam(route.params.id)
+const slug = getPlayerSlugFromParam(route.params.slug)
 
-if (!Number.isInteger(playerId)) {
-  throw createError({
-    statusCode: 400,
-    statusMessage: 'El id del jugador debe ser numerico.',
-  })
-}
-
-const { data, error } = await useFetch<Player>(`/api/players/${playerId}`, {
-  key: `player-${playerId}`,
+const { data, error } = await useFetch<Player>(`/api/players/${slug}`, {
+  key: `player-${slug}`,
 })
 
 if (error.value !== null && error.value !== undefined) {

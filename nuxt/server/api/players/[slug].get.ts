@@ -2,19 +2,12 @@
 
 // 2. Internal imports
 import type { Player } from '../../../shared/domains/players/player.types'
-import { getPlayerById } from '../../domains/players/players.repository'
+import { getPlayerBySlug } from '../../domains/players/players.repository'
 
 export default defineEventHandler((event): Player => {
-  const playerId = Number(getRouterParam(event, 'id'))
+  const slug = getRouterParam(event, 'slug') ?? ''
 
-  if (!Number.isInteger(playerId)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'El id del jugador debe ser numerico.',
-    })
-  }
-
-  const player = getPlayerById(playerId)
+  const player = getPlayerBySlug(slug)
 
   if (player === undefined) {
     throw createError({

@@ -8,6 +8,6 @@ export function getPlayers(): readonly Player[] {
   return players
 }
 
-export function getPlayerById(id: number): Player | undefined {
-  return players.find((player) => player.id === id)
+export function getPlayerBySlug(slug: string): Player | undefined {
+  return players.find((player) => player.slug === slug)
 }

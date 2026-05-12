@@ -28,7 +28,7 @@ defineProps<Props>()
       <tbody>
         <tr v-for="player in players" :key="player.id" class="hover:bg-slate-50">
           <td class="border-b border-slate-200 px-4 py-3.5 text-[0.95rem] text-slate-800 whitespace-nowrap">
-            <NuxtLink class="font-extrabold text-blue-700" :to="`/players/${player.id}`">
+            <NuxtLink class="font-extrabold text-blue-700" :to="`/players/${player.slug}`">
               {{ player.nombre }}
             </NuxtLink>
           </td>
